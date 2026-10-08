@@ -1,0 +1,645 @@
+\section{潜在字母表 gadget}\label{sec:latent}
+
+本节的构造把一个非线性可观测与同加性噪声下的线性可观测族分离。
+本节的所有向量空间与对偶都在 $\F_2$ 上，除非指明别的域。对偶的
+子空间的「限制」指其在限制映射下的像。
+
+\begin{lemma}[潜在字母表 gadget]\label{lem:latent}
+对每个 $p_*>0$ 存在整数 $r_*$，使得对每个足够大的整数 $\ell$，
+以下对象存在：包含指定子空间 $K=\F_2^\ell$ 的有限维二元空间
+$\mathcal V$、映射 $C:\mathcal V\to K$、以及 $\mathcal V$ 上的有理
+概率分布 $\mu$。它们满足
+\begin{equation}\label{eq:latent-equivariance}
+ C(x+k)=C(x)+k
+ \qquad(x\in\mathcal V,\ k\in K),
+\end{equation}
+并且，对独立的均匀 $x\in\mathcal V$ 与 $a\sim\mu$，
+\begin{equation}\label{eq:latent-small-change}
+ \Pr[C(x+a)\ne C(x)]\le p_*.
+\end{equation}
+此外，每个满足 $\dim(G|_K)\ge r_*$ 的线性子空间
+$G\le\mathcal V^*$ 都满足
+\begin{equation}\label{eq:latent-detection}
+ \Pr_{a\sim\mu}[\text{存在 }g\in G\text{ 使 }g(a)\ne0]
+ \ge\frac18.
+\end{equation}
+特别地，$r_*$ 在选取 $\ell$ 之前固定。对有理 $p_*$，该阈值与所有
+有限数据都可由一个会终止的确定性算法找到。
+\end{lemma}
+
+我们先构造一个输出空间 $B$ 固定且更小的 gadget：其中的平移诱导
+$B$ 的平移。在把诱导同一平移的平移等同之后，该 gadget 将检测每个
+限制填满 $B^*$ 的线性族。随后我们组合由单射 $B\to K$ 索引的副本：
+$K$ 上限制秩足够高的族在大多数副本上限制到整个 $B^*$。这第二步
+容许 $K$ 的每个足够大的维数，同时保持秩阈值固定。
+
+固定 $B$ 的构造从二次块开始。在独立均匀输入上，其某个更新空间中
+的均匀非零扰动以概率 $\theta$ 保持非线性输出不变。一个适当一般的
+秩 $r$ 线性观察族在同一更新空间上至多损失一维，而均匀选取该空间
+导致损失的概率至多为 $3r\theta$。一个调和势把这一点转化为每层
+至多 $3\theta$ 的期望损失。坐标的随机变化使非一般的族在下降过程
+中变稀少，即使后面的线性映射依赖前面的选择。因此级联使非线性变化
+概率变小，同时留下常数概率的正秩。在最后的叶子处，存活下来的族
+以常数概率检测出一个独立的均匀符号。
+
+\subsection{二次块}
+
+固定整数 $r_0\ge1$，其规模最终只依赖 $p_*$。记 $H_0=0$ 与
+$H_r=\sum_{j=1}^r 1/j$。设 $F=\F_{2^d}$、$q=2^d$，并把
+$X=B=F^3$ 视为二元空间，各维数 $b=3d$。整数 $d$ 将按 $r_0$ 选得
+足够大。
+
+用迹配对把 $X^*$ 与 $B^*$ 都等同于 $F^3$：向量 $z\in F^3$ 表示
+特征 $y\mapsto\operatorname{Tr}_{F/\F_2}(z\cdot y)$，其中点号表示
+域点积。我们简写迹为 $\operatorname{Tr}$。迹配对非退化，且
+$\operatorname{Tr}(t^2)=\operatorname{Tr}(t)$。$F$ 的每个元素都有
+唯一的平方根。
+
+定义
+\begin{equation}\label{eq:latent-quadratic}
+ Q(x_1,x_2,x_3)=(x_2x_3,x_1x_3,x_1x_2),
+ \qquad
+ D(x,a)=Q(x+a)+Q(x)+Q(a).
+\end{equation}
+块可观测为
+\[
+ C_{\mathrm{blk}}:X\oplus B\longrightarrow B,
+ \qquad C_{\mathrm{blk}}(x,y)=y+Q(x).
+\]
+它在竖直的 $B$ 副本下等变：$C_{\mathrm{blk}}(x,y+k)=C_{\mathrm{blk}}(x,y)+k$。
+对 $z\in B^*$，标量观察 $z\circ C_{\mathrm{blk}}$ 在该平移下改变
+$z(k)$。我们将把它与限制到竖直 $B$ 上同为 $z$ 的线性泛函比较。
+
+对 $F^3$ 的一维 $F$-子空间 $A=Fv$，令
+\begin{equation}\label{eq:latent-block-subspaces}
+ D_A=\{y\in B:v\cdot y=0\},
+ \qquad
+ U_A=\{(a,Q(a)+w):a\in A,\ w\in D_A\}\subseteq X\oplus B.
+\end{equation}
+这些定义与所选的非零生成元 $v$ 无关。这样的线有 $q^2+q+1$ 条；令
+\begin{equation}\label{eq:latent-theta}
+ \theta=\frac{1}{q^2+q+1}.
+\end{equation}
+
+\begin{lemma}\label{lem:latent-block}
+对每条线 $A$，空间 $U_A$ 是维数 $b$ 的二元线性空间。对
+$a\in A$ 与 $x\in X$ 有 $D(x,a)\in D_A$；对 $a,a'\in A$ 有
+$D(a,a')=0$。$D_A$ 在 $B^*=F^3$ 中的迹零化子是 $A$，且诸 $U_A$
+共同张成 $X\oplus B$。
+\end{lemma}
+
+\begin{proof}
+$D(x,a)$ 的三个坐标是
+\[
+ x_2a_3+a_2x_3,\qquad
+ x_1a_3+a_1x_3,\qquad
+ x_1a_2+a_1x_2.
+\]
+当 $a=tv$ 时，$v\cdot D(x,a)$ 中每一项出现两次，故其和为零。当两个
+自变量都是 $v$ 的倍数时，极化式的每个坐标为零。于是 $Q|_A$ 是二元
+可加的，且 $U_A$ 由 $A\oplus D_A$ 的参数化是二元线性双射。其维数
+为 $d+2d=b$。
+
+每个 $z\in A$ 在迹配对下零化 $D_A$。该零化子的二元维数为
+$3d-2d=d$，故恰为 $A$。最后，对每条坐标线 $A=Fe_i$，空间 $U_A$
+包含 $(Fe_i,0)$（因为 $Q(te_i)=0$）以及 $\{0\}\oplus D_A$。这三条
+坐标线与其竖直超平面共同张成 $X\oplus B$。
+\end{proof}
+
+\paragraph{非线性响应。}
+$U_A$ 的形状使更新的二次项消去。对 $(a,Q(a)+w)\in U_A$，
+\[
+ C_{\mathrm{blk}}\bigl((x,y)+(a,Q(a)+w)\bigr)
+       +C_{\mathrm{blk}}(x,y)
+ =w+D(x,a).
+\]
+由 Lemma~\ref{lem:latent-block}，右端落在 $D_A$ 中。下面的计算给出
+递归将要使用的精确律。
+
+\begin{lemma}[对一次块更新的响应]\label{lem:latent-block-noise}
+固定线 $A$。对独立的均匀 $(x,y)\in X\oplus B$ 与
+$\zeta\in U_A\setminus\{0\}$，
+\[
+ \Pr\bigl[C_{\mathrm{blk}}((x,y)+\zeta)
+             \ne C_{\mathrm{blk}}(x,y)\bigr]=1-\theta.
+\]
+\end{lemma}
+
+\begin{proof}
+先取 $\zeta$ 在整个 $U_A$ 中均匀，仍与均匀聚合独立。其参数化
+$(a,Q(a)+w)$ 中 $a\in A$ 与 $w\in D_A$ 独立均匀。对每个固定的
+$x,a$，输出差 $w+D(x,a)$ 在 $D_A$ 中均匀，故以概率 $1-q^{-2}$ 非零。
+零扰动占质量 $q^{-3}$ 且从不改变输出。对非零扰动条件化给出
+\[
+ \frac{1-q^{-2}}{1-q^{-3}}
+ =\frac{q(q+1)}{q^2+q+1}=1-\theta.
+\]
+\end{proof}
+
+该引理处理独立的均匀聚合与均匀非零更新。当更新来自递归的更低层时，
+我们会在应用引理之前验证这一条件律。
+
+\paragraph{线性限制。}
+固定二元子空间 $S\le B^*$。限制到竖直 $B$ 上为 $z\in S$ 的
+$X\oplus B$ 上的线性泛函有唯一形式 $(\gamma_z,z)\in X^*\oplus B^*$。
+于是「为每个 $z\in S$ 二元线性地选取一个这样的延拓」由二元线性映射
+$\gamma:S\to X^*$ 指定。我们问这些所选延拓中哪些限制到 $U_A$ 上
+为零。该限制恰在其核包含非零元素时失去秩。
+
+\begin{lemma}[块限制的核]\label{lem:latent-block-kernel}
+设 $S\le B^*$ 且 $\gamma:S\to X^*$ 二元线性。对每条线 $A$，定义
+\[
+ \kappa_{A,\gamma}:S\longrightarrow U_A^*,
+ \qquad \kappa_{A,\gamma}(z)=(\gamma_z,z)|_{U_A}.
+\]
+在迹等同下，把 $\gamma_z(x)=\operatorname{Tr}(g(z)\cdot x)$ 写成
+相应的二元线性映射 $g:S\to F^3$。对每个非零 $z\in S$，
+\[
+ \kappa_{A,\gamma}(z)=0
+ \quad\Longleftrightarrow\quad
+ A=Fz
+ \quad\text{且}\quad
+ z\cdot g(z)=\sqrt{z_1z_2z_3}.
+\]
+\end{lemma}
+
+\begin{proof}
+若 $z$ 在核中，则它零化每个竖直向量 $(0,w)$（$w\in D_A$）。
+Lemma~\ref{lem:latent-block} 给出 $z\in A$，而 $z\ne0$ 意味着
+$A=Fz$。在其余向量 $(tz,Q(tz))$（$t\in F$）上，该泛函取值
+\begin{equation}\label{eq:latent-kernel-trace}
+ \operatorname{Tr}\bigl(t\,g(z)\cdot z+t^2z_1z_2z_3\bigr).
+\end{equation}
+$z\cdot Q(tz)$ 的三个被加项相等，而特征二中三等于一。另外
+\[
+ \operatorname{Tr}(t^2c)=\operatorname{Tr}(t\sqrt c).
+\]
+迹配对的非退化性表明：Equation~\eqref{eq:latent-kernel-trace} 对
+每个 $t$ 为零，当且仅当 $z\cdot g(z)=\sqrt{z_1z_2z_3}$。结合
+$z\in A$，该条件也是充分的：竖直部分已被零化。
+\end{proof}
+
+\subsection{一般的特征空间}
+
+核判据提示两种充分控制。我们将使用这样的一族：没有域线包含两个
+非零特征，且对任一延拓选择，只有少数特征满足对齐方程。对该选择
+的一致性随后允许提升依赖较早的随机坐标变化。
+
+\begin{definition}
+维数 $r\ge1$ 的二元子空间 $S\le F^3$ 称为\emph{一般的}，若 $S$ 中
+没有两个不同的非零元素在 $F$ 上成比例，且对每个二元线性映射
+$g:S\to F^3$，至多 $3r$ 个非零 $z\in S$ 满足
+\begin{equation}\label{eq:latent-alignment}
+ z\cdot g(z)=\sqrt{z_1z_2z_3}.
+\end{equation}
+\end{definition}
+
+在选取均匀线 $A$ 之前先固定一个映射 $\gamma:S\to X^*$，并令
+$r_A=\dim\im\kappa_{A,\gamma}$，其中 $r=\dim S>0$。
+Lemma~\ref{lem:latent-block-kernel} 现在给出损失界。若 $S$ 是一般
+的，每条域线至多含 $S$ 的一个非零元素，故核的维数至多为一。对与
+$\gamma$ 关联的固定映射 $g$，至多 $3r$ 个特征满足
+Equation~\eqref{eq:latent-alignment}；故至多 $3r$ 条线可能造成任何
+秩损失。因此
+\begin{equation}\label{eq:latent-generic-rank-loss}
+ r-r_A\le1,\qquad
+ \Pr_A[r_A<r]\le3r\theta,\qquad
+ \E_A[H_r-H_{r_A}]\le3\theta.
+\end{equation}
+最后的界用了 $H_r-H_{r-1}=1/r$。
+对任意的秩 $r$ 空间，损失仍要求对某非零 $z\in S$ 有 $A=Fz$。因此
+\begin{equation}\label{eq:latent-arbitrary-rank-loss}
+ \Pr_A[r_A<r]\le(2^r-1)\theta\le2^r\theta,
+ \qquad H_r-H_{r_A}\le H_r.
+\end{equation}
+这些估计关心限制下的秩。只有当正秩的族到达叶子后，最终噪声的检测
+才会随之而来。
+
+还需证明具有所述一般性的空间大量存在。
+
+\begin{lemma}\label{lem:latent-generic}
+对每个固定的 $r\ge1$，$F^3$ 中均匀随机选取的二元 $r$ 维子空间在
+$d\to\infty$ 时为一般的概率趋于 1。
+\end{lemma}
+
+\begin{proof}
+选独立的均匀 $x_{ij}\in F$（$1\le i\le3$，$1\le j\le r$），并用
+\[
+ z_i(t)=\sum_{j=1}^r x_{ij}t_j,
+ \qquad t\in\F_2^r
+\]
+参数化一个二元线性映射。每个非零输入的像在 $F^3$ 中均匀，故该映射
+非单射的概率至多 $(2^r-1)q^{-3}$。在单射的条件下，其像是均匀的
+二元 $r$-子空间：每个这样的子空间有相同数目的有序二元基。不同的
+非零二元输入在 $F$ 上也线性无关，故其像是 $F^3$ 中独立均匀元素。
+因此除非单射事件外，并界表明非比例条件以 $O_r(q^{-2})$ 的概率
+失败。
+
+剩下要对所有 $g$ 同时证明对齐条件。固定 $\F_2^r$ 中超过 $3r$ 个
+互异非零输入的集合 $E$。在单射参数化下，二元线性 $g$ 在一组基上的
+取值可以是 $F^3$ 中的任意向量。于是 $E$ 上的对齐蕴含向量
+\[
+ c=\bigl(\sqrt{z_1(t)z_2(t)z_3(t)}\bigr)_{t\in E}
+\]
+落在具有 $3r$ 列的矩阵
+\[
+ M_{t,(i,j)}=t_jz_i(t),
+ \qquad t\in E,\quad 1\le i\le3,\quad 1\le j\le r
+\]
+的 $F$-列张成中。反之，属于该列张成即给出这样一个 $g$ 的基取值。
+特别地，这一列隶属条件已经涵盖了所有可能的映射 $g$。
+
+先把 $x_{ij}$ 视为独立不定元并令 $L=\F_2(x_{ij})$。我们断言：即使
+把系数扩到代数闭包 $\overline L$，$c$ 也不在 $M$ 的列张成中。以下
+$r^3$ 个元素在 $L$ 上线性无关：
+\[
+ \sqrt{x_{1j}x_{2k}x_{3l}},
+ \qquad 1\le j,k,l\le r.
+\]
+事实上，通分后，一个依赖关系将是这些不定元的平方根之间的多项式
+恒等式。所示单项式有不同的奇偶向量，而关于 $x_{ij}$ 的多项式系数
+在这些平方根中只有偶次幂。不同奇偶向量的项不可能相消。
+
+$c$ 在这些无关元素中的展开的系数向量为
+\[
+ v_{jkl}=(t_jt_kt_l)_{t\in E}.
+\]
+若 $c$ 属于 $\overline L$ 上的列张成，则每个在 $L$ 上零化 $M$ 的
+行向量都会零化 $c$。刚证的无关性蕴含它会零化每个 $v_{jkl}$。由
+有限维空间 $L^E$ 中的双重零化，每个 $v_{jkl}$ 都会属于 $L$ 本身上
+的列张成。
+
+对 $h\ge1$，设 $V_h\le L^E$ 为 $t_1,\ldots,t_r$ 的二元坐标中次数
+至多 $h$ 的所有正次数单项式的赋值张成。$v_{jkl}$ 中的重复指标给出
+一次、二次与三次的所有单项式，因为在赋值集上 $t_i^2=t_i$。前述
+结论与列的形状因此蕴含
+\[
+ V_3\subseteq\operatorname{col}_L(M)\subseteq V_2\subseteq V_3.
+\]
+三个空间相等。乘以任意 $t_i$ 把 $V_2$ 送入 $V_3$，故保持其公共
+值。由于该空间含一次单项式，它含每个正次数单项式的赋值。这些赋值
+张成整个 $L^E$：对任意非零二元点，其通常的示性多项式是因子 $t_i$
+与 $1+t_i$ 的乘积且至少含一个因子 $t_i$，从而无常数单项式；其在
+$E$ 上的限制给出相应的点示性。于是列张成的维数将为 $|E|>3r$，
+矛盾。
+
+为从这一代数命题过渡到有限域，把 $M$ 与 $c$ 的元素都平方。所得
+矩阵有多项式元素，附加列的元素为 $z_1(t)z_2(t)z_3(t)$。令
+$h=\rank_L M\le3r$。平方在 $\overline L$ 上保持秩，故增广平方
+矩阵有 $h+1$ 阶非零子式。该子式是次数至多 $2h+3\le6r+3$ 的非零
+多项式。所有 $h+1$ 阶的未增广子式恒为零，故未增广秩在特化时不会
+增大。因此特化后的列隶属迫使这个特定的非零多项式为零。对独立的
+均匀 $x_{ij}\in F$，由多项式零点界~\cite[Corollary~1]{Schwartz80}
+（另见~\cite[Section~3.1]{Zippel79} 较早的稀疏多项式表述），该事件
+的概率至多 $(6r+3)/q$。
+
+若对齐条件失败，则它在某个大小为 $3r+1$ 的集合 $E$ 上失败。这样的
+集合只有有限多个（只依赖 $r$）；若 $2^r-1\le3r$ 则没有，条件自动
+成立。并界加上对单射的条件化即证引理。
+\end{proof}
+
+一般性因此控制所有可能的映射 $g$。现在固定一个域，使截至 $r_0$ 的
+每个秩上非一般空间都稀少；此阶段不需要选取任何线性映射。取正的
+$\eps_0$ 满足
+\begin{equation}\label{eq:latent-generic-error}
+ H_{r_0}2^{r_0}\eps_0\le1,
+ \qquad \eps_0<1.
+\end{equation}
+由 Lemma~\ref{lem:latent-generic}，可以固定足够大的 $d$ 使
+$b=3d\ge r_0$，且对每个 $1\le r\le r_0$，$B^*$ 的均匀秩 $r$ 子空间
+非一般的概率至多 $\eps_0$。特别地，存在一般的秩 $r_0$ 子空间，
+我们一劳永逸地固定它。
+
+\subsection{级联及其噪声}
+
+在级联二次块时，我们保持输出空间 $B$ 固定。每层选取一条噪声分支。
+下一个引理计算非线性变化概率衰减的速度；随后我们将沿同一分支追踪
+线性限制的秩。
+
+我们构造二元输入空间 $P_t$、平移子空间 $R_t\le P_t$、线性满射
+$\lambda_t:R_t\to B$ 与映射 $C_t:P_t\to B$，使
+\begin{equation}\label{eq:latent-recursive-equivariance}
+ C_t(u+h)=C_t(u)+\lambda_t(h)
+ \qquad(h\in R_t).
+\end{equation}
+于是平移 $h\in R_t$ 表示输出平移 $\lambda_t(h)$；不同的平移可以
+表示同一输出平移。这种平移作用的形式在聚合下保持。最后，对值为
+零的平移作商，将把输出平移变成输入的实际子空间。
+
+在高度零处取 $P_0=R_0=B$ 与 $C_0=\lambda_0=\operatorname{id}_B$。
+设 $\mathcal I$ 由所有对 $(A,J)$ 组成，其中 $A$ 是 $F^3$ 中的一条
+线，$J:B\to U_A$ 是二元线性同构。每条线有相同数目的这样的同构。
+
+我们在单个固定的父映射中为每个 $(A,J)$ 安排一个子节点。选取均匀
+的噪声子节点随即采样一条均匀的线与一个新鲜的均匀同构。
+对 $t\ge1$，取 $P_t=\prod_{(A,J)\in\mathcal I}P_{t-1}$ 并设
+\begin{equation}\label{eq:latent-recursive-output}
+ (x,y)=\sum_{A,J}J C_{t-1}(u_{AJ}),
+ \qquad C_t(u)=C_{\mathrm{blk}}(x,y)=y+Q(x).
+\end{equation}
+子节点平移的元组通过其嵌入的输出平移之和改变该聚合。为使父节点
+的变化是纯输出平移，我们要求该和的 $X$-分量为零。据此定义
+\begin{equation}\label{eq:latent-recursive-shifts}
+ R_t=\left\{(h_{AJ})\in\prod_{A,J}R_{t-1}:
+       \sum_{A,J}J\lambda_{t-1}(h_{AJ})\in\{0\}\oplus B\right\},
+\end{equation}
+并当该聚合为 $(0,k)$ 时令 $\lambda_t(h)=k$。这些是线性定义，且
+Equation~\eqref{eq:latent-recursive-equivariance} 立即由
+Equation~\eqref{eq:latent-recursive-output} 得到。满射性由
+Lemma~\ref{lem:latent-block} 归纳可得：子节点的输出平移可以任意
+选取，而其聚合映射是到 $X\oplus B$ 的满射。
+Equation~\eqref{eq:latent-recursive-equivariance} 与满射性还表明
+$C_t$ 把均匀输入送到 $B$ 的均匀元素。
+
+设 $\xi_t$ 为 $P_t$ 中如下的加性噪声。高度零处它在 $B$ 中均匀。
+在正高度处，选均匀的子节点 $(A,J)$，把 $\xi_{t-1}$ 的独立副本嵌入
+该子节点，其余子节点置零。等价地，在乘积树中选均匀的叶子，并在该
+叶子处加 $B$ 的均匀符号。每条路径选择可以采样为一次均匀的 $A$ 加
+一次均匀的 $J$，逐层独立。所有这些分布都是有理的。
+Figure~\ref{fig:latent-recursion} 展示递归的一层与所选的噪声分支。
+\input{figures/latent-recursion}
+\FloatBarrier
+
+\begin{lemma}\label{lem:latent-noise}
+对独立的均匀 $u\in P_t$ 与噪声 $\xi_t$，
+\begin{equation}\label{eq:latent-change-probability}
+ p_t:=\Pr[C_t(u+\xi_t)\ne C_t(u)]
+     =(1-q^{-3})(1-\theta)^t.
+\end{equation}
+\end{lemma}
+
+\begin{proof}
+高度零处的恒等式显然。考虑更高的一层，并在所选子节点 $(A,J)$ 上
+条件化。记其输出差为 $\Delta$。所有子节点副本有相同的函数与相同
+的内部噪声律，故 $\Delta$ 的律与所选指标无关。
+
+我们还需要子节点初始输出的条件律。对任意固定的子节点扰动 $a$，
+Equation~\eqref{eq:latent-recursive-equivariance} 给出
+\[
+ C_{t-1}(u+a+h)+C_{t-1}(u+h)
+ =C_{t-1}(u+a)+C_{t-1}(u)
+ \qquad(h\in R_{t-1}).
+\]
+于是该差在这些平移下不变，而初始输出被 $B$ 的每个元素平移。在
+均匀输入下，即使内部扰动也被指定，其初始输出在给定差时仍均匀。
+其余子节点的初始输出保持独立均匀。由于聚合映射是到 $X\oplus B$ 的
+满射，初始聚合 $(x,y)$ 在给定 $(A,J,\Delta)$ 时均匀。特别地，它与
+聚合扰动 $J\Delta$ 独立。
+
+在 $\Delta\ne0$ 与 $A$ 的条件下，同构 $J$ 仍均匀，因为 $\Delta$ 的
+律与所选子节点指标无关。于是 $J\Delta$ 在 $U_A\setminus\{0\}$ 中
+均匀。刚证明的条件均匀性使初始聚合与该更新独立。因此
+Lemma~\ref{lem:latent-block-noise} 给出：在子节点差非零的条件下，
+父节点变化概率为 $1-\theta$。当 $\Delta=0$ 时聚合不变。于是
+$p_t=p_{t-1}(1-\theta)$，恒等式得证。
+\end{proof}
+
+\subsection{线性提升与秩损失}
+
+非线性变化概率现在随高度衰减。对固定 $B$ 的 gadget，剩余目标是：
+只要族的限制填满 $B^*$ 就能检测。我们将通过平移作用追踪这些输出
+特征的每一种二元线性延拓选择来证明它。
+
+对 $S\le B^*$，$P_t$ 上的\emph{提升}指二元线性映射
+$z\mapsto\psi_z$（从 $S$ 到 $P_t^*$），满足
+\begin{equation}\label{eq:latent-lift-definition}
+ \psi_z|_{R_t}=z\circ\lambda_t.
+\end{equation}
+定义域为 $B^*$ 的提升称为\emph{满提升}。接下来我们描述父节点处的
+每一种可能的提升，不对其选取方式作任何假设。
+
+\begin{lemma}\label{lem:latent-lift-factorization}
+设 $P_t$（$t\ge1$）上给定了定义域为 $S$ 的提升。对每个子节点
+$(A,J)$，限制到该子节点的平移空间会经由 $\lambda_{t-1}$ 分解。所得
+子节点输出空间 $B$ 上的特征形如
+\begin{equation}\label{eq:latent-child-characters}
+ \phi_{AJ}(z)=J^*\bigl((\gamma_z,z)|_{U_A}\bigr)\in B^*,
+\end{equation}
+其中 $\gamma:S\to X^*$ 是对所有子节点公共的单一二元线性映射。
+\end{lemma}
+
+\begin{proof}
+支撑在单个子节点上且属于 $\ker\lambda_{t-1}$ 的平移，是输出平移为
+零的父平移。每个 $\psi_z$ 在其上为零，证得第一个断言。
+
+设 $T=\prod_{A,J}B$ 为子节点输出平移的空间，聚合映射为
+$\mathcal A:T\to X\oplus B$。该映射是满的。子节点特征之和减去 $z$
+作用在 $\mathcal A$ 的第二分量上，在 $\mathcal A$ 的第一分量为零
+时为零：每个这样的平移元组都可由子平移提供，给出一个父平移。因此
+该差唯一地经由 $\mathcal A$ 的第一分量（满射到 $X$）分解。称此
+特征为 $\gamma_z$。唯一性表明 $\gamma_z$ 线性依赖 $z$。在支撑于
+单个子节点的元组上求值即得 Equation~\eqref{eq:latent-child-characters}。
+\end{proof}
+
+选定子节点后，令 $S'=\im\phi_{AJ}$ 并取 $\phi_{AJ}$ 的线性截断
+$\iota:S'\to S$。把 $\psi_{\iota(z')}$ 限制到该子节点的输入上，即
+得 $P_{t-1}$ 上定义域为 $S'$ 的提升。我们可以为所有这样的截断固定
+确定性规则。特别地，它们只依赖已选的路径，从不依赖未来的路径指标
+或最终噪声符号。下降树时，每个存活的泛函都是原线性族某个成员的
+限制。
+
+分解由此把递归与局部限制问题连接起来。对固定的父提升，其唯一的
+映射 $\gamma$ 对每条出线 $A$ 公共，且
+$\phi_{AJ}=J^*\kappa_{A,\gamma}$。由于 $J^*$ 是同构，不改变核与秩。
+因此当出线均匀选取时，可以应用
+Equations~\eqref{eq:latent-generic-rank-loss}
+与~\eqref{eq:latent-arbitrary-rank-loss}。下一个证明表明：入射
+同构使一般性在后续每个正秩处都典型，即使提升本身依赖较早的路径。
+
+\begin{proposition}\label{prop:latent-full-lift-detection}
+令
+\begin{equation}\label{eq:latent-depth}
+ s=\left\lfloor\frac{H_{r_0}}{8\theta}\right\rfloor.
+\end{equation}
+$P_s$ 上的每个满提升以至少 $1/4$ 的概率检测 $\xi_s$：
+\begin{equation}\label{eq:latent-full-lift-detection}
+ \Pr[\text{存在 }z\in B^*\text{ 使 }\psi_z(\xi_s)\ne0]
+ \ge\frac14.
+\end{equation}
+\end{proposition}
+
+\begin{proof}
+把顶端的满提升限制到维数 $r_0$ 的固定一般子空间。沿随机叶子路径
+行进，在每个所选子节点处把提升换成刚描述的像提升。记其经 $j$ 步
+后的定义域为 $S_j$，$r_j=\dim S_j$，初始时 $j=0$ 处 $r_j=r_0$。
+灭绝后继续用零空间。
+
+我们详细说明允许在每层使用一般性的条件化。设 $\mathcal F_j$ 为
+第 $j$ 步的出线选择 $(A_j,J_j)$ 之前所有路径选择的信息。当前的
+空间、提升与映射 $\gamma_j$ 都是 $\mathcal F_j$-可测的。在
+$\mathcal F_j$ 与 $A_j$ 的条件下，子空间
+\[
+ E_{j,A_j}
+ =\im\bigl[z\mapsto(\gamma_{j,z},z)|_{U_{A_j}}\bigr]
+ \le U_{A_j}^*
+\]
+固定。下一个定义域与其秩为
+\[
+ S_{j+1}=J_j^*E_{j,A_j},
+ \qquad r_{j+1}=\dim E_{j,A_j}.
+\]
+秩在 $J_j$ 揭晓之前固定。均匀二元同构 $J_j:B\to U_{A_j}$ 使
+$S_{j+1}$ 成为 $B^*$ 中该秩的均匀随机子空间。因此，若 $B_j$ 为
+「$r_j>0$ 且 $S_j$ 非一般」的示性变量，则
+\begin{equation}\label{eq:latent-fresh-orientation}
+ \E[B_{j+1}\mid\mathcal F_j,A_j]\le\eps_0.
+\end{equation}
+下一个提升可以依赖 $J_j$。这对论证不构成限制：一般性界定所选
+子空间上的每个二元线性映射 $g$，包括由该提升给出的映射。
+
+令 $\Delta_j=H_{r_j}-H_{r_{j+1}}\ge0$。在 $\mathcal F_j$ 的条件
+下，出线 $A_j$ 独立均匀，而上述秩损失估计适用于固定的当前提升。
+因此
+\begin{equation}\label{eq:latent-conditional-harmonic}
+ \E[\Delta_j\mid\mathcal F_j]
+ \le3\theta+H_{r_0}2^{r_0}\theta B_j.
+\end{equation}
+对 $j=0$，空间是一般的，故其期望下降至多 $3\theta$。对 $j\ge1$，
+用 Equation~\eqref{eq:latent-fresh-orientation} 把
+Equation~\eqref{eq:latent-conditional-harmonic} 对前面的同构取平均。
+这给出无条件的界
+\[
+ \E\Delta_j
+ \le\bigl(3+H_{r_0}2^{r_0}\eps_0\bigr)\theta
+ \le4\theta.
+\]
+没有假设入射取向与其后续提升之间的独立性。
+
+对期望下降求和并用 Equation~\eqref{eq:latent-depth}：
+\[
+ \E[H_{r_0}-H_{r_s}]\le4s\theta\le\frac{H_{r_0}}2.
+\]
+灭绝需要总下降 $H_{r_0}$，故 $\Pr[r_s=0]\le1/2$。在叶子处，
+$P_0=R_0=B$，其提升由特征本身组成。在任意存活的秩 $r_s>0$ 的条件
+下，$B$ 中的独立均匀符号以概率 $1-2^{-r_s}\ge1/2$ 被检测。每个
+存活的泛函都是原族沿所选叶子的限制，故这样的检测蕴含原族对嵌入
+噪声 $\xi_s$ 的检测。两个界相乘即证
+Equation~\eqref{eq:latent-full-lift-detection}。
+\end{proof}
+
+\subsection{商与放大}
+
+一旦平移作用由实际子空间实现，固定 $B$ 的构造就完成了。令
+\[
+ V_0=P_s/\ker\lambda_s,
+\]
+其中核取在 $R_s\le P_s$ 内，并设 $q_0:P_s\to V_0$ 为商映射。
+Equation~\eqref{eq:latent-recursive-equivariance} 使 $C_s$ 在该核下
+不变，故它下降为映射 $\overline C:V_0\to B$。商
+$R_s/\ker\lambda_s$ 由 $\lambda_s$ 等同于 $B$，给出包含
+$i_B:B\to V_0$ 使
+\[
+ q_0(h)=i_B(\lambda_s h)\qquad(h\in R_s).
+\]
+下文把该子空间等同于 $B$。其平移作用满足
+\[
+ \overline C(x+b')=\overline C(x)+b'
+ \qquad(b'\in B).
+\]
+设 $\nu$ 为 $\xi_s$ 的噪声律的前推。$P_s$ 上的均匀输入前推为
+$V_0$ 上的均匀输入，故输出变化概率仍为 $p_s$。
+
+限制为整个 $B^*$ 的每个线性子空间 $G_0\le V_0^*$ 都满足
+\begin{equation}\label{eq:latent-base-detection}
+ \Pr_{a\sim\nu}[\text{存在 }g\in G_0\text{ 使 }g(a)\ne0]
+ \ge\frac14.
+\end{equation}
+事实上，取限制的线性截断 $\sigma:B^*\to G_0$ 并定义
+$\psi_z=q_0^*\sigma(z)=\sigma(z)\circ q_0$。对 $h\in R_s$，
+\[
+ \psi_z(h)=\sigma(z)(q_0h)=z(\lambda_s h).
+\]
+于是该拉回是满提升。而且 $\psi_z(\xi_s)=\sigma(z)(q_0\xi_s)$，
+故提升的检测就是所选截断对前推噪声的检测。
+Proposition~\ref{prop:latent-full-lift-detection} 给出该界，而截断
+的检测蕴含 $G_0$ 的检测。
+
+\begin{proof}[Lemma~\ref{lem:latent} 的证明]
+选足够大的 $r_0$ 使
+\[
+ \exp(1-H_{r_0}/8)\le p_*.
+\]
+再按 Equation~\eqref{eq:latent-generic-error} 选 $\eps_0$，并用
+Lemma~\ref{lem:latent-generic} 固定 $d$（从而 $b=3d$ 与 $\theta$）。
+构造 Equation~\eqref{eq:latent-depth} 的高度 $s$ 与上述商
+$(V_0,B,\overline C,\nu)$。Lemma~\ref{lem:latent-noise} 给出
+\begin{equation}\label{eq:latent-small-base-change}
+ p_s\le(1-\theta)^s
+ \le\exp(-\theta s)
+ \le\exp(\theta-H_{r_0}/8)
+ \le p_*.
+\end{equation}
+令 $r_*=b+2$。至此所有选取都只依赖 $p_*$。
+
+现在放大输出空间。使用随机单射 $B\to K$ 的要点是：$K$ 上限制秩
+至少 $b+2$ 的族沿大多数单射限制到整个 $B^*$。于是为每个单射取
+基 gadget 的一个副本，即可把其满限制检测界转化为所需的高秩界。
+
+固定 $\ell\ge b+2$ 并记 $K=\F_2^\ell$。设 $\mathcal L$ 为所有二元
+线性单射 $L:B\to K$ 的有限集。取乘积 $P=\prod_{L\in\mathcal L}V_0$
+并定义
+\[
+ \widetilde C((x_L)_L)=\sum_{L\in\mathcal L}L\overline C(x_L).
+\]
+平移子空间的乘积 $T=\prod_L B\le P$ 通过线性映射
+\[
+ \Lambda:T\longrightarrow K,
+ \qquad \Lambda((b_L)_L)=\sum_L Lb_L
+\]
+作用于该输出。该映射是满的，因为 $K$ 的每个非零向量都在某个单射
+$B\to K$ 的像中。对其在 $T$ 内的核作商：
+\[
+ \mathcal V=P/\ker\Lambda.
+\]
+映射 $\widetilde C$ 下降为 $C:\mathcal V\to K$，而
+$T/\ker\Lambda$ 等同于所需的平移子空间 $K$。这证明
+Equation~\eqref{eq:latent-equivariance}。
+
+在 $P$ 上选均匀的 $L\in\mathcal L$，仅对该副本用 $\nu$ 的独立样本
+更新。设 $\mu$ 为取商后的律。在均匀乘积输入上，输出和变化当且仅当
+所选副本的输出变化（因为 $L$ 是单射）。均匀输入前推为商上的均匀
+输入，故变化概率仍为 $p_s$。Equation~\eqref{eq:latent-small-base-change}
+证明 Equation~\eqref{eq:latent-small-change}。这里用到的每个噪声
+分布都由有限均匀选取经前推得到，因而是有理的。
+
+还需对任意 $G\le\mathcal V^*$ 建立检测。设 $S=G|_K\le K^*$，维数
+$r\ge r_*$。把 $G$ 拉回到 $P$，再限制到由 $L$ 索引的 $V_0$ 副本；
+把所得 $V_0^*$ 的子空间记为 $G_L$。它限制到该副本的平移子空间
+$B$ 上恰为
+\[
+ G_L|_B=L^*S.
+\]
+缘由：支撑在副本 $L$ 上的平移 $b'\in B$ 在商中表示平移 $Lb'\in K$，
+故限制到 $z\in S$ 的特征在该处取值 $z(Lb')$。
+
+映射 $L^*:S\to B^*$ 不满，当且仅当存在非零 $b'\in B$ 使
+$Lb'\in S^\perp$。对每个这样的固定 $b'$，均匀单射 $L$ 使 $Lb'$
+在 $K$ 的非零向量中均匀。故
+\[
+ \Pr_L[Lb'\in S^\perp]
+ =\frac{2^{\ell-r}-1}{2^\ell-1}
+ \le2^{-r}.
+\]
+并界给出
+\[
+ \Pr_L[L^*S\ne B^*]
+ \le(2^b-1)2^{-r}
+ \le2^{b-r}\le\frac14.
+\]
+在每个其余的副本上，Equation~\eqref{eq:latent-base-detection} 给出
+$G_L$ 从而 $G$ 对嵌入噪声的检测概率至少 $1/4$。对所选副本取平均，
+检测概率至少 $\frac34\cdot\frac14=\frac{3}{16}\ge\frac18$，证明了
+Equation~\eqref{eq:latent-detection}。构造对每个 $\ell\ge b+2$
+有效，且 $r_*=b+2$ 已固定，如所需。
+
+为完备起见：当 $p_*$ 有理时，所有选取都是有效的。选整数 $m\ge0$
+使 $2^{-m}\le p_*$，再选 $r_0$ 使 $H_{r_0}\ge8(m+1)$；由
+$e^{-m}\le2^{-m}$，这保证 $r_0$ 的初始界。选满足
+Equation~\eqref{eq:latent-generic-error} 的有理 $\eps_0$。对相继的
+整数 $d$（$3d\ge r_0$），枚举 $\F_{2^d}^3$ 的二元子空间与一般性
+定义中的线性映射。这精确检验一般性，并计算每个秩 $1,\ldots,r_0$
+处非一般空间的比例。Lemma~\ref{lem:latent-generic} 保证最终所有
+这些比例都至多 $\eps_0$。固定第一个这样的域与一个一般的秩 $r_0$
+空间。其余的乘积、同构、单射、商、函数表与有理噪声律都由有限枚举
+与二元线性代数获得。这给出所述的会终止的构造。
+\end{proof}

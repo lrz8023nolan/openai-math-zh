@@ -1,0 +1,103 @@
+\documentclass[11pt]{ctexart}
+\ifdefined\pdfinfoomitdate\pdfinfoomitdate=1\fi
+\ifdefined\pdftrailerid\pdftrailerid{}\fi
+\ifdefined\pdfsuppressptexinfo\pdfsuppressptexinfo=15\fi
+\usepackage[margin=1in]{geometry}
+\usepackage{amsmath,amssymb,amsthm,mathtools}
+\usepackage{microtype}
+\usepackage{enumitem,booktabs,array}
+\usepackage{tikz}
+\usepackage{placeins,flafter}
+\usepackage[titles]{tocloft}
+\usepackage[hyphens]{url}
+\usetikzlibrary{arrows.meta,positioning,calc}
+\usepackage{xcolor}
+\definecolor{linkblue}{RGB}{25,63,105}
+\usepackage[colorlinks=true,allcolors=linkblue,pdfencoding=auto,psdextra]{hyperref}
+\usepackage[nameinlink,capitalise,noabbrev]{cleveref}
+\hypersetup{
+  pdftitle={唯一游戏定理（中文对照版）},
+  pdfsubject={从 3SAT 到唯一游戏的确定性归约},
+  pdfauthor={OpenAI（原文）；openai-math-zh 项目（翻译）},
+  pdfkeywords={Unique Games, approximation hardness, shortcode, projection games}
+}
+
+% —— 中文环境名 ——
+\newtheorem{theorem}{定理}[section]
+\newtheorem{lemma}[theorem]{引理}
+\newtheorem{proposition}[theorem]{命题}
+\newtheorem{corollary}[theorem]{推论}
+\theoremstyle{definition}
+\newtheorem{definition}[theorem]{定义}
+\theoremstyle{remark}
+\newtheorem{remark}[theorem]{注记}
+\crefname{theorem}{定理}{定理}
+\crefname{lemma}{引理}{引理}
+\crefname{proposition}{命题}{命题}
+\crefname{corollary}{推论}{推论}
+\crefname{definition}{定义}{定义}
+\crefname{remark}{注记}{注记}
+\crefname{equation}{式}{式}
+\crefname{section}{节}{节}
+\crefname{appendix}{附录}{附录}
+\crefname{figure}{图}{图}
+\crefname{table}{表}{表}
+\numberwithin{equation}{section}
+\newcommand{\F}{\mathbb F}
+\newcommand{\E}{\mathbb E}
+\newcommand{\eps}{\varepsilon}
+\DeclareMathOperator{\OPT}{OPT}
+\DeclareMathOperator{\val}{val}
+\DeclareMathOperator{\Hom}{Hom}
+\DeclareMathOperator{\im}{im}
+\DeclareMathOperator{\rank}{rank}
+\DeclareMathOperator{\Span}{span}
+\DeclareMathOperator{\supp}{supp}
+\DeclareMathOperator{\TV}{TV}
+\newcommand{\abs}[1]{\lvert #1\rvert}
+\newcommand{\norm}[1]{\lVert #1\rVert}
+\newcommand{\ip}[2]{\langle #1,#2\rangle}
+\setlist[itemize]{topsep=4pt,itemsep=2pt,parsep=0pt}
+\setlist[enumerate]{topsep=4pt,itemsep=2pt,parsep=0pt}
+\setlength{\emergencystretch}{2em}
+\allowdisplaybreaks[1]
+
+\title{唯一游戏定理\\{\large The Unique Games Theorem（中文对照版）}}
+\author{OpenAI（原文）\\中文翻译：openai-math-zh 项目}
+\date{2026 年 9 月 23 日（原文日期）}
+
+\begin{document}
+\maketitle
+\begin{abstract}
+我们证明唯一游戏猜想。对每个固定的
+\(\varepsilon,\delta\in(0,1/2)\)，我们给出从 \(\mathrm{3SAT}\) 到固定
+有限字母表上唯一游戏的确定性多项式时间归约，完备性至少
+\(1-\varepsilon\)，可靠性至多 \(\delta\)。
+
+\smallskip
+\emph{（本文件是 openai/math 手稿的中文对照翻译；原文结果未经同行评审。
+数学公式、定理编号与结构与英文原文保持一致，术语以仓库 glossary.md
+为准；译文与原文冲突时以英文原文为准。）}
+\end{abstract}
+
+\begingroup
+\small
+\setlength{\baselineskip}{10.5pt}
+\setlength{\cftbeforesecskip}{3pt}
+\tableofcontents
+\endgroup
+\clearpage
+\input{sections/00-introduction-zh}
+\FloatBarrier
+\input{sections/01-preliminaries-zh}
+\input{sections/02-latent-zh}
+\input{sections/03-game-zh}
+\input{sections/04-matrix-zh}
+\input{sections/05-clean-zh}
+\input{sections/06-finish-zh}
+\input{sections/07-consequences-zh}
+\appendix
+\input{appendices/finite-consequences-zh}
+\bibliographystyle{plain}
+\bibliography{references}
+\end{document}
