@@ -1,0 +1,160 @@
+\section{引言}
+
+对于边权非负的图，Max-Cut（最大割）问的是：如何划分顶点，使横跨划分的边权之和最大。
+一个割由顶点上的符号编码，一条边恰在其两端符号不同时有贡献。
+对最大化问题而言，$\alpha$-近似指返回一个价值至少为最优值 $\alpha$ 倍的可行解。
+除非特别说明，图及其有理边权都是显式给出的。
+我们以 $\operatorname{MaxCut}(G)$ 记最大跨越权重；当边权之和为 1 时，
+也把该值记作 $\Val(G)$。
+带权图的割是否至少达到给定权重的判定问题，出现在 Karp 最初的
+NP 完全问题清单中~\cite{Karp72}。近似算法问的是：在多项式时间内，
+这个最优值还能保证多少。
+Goemans 与 Williamson~\cite{GW95} 为 Max-Cut 给出了半定规划算法与
+随机超平面舍入，其期望近似比逼近
+\begin{equation}\label{eq:gw-constant}
+ \GW=\min_{-1\le \rho<1}
+ \frac{2\arccos\rho}{\pi(1-\rho)}
+ =0.878567\ldots.
+\end{equation}
+该表达式比较的是端点向量内积为 $\rho$ 的一条边的两项贡献：其在半定目标中
+的价值为 $(1-\rho)/2$，而随机超平面以概率 $\arccos(\rho)/\pi$ 分开这两个
+向量。比值对 $\rho$ 取最小，就是这一舍入规则的一致保证。
+在普通 NP 难度意义下判定该比值是否最优，一直是近似算法领域的核心问题。
+H\aa stad 的难度定理~\cite{Hastad01} 结合 Trevisan、Sorkin、Sudan 与
+Williamson 的归约 gadget~\cite{TSSW00}，排除了大于 $16/17$ 的比值。
+Khot、Kindler、Mossel 与 O'Donnell~\cite{KKMO07} 在唯一游戏
+猜想~\cite{Khot02} 的假设下确立了 $\GW$ 的最优性；其解析输入是
+Mossel、O'Donnell 与 Oleszkiewicz 的 Majority Is Stablest
+定理~\cite{MOO10}。
+
+我们解决 Max-Cut 无条件最优性的问题。
+
+\begin{theorem}\label{thm:main}
+对每个满足 $\GW<\alpha\le1$ 的固定 $\alpha$，在因子 $\alpha$ 内近似
+Max-Cut 是 NP 难的。该结论对简单无权图成立。
+\end{theorem}
+
+这一陈述的含义是：若存在多项式时间算法总能返回权重至少为最大值
+$\alpha$ 倍的割，则 $\mathrm P=\mathrm{NP}$。我们证明下面更精确的
+间隙定理。记
+\begin{equation}\label{eq:B}
+ B(t)=\frac{2}{\pi}\arcsin t,\qquad 0<t<1.
+\end{equation}
+
+\begin{theorem}\label{thm:gap}
+固定有理数 $t\in(0,1)$ 与常数 $0<\eps<(t-B(t))/4$。对边上有有理概率
+分布的图，区分下列情形是 NP 难的：
+\begin{align*}
+ \textnormal{YES：}\quad&\Val\ge\frac{1+t}{2}-\eps,\\
+ \textnormal{NO：}\quad&\Val\le\frac{1+B(t)}{2}+\eps,
+\end{align*}
+其中 $\Val$ 为最大割权重。
+\end{theorem}
+
+\subsection*{已有工作与直接路线}
+
+把证明验证归约为近似间隙的思想可追溯到 Feige、Goldwasser、Lov\'asz、
+Safra 与 Szegedy~\cite{FGLSS96}，以及 Arora--Safra 与 Arora、Lund、
+Motwani、Sudan、Szegedy 的 PCP 定理~\cite{AroraSafra98,ALMSS98}。
+H\aa stad 对验证测试的傅里叶分析~\cite{Hastad01} 使其中许多间隙达到
+锐利。对 Max-Cut 而言，半定松弛的高斯几何给出了一个格外精确的目标。
+Feige 与 Schechtman~\cite{FS02} 为该松弛构造了逼近 $\GW$ 的整性间隙；
+但仅凭该松弛的局限，并不能对任意算法建立难度。
+Khot、Kindler、Mossel 与 O'Donnell 的唯一游戏归约~\cite{KKMO07} 把同一
+几何阈值与计算难度联系起来。
+
+Khot、Kindler、Mossel 与 O'Donnell 的原始分析提出：要得到该阈值，
+所需的解析命题是 Majority Is Stablest。Mossel、O'Donnell 与
+Oleszkiewicz 通过在低影响布尔函数与高斯函数之间作比较证明了它
+~\cite{MOO10}，把 Borell 的半空间噪声稳定性界~\cite{Borell85} 转移到
+布尔情形。他们的定理使唯一游戏猜想仍是经典难度归约中的假设
+~\cite[Corollary~2.12]{MOO10}。我们用 Majority Is Stablest 找出测试中
+的一个具有影响的坐标，再证明所需的额外抽取步骤，把该坐标变成
+源博弈（source game）的标记。上述算法基准是理想舍入比；有限精度的
+SDP 优化与随机超平面舍入对任意固定 $\eta>0$ 给出期望比
+$\GW-\eta$~\cite[Section~2]{GW95}。
+
+半定近似与难度之间的比较不止于单一的最坏情形比值。O'Donnell 与
+Wu~\cite{OW08} 在唯一游戏猜想下确定了 Max-Cut 的完整近似曲线，把可
+达到的割值与实例的最优值联系起来。Raghavendra~\cite{Raghavendra08}
+对有限约束满足问题建立了半定松弛与基于唯一游戏的难度之间的一般对
+应。本定理关心的是 Max-Cut 无条件的最坏情形比值；下文的证明建立了
+\Cref{thm:gap} 中特定的完备性与可靠性间隙族。
+
+在投影博弈（projection game）中，二部图的每个顶点从指定字母表中领取
+标记，边权构成一个概率分布。当边所规定的映射把左端标记送到右端标记
+时，该边被接受。其值是被接受边权的最大值。二对一约束指每个右侧标记
+恰有两个原像。完备性与可靠性分别是 YES 情形值的承诺下界与 NO 情形值
+的上界。
+
+我们的出发点是已发表的、完备性不完美的二对一博弈构造~\cite{DKKMS25}。
+Grassmann 图方法由 Khot、Minzer 与 Safra~\cite{KMS25} 引入。其可靠性
+经由 Barak、Kothari 与 Steurer 建立的扩张与一致性之间的联系~\cite{BKS19}
+以及 Khot、Minzer 与 Safra 的扩张定理~\cite{KMS23} 得以补全。我们
+需要该构造的一个精确仿射形式：其投影是维数相差 1 的二元空间之间的
+满射仿射映射，且在把完备性误差取得任意小之前，字母表可以先按所需
+可靠性固定。\Cref{prop:affine-games} 给出该输入。
+Appendix~\ref{sec:affine-games} 从已发表构造推导出它，同时指定
+有效子空间的条件化与可靠性证明中使用的辅助候选列表。
+与 Majority Is Stablest 一起，该构造构成了本论证的外部基础。
+唯一游戏猜想只作为历史背景出现。树的傅里叶分析、哈希界与隐藏坐标
+解码均在此处证明。
+
+\subsection*{证明及其主要组成部分}
+
+如同长码（long code）归约~\cite{BGS98,Hastad01}，标记 $a$ 由独裁者
+函数 $w\mapsto w(a)$ 表示，其中 $w$ 取遍以标记为指标的布尔字。
+图的每个左顶点元组对应一个这样的字域。于是任意割在每个域上指定一个
+布尔函数。为采样一条边，测试通过共同的右元组选取两个左元组，在右侧
+标记空间上生成两个字，再沿采样到的仿射投影拉回；然后把第二个字取反。
+当采样到的约束被满足时，独裁者标记给出的割概率为二分之一加一：
+即两字在公共标记处取值相关再加二分之一。
+
+字生成器是一棵有限有根树。每个内部节点有 $s$ 对子节点以及一张从
+$\F^s$ 到 $\bits$ 的随机表；叶子承载标记空间上的仿射型。在标记 $a$
+处，这些仿射型给出叶符号，各表递归地把子符号组合成根符号 $W(a)$。
+门规则选取的原则是：其 Walsh 展开的每个单项式从每对子节点中恰好保留
+一个。第二次探索在每个到达的节点随机选取一对并保留其两个子节点。
+在任何固定深度，两次探索恰有一个公共节点。测试把第二次探索在随机
+深度处到达的那些表耦合起来，逐项相关取为 $t$，其余所有表保持不变。
+于是每个单项式恰获得一个因子 $t$。对仿射行做一次小规模的独立重采样
+提供了可靠性所需的平滑，且只带来很小的完备性损失。
+
+对任意割，我们先把它在源博弈边上的奇部取平均。所得函数在选定的表
+项上是均衡的；若割高于所需的 NO 阈值，则其期望噪声稳定性超过
+$B(t)$。于是 Majority Is Stablest 检出一个有影响的项。该项由门的输入
+索引，而不是由源博弈标记索引。剩下的任务是：把该影响与源边的两个
+端点能够一致选取的标记连接起来。分三步完成。
+
+\begin{enumerate}
+\item \emph{傅里叶支撑的局部化简。}
+门的对称性迫使每对中的两个子指标具有相同的和。在行平滑之后，对选定
+表的深度取平均，使得只保留「把该和放进每对的一个子节点、在另一个中
+置零」的指标变得不再昂贵。这一化简只在有影响的门处施加。正是这一
+结构让仿射平移表现为该门的表的平移。
+
+\item \emph{向量值仿射哈希引理。}
+对独立的仿射平移，弥散分布的傅里叶质量无法在平均意义下产生大的单项
+影响。该界对行空间的维数一致。其证明使用两次截断与一个四阶矩恒等式；
+凡需在不损失字母表规模的前提下解码平移系数阵列的场合，它都可能有用。
+
+\item \emph{带隐藏坐标的解码。}
+质量集中是在固定许多行坐标之后得到的。左端点通常无法在不知道其关联
+投影的情况下构造该上下文的拉回。我们使用博弈的乘积，并在上下文与
+潜在重采样行的某个均匀选取的因子中植入零线性系数。在该因子被遗忘后，
+植入律接近原律。在植入因子处，上下文可以在不知道投影的情况下拉回。
+只有选定门处的 $2s$ 个自由行仍需跨该因子比较，其代价是傅里叶质量
+损失 $2^{2s}$。
+\end{enumerate}
+
+由此得到的解码损失与源字母表无关。这一点至关重要：字母表维数依赖
+于我们要求的可靠性，若损失依赖维数，可靠性的选取就会循环。我们先
+固定该损失与源可靠性，再固定字母表与乘积因子个数，最后固定源完备性
+误差。\Cref{prop:affine-games} 中的量词顺序恰好允许这一序列。
+
+\Cref{sec:preliminaries} 固定傅里叶约定。
+\Cref{sec:tree,sec:reduction} 定义编码与 Max-Cut 测试。
+\Cref{sec:tree-fourier,sec:hashing,sec:extraction} 证明解析组成部分。
+\Cref{sec:decoding,sec:completion} 给出解码并完成证明。
+Appendix~\ref{sec:affine-games} 从已发表构造推导精确的起始博弈，
+Appendix~\ref{sec:unweighted} 给出到简单无权图的确定性转换。

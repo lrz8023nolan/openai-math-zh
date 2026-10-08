@@ -1,0 +1,148 @@
+\section{预备知识}\label{sec:preliminaries}
+
+证明使用两种傅里叶展开。仿射行的特征刻画候选标记，而布尔表项的特征
+检测 Majority Is Stablest 所适用的那些影响。我们先介绍这两套约定，
+再陈述精确的仿射博弈输入。
+
+$\F$ 上所有向量空间都是有限维的。除非另有说明，有限向量空间或布尔
+立方上的所有期望都使用均匀概率测度。所有傅里叶系数都使用这一概率
+归一化。$L^2$ 范数始终对其下标显示的变量积分；声明为固定的变量不
+参与积分。
+
+\subsection{仿射行与标记}
+
+设 $\mathcal A$ 是 $\F$ 上的非空仿射空间，带固定的仿射坐标系，并令
+\[
+ H=\Aff(\mathcal A,\F).
+\]
+这是一个向量空间，包含常值型 $\one$。
+对 $q\in H^*$ 定义 $\chi_q(h)=(-1)^{q(h)}$。
+求值把 $\mathcal A$ 等同于
+\begin{equation}\label{eq:labels-dual}
+ \{q\in H^*:q(\one)=1\}.
+\end{equation}
+事实上，若 $h(a)=h_0+\sum_i h_i a_i$，则在 $\one$ 上取值 1 的线性
+泛函具有唯一形式 $q(h)=h_0+\sum_i h_i a_i$。
+我们恰把这些泛函称为\emph{标记}；$H^*$ 中的一般非零泛函未必是标记。
+
+对 $f:H^k\to\mathbb R$ 与 $C=(q_1,\ldots,q_k)\in(H^*)^k$，令
+\[
+ \widehat f(C)=\E_R f(R)\prod_{i=1}^k\chi_{q_i}(R_i),\qquad
+ |C|=\#\{i:q_i\ne0\}.
+\]
+Parseval 给出 $\sum_C\widehat f(C)^2=\E_R f(R)^2$。
+带额外变量的函数沿用同一记号；这些变量在所指的傅里叶展开中保持
+固定。
+
+对 $0\le r\le1$，记 $T_r$ 为行噪声算子：在每个坐标独立地以概率
+$r$ 保留该行，否则代之以独立的均匀行。则
+\begin{equation}\label{eq:row-noise}
+ \widehat{T_rf}(C)=r^{|C|}\widehat f(C).
+\end{equation}
+该算子保持值域 $[-1,1]$。它也是与独立增量 $E\in H^k$ 的卷积，
+其坐标以概率 $r$ 为零、以概率 $1-r$ 为独立均匀行。
+卷积与行的任何固定平移交换。
+
+\subsection{布尔傅里叶分析}
+
+对有限集 $\Omega$ 与 $h:\bits^\Omega\to\mathbb R$，写
+\[
+ h(x)=\sum_{S\subseteq\Omega}\widehat h(S)\prod_{a\in S}x_a.
+\]
+其在 $a\in\Omega$ 处的影响与次数至多 $K$ 的影响为
+\[
+ \Inf_a(h)=\sum_{S\ni a}\widehat h(S)^2,\qquad
+ \Inf_a^{\le K}(h)=\sum_{\substack{S\ni a\\|S|\le K}}
+ \widehat h(S)^2.
+\]
+记 $P_{\le K}$ 为到傅里叶次数至多 $K$ 的正交投影。特别地，
+\begin{equation}\label{eq:degree-influence}
+ \sum_{a\in\Omega}\Inf_a(P_{\le K}h)
+ \le K\norm{h}_2^2.
+\end{equation}
+对 $t$-相关的均匀比特 $x,y$（在每个坐标独立耦合），
+\begin{equation}\label{eq:stability}
+ \Stab_t(h)=\E[h(x)h(y)]
+ =\sum_{S\subseteq\Omega}t^{|S|}\widehat h(S)^2.
+\end{equation}
+因此当 $t\ge0$ 时稳定性非负。若 $h\in[-1,1]$，则它至多为 1。
+
+\begin{lemma}[带次数截断的 Majority Is Stablest]\label{lem:mis}
+固定 $0<t<1$ 与 $\xi>0$。存在只依赖 $t,\xi$ 的整数 $K\ge1$ 与
+$\tau>0$，使得每个满足 $\E h=0$ 的 $h:\bits^\Omega\to[-1,1]$ 都有
+\[
+ \bigl(\Inf_a^{\le K}(h)<\tau\text{ 对所有 }a\in\Omega\bigr)
+ \quad\Longrightarrow\quad
+ \Stab_t(h)\le B(t)+\xi.
+\]
+\end{lemma}
+
+\begin{proof}
+无截断的断言来自 Majority Is Stablest~\cite[Theorem~4.4]{MOO10}。
+为匹配其 $[0,1]$ 约定，令 $g=(h+1)/2$：则 $\E g=1/2$，每个非常数
+傅里叶系数减半，且 $\Stab_t(h)=4\Stab_t(g)-1$。$g$ 的高斯半空间值
+为 $1/4+\arcsin(t)/(2\pi)$，在我们的归一化下即为 $B(t)$；见
+\cite[Theorem~4.1 and Corollary~4.3]{MOO10} 与 \cite{Borell85}。
+下面是从无截断断言到带次数截断版本的归约。对立方噪声参数 $u<1$，
+令 $h_u=T_u h$（本段使用普通比特噪声）。值域与均值保持不变。对范数
+至多 1 的 $h$ 一致地有
+\[
+ 0\le\Stab_t(h)-\Stab_t(h_u)
+ \le\sup_{j\ge0}t^j(1-u^{2j})\longrightarrow0
+ \quad(u\uparrow1).
+\]
+收敛性这样得出：先选有限的次数截断以控制尾部 $t^j$，再对剩余次数取
+$u$ 接近 1。选 $u$ 使该误差至多 $\xi/2$。设 $\delta>0$ 为误差
+$\xi/2$ 对应的无截断影响阈值。选 $K$ 使 $u^{2(K+1)}\le\delta/2$，
+并取 $\tau=\delta/2$。则
+\[
+ \Inf_a(h_u)
+ \le\Inf_a^{\le K}(h)+u^{2(K+1)}\norm{h}_2^2
+ <\delta.
+\]
+对 $h_u$ 应用无截断定理并加上稳定性误差即得。
+\end{proof}
+
+\subsection{仿射投影博弈}
+
+带权二部投影博弈由以下部分组成：有限集 $X,Y$；有限边集 $E$ 上的
+有理概率分布 $\lambda$，边带指向 $X$ 与 $Y$ 的端点映射（允许平行
+边）；有限字母表；以及每条边上的投影 $\pi_e$。其值为
+\[
+ \Val(\mathcal G)=
+ \max_{\ell_X,\ell_Y}\Pr_{e=(x,y)\sim\lambda}
+ [\pi_e(\ell_X(x))=\ell_Y(y)].
+\]
+本文中字母表为 $\F^{n+1}$ 与 $\F^n$，且每个 $\pi_e:\F^{n+1}\to\F^n$
+都是满射仿射映射。\Cref{prop:affine-games} 提供具有该结构的 NP 难
+间隙。凡使用条件边分布之处，我们一律弃掉边际概率为零的端点。
+
+起始定理的量词顺序为
+\[
+ \forall b\in(0,1)\quad \exists n=n(b)\ge1\quad
+ \forall a\in(0,1-b).
+\]
+精确承诺见下；其从已发表构造的推导在 \Cref{sec:affine-games}。
+
+\begin{proposition}[仿射二对一博弈定理]
+\label{prop:affine-games}
+对每个常数 $b\in(0,1)$ 存在整数 $n\geq 1$，使得对每个常数
+$a\in(0,1-b)$，下述承诺问题是 NP 难的。其输入是带权二部博弈：顶点集
+$X,Y$，各自的标记集 $\F^{n+1},\F^n$，以及每条边 $e=(x,y)$ 上的满射
+仿射映射
+\[
+  \pi_e:\F^{n+1}\longrightarrow\F^n.
+\]
+当 $\pi_e(\lambda_X(x))=\lambda_Y(y)$ 时称该边被满足。承诺情形为
+\[
+  \mathrm{YES}：\quad \Val(\mathcal G)\geq 1-a,
+  \qquad
+  \mathrm{NO}：\quad \Val(\mathcal G)\leq b.
+\]
+整数 $n$ 只依赖 $b$。对固定的 $a,b$，归约是确定性的，运行时间与
+输出规模均为多项式。
+\end{proposition}
+
+带权图同样由无序边（允许自环）上的有理分布给出。割给顶点指派符号，
+当边两端符号不同时该边被满足；其值即被满足概率。自环的割权重为零。
+\Cref{lem:unweighted} 中的转换即使在删除自环后也保持公共尺度。

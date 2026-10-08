@@ -17,6 +17,8 @@
 | 246 | Cannon 猜想 | 群论 | ✅ | ✅ 完成 | [246-cannon-conjecture.md](preprints-zh/246-cannon-conjecture.md) |
 | 287 | 自由群因子同构 | 算子代数 | ✅ | ✅ 完成 | [287-free-group-factors.md](preprints-zh/287-free-group-factors.md) |
 
+以上 10 篇均有对应的 **PDF 版**（A4 排版，KaTeX 渲染公式）：[preprints-zh/pdf/](preprints-zh/pdf/)。
+
 ## 成果族目录翻译（contents-zh/）
 
 - 状态：**✅ 完成**——[CONTENTS-zh.md](contents-zh/CONTENTS-zh.md) 覆盖全部 **372 个成果族 / 722 篇手稿**（235 个族带 Lean 形式化标记），编号与上游一一对应，按 17 个学科分组。

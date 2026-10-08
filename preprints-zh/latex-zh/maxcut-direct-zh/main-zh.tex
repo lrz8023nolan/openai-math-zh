@@ -1,0 +1,86 @@
+\documentclass[11pt]{ctexart}
+\usepackage[margin=1.12in]{geometry}
+\usepackage{amsmath,amssymb,amsthm,mathtools,mathrsfs}
+\usepackage{microtype}
+\usepackage{enumitem}
+\usepackage{xcolor}
+\usepackage{tikz}
+\usepackage{hyperref}
+\hypersetup{colorlinks=true,linkcolor=blue!45!black,citecolor=blue!45!black,urlcolor=blue!45!black,pdftitle={最优 Max-Cut 难度的直接证明},pdfauthor={OpenAI（中文对照版）}}
+\usepackage[nameinlink,capitalise,noabbrev]{cleveref}
+% —— 中文环境名 ——
+\newtheorem{theorem}{定理}[section]
+\newtheorem{lemma}[theorem]{引理}
+\newtheorem{proposition}[theorem]{命题}
+\newtheorem{corollary}[theorem]{推论}
+\theoremstyle{definition}
+\newtheorem{definition}[theorem]{定义}
+\theoremstyle{remark}
+\newtheorem{remark}[theorem]{注记}
+\crefname{theorem}{定理}{定理}
+\crefname{lemma}{引理}{引理}
+\crefname{proposition}{命题}{命题}
+\crefname{corollary}{推论}{推论}
+\crefname{definition}{定义}{定义}
+\crefname{remark}{注记}{注记}
+\crefname{equation}{式}{式}
+\crefname{section}{节}{节}
+\crefname{appendix}{附录}{附录}
+\crefname{figure}{图}{图}
+\crefname{table}{表}{表}
+\numberwithin{equation}{section}
+\newcommand{\F}{\mathbb F_2}
+\newcommand{\E}{\mathbb E}
+\newcommand{\one}{\mathbf 1}
+\newcommand{\GW}{\alpha_{\mathrm{GW}}}
+\DeclareMathOperator{\Aff}{Aff}
+\DeclareMathOperator{\Stab}{Stab}
+\DeclareMathOperator{\Inf}{Inf}
+\DeclareMathOperator{\Val}{Val}
+\DeclareMathOperator{\TV}{TV}
+\DeclareMathOperator{\supp}{supp}
+\DeclareMathOperator{\codim}{codim}
+\DeclarePairedDelimiter{\abs}{\lvert}{\rvert}
+\DeclarePairedDelimiter{\norm}{\lVert}{\rVert}
+\newcommand{\ip}[2]{\langle #1,#2\rangle}
+\newcommand{\bits}{\{-1,1\}}
+\newcommand{\Bfun}{B}
+\newcommand{\cut}{\operatorname{cut}}
+\newcommand{\eps}{\varepsilon}
+\newcommand{\ind}{\mathbf 1}
+\setlist{topsep=4pt,itemsep=2pt}
+\allowdisplaybreaks[2]
+
+\title{最优 Max-Cut 难度的直接证明\\{\large A Direct Proof of Optimal Max-Cut Hardness（中文对照版）}}
+\author{OpenAI（原文）\\中文翻译：openai-math-zh 项目}
+\date{2026 年 9 月 23 日（原文日期）}
+
+\begin{document}
+\maketitle
+\begin{abstract}
+我们证明：在简单无权图上，把 Max-Cut 近似到任何优于
+Goemans--Williamson 常数的固定因子都是 NP 难的。
+
+\smallskip
+\emph{（本文件是 openai/math 手稿的中文对照翻译；原文结果未经同行评审。
+数学公式、定理编号与结构与英文原文保持一致，术语以仓库 glossary.md 为准；
+译文与原文冲突时以英文原文为准。）}
+\end{abstract}
+
+\input{sections/introduction-zh}
+\input{sections/preliminaries-zh}
+\input{sections/tree-zh}
+\input{sections/reduction-zh}
+\input{sections/tree_fourier-zh}
+\input{sections/hashing-zh}
+\input{sections/extraction-zh}
+\input{sections/decoding-zh}
+\input{sections/conclusion-zh}
+
+\appendix
+\input{sections/affine_games-zh}
+\input{sections/unweighted-zh}
+
+\bibliographystyle{plain}
+\bibliography{references}
+\end{document}

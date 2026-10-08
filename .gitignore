@@ -1,6 +1,9 @@
 # 上游原始仓库（只读镜像，不纳入本仓库版本管理）
 upstream/
 
+# PDF 构建中间产物（HTML/截图）
+tools/pdf_build/
+
 # LaTeX 编译产物
 *.aux
 *.log
