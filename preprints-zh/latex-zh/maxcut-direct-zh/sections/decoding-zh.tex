@@ -1,0 +1,309 @@
+\section{带隐藏坐标的解码}
+\label{sec:decoding}
+
+现在把 Proposition~\ref{prop:extraction} 提供的傅里叶质量转换为对
+原仿射博弈的染色。困难在于：质量是在固定行上下文之后度量的。
+$X$ 顶点处的染色者不知道其关联边上的投影，因而通常无法把该上下文
+提升到自己的标记空间。我们的解决办法是：重复博弈坐标，并植入一个
+坐标，使上下文与潜在重采样行在其上的线性系数为零。把被植入坐标
+隐藏起来，就使所得分布接近原分布。跨越未知投影的比较于是只涉及
+$2s$ 个自由平移，其损失与 $n$ 和 $T$ 无关。
+
+本节通篇固定割表。我们沿用前几节的树参数与行坐标。对切片
+$\mathcal D$ 与节点 $v\in\mathcal D$ 的每组选取，按确定性的顺序选取
+代表叶，固定坐标变换
+\[
+ R\longleftrightarrow (L,\Gamma),\qquad
+ L=(L_{gb})_{g\in[s],\,b\in\{0,1\}}\in H^{2s},
+ \quad \Gamma\in H^{k-2s}.
+\]
+该变换只用行坐标的加法，且只依赖树与 $v$。特别地，它与仿射型的
+拉回交换。质量 $m_q$ 总是指这些坐标以及 Equation~\eqref{eq:mass}
+中对切片表的均匀平均。
+
+\subsection{去掉行平滑}
+
+设 $R^{\mathrm{new}}_1,\ldots,R^{\mathrm{new}}_k$ 是 $H$ 中独立均匀
+元素，并独立地设 $B_1,\ldots,B_k$ 为 $\Pr(B_i=1)=1-r$ 的 Bernoulli
+变量。令
+\[
+ E_i=B_iR^{\mathrm{new}}_i,
+ \qquad E=(E_1,\ldots,E_k).
+\]
+对任意固定的行数组 $R$，数组 $R+E$ 具有测试所用的单副本行重采样
+分布。把 $E$ 在上述线性变换下的坐标记为 $(E_L,E_\Gamma)$。
+
+\begin{lemma}[去掉平滑]\label{lem:unsmooth}
+对每组固定的 $\underline y$、$\mathcal D$、$v$、$\Gamma$、
+$F_{\mathrm{out}}$ 与标记 $q\in\mathcal A$，
+\begin{equation}\label{eq:unsmooth}
+ m_q(\bar G_{\underline y};\Gamma,F_{\mathrm{out}})
+ \leq
+ \E_{E,\,\underline e\mid\underline y}
+ m_q(G_{\underline e};\Gamma+E_\Gamma,F_{\mathrm{out}}).
+\end{equation}
+此处噪声 $E$ 与条件采样的边元组 $\underline e$ 独立。
+\end{lemma}
+
+\begin{proof}
+对该固定上下文，把 $(L,F_{\mathcal D})$ 的函数视为带均匀概率测度的
+实希尔伯特空间中的元素。令 $\Pi_q$ 为到满足
+$Q_{g0}+Q_{g1}=q$（对所有 $g$）的平移傅里叶指标 $Q$ 的正交投影。
+则相应的质量即该投影的范数平方。恒等式
+\[
+ \bar G_{\underline y}(L,\Gamma,F)
+ =\E_{E,\,\underline e\mid\underline y}
+ G_{\underline e}(L+E_L,\Gamma+E_\Gamma,F)
+\]
+连同希尔伯特空间范数平方的凸性给出所需不等式。事实上，平移
+$E_L$ 与 $\Pi_q$ 交换且保持其范数：在每个平移傅里叶系数上它只乘以
+一个符号。
+\end{proof}
+
+一劳永逸地为每个标记空间选定一个排序，并用该排序打破平局，定义
+\begin{equation}\label{eq:decoder-choice}
+ q^*=q^*(\underline y,\mathcal D,v,\Gamma,F_{\mathrm{out}})
+ \in\operatorname*{arg\,max}_{q\in\mathcal A}
+ m_q(\bar G_{\underline y};\Gamma,F_{\mathrm{out}}).
+\end{equation}
+该定义使用原始的条件边平均与原始行平滑算子。在下文修改行数据的
+分布时它保持不变。
+
+按 Proposition~\ref{prop:extraction} 采样 $\underline y$、切片、其
+均匀节点、上下文与切片外的表，然后采样 $R^{\mathrm{new}}$、$B$ 与
+$\underline e\mid\underline y$。把该命题与 Lemma~\ref{lem:unsmooth}
+结合给出
+\begin{equation}\label{eq:unplanted-score}
+ \E\,m_{q^*}(G_{\underline e};
+              \Gamma+E_\Gamma,F_{\mathrm{out}})
+ \geq p_*\theta.
+\end{equation}
+此期望中的质量落在 $[0,1]$ 内，因为 $G_{\underline e}$ 的绝对值以
+1 为界。
+
+\subsection{植入一个坐标}
+
+把每条仿射行写成 $\mathcal A=(\F^n)^T$ 上的坐标。除单个常数系数
+外，它对 $T$ 个槽位各有一块 $n$ 个线性系数。对槽位 $a\in[T]$，令
+$Z_a$ 为槽位 $a$ 的块在所有 $k-2s$ 个上下文行与所有 $k$ 个潜在行
+$R^{\mathrm{new}}_i$ 中为零的事件。对常数系数不施加任何条件。在
+原始的、未植入的律下，
+\begin{equation}\label{eq:zero-slot-probability}
+ p_0:=\Pr(Z_a)=2^{-n(2k-2s)}.
+\end{equation}
+在给定深度、切片与节点的条件下，事件 $Z_a$ 相互独立：它们涉及
+独立均匀系数的不相交块。
+
+\emph{植入实验}选取均匀标记 $a_*\in[T]$，并把 $a_*$ 处的这些块置
+零。其余行系数、噪声掩码、切片外的表与博弈边都保持原分布。等价地，
+在 $a_*=a$ 的条件下，这是以 $Z_a$ 为条件的未植入律。
+
+\begin{lemma}[隐藏被植入的坐标]\label{lem:planting}
+设 $\mathsf U$ 为未植入律，$\mathsf P$ 为遗忘标记后的植入律。两个
+律都取在下述完整数据上：
+\[
+ \bigl(\underline e,J_0,\mathcal D,v,F_{\mathrm{out}},
+        \Gamma,R^{\mathrm{new}},B\bigr).
+\]
+则
+\begin{equation}\label{eq:planting-tv}
+ \TV(\mathsf P,\mathsf U)
+ \leq \frac12\sqrt{\frac{1-p_0}{Tp_0}}
+ \leq \frac{1}{2\sqrt{Tp_0}}.
+\end{equation}
+因此，若
+\begin{equation}\label{eq:decoder-repetition}
+ T\geq\frac{1}{p_0(p_*\theta)^2},
+\end{equation}
+则在植入律下
+\begin{equation}\label{eq:planted-score}
+ \E_{\mathsf P}\,m_{q^*}(G_{\underline e};
+               \Gamma+E_\Gamma,F_{\mathrm{out}})
+ \geq \frac{p_*\theta}{2}.
+\end{equation}
+\end{lemma}
+
+\begin{proof}
+令 $Z=\sum_{a=1}^T\one_{Z_a}$。把条件密度对均匀标记取平均给出
+\[
+ \frac{d\mathsf P}{d\mathsf U}=\frac{Z}{Tp_0}.
+\]
+在给定树数据的条件下，$Z$ 具有参数 $T,p_0$ 的二项分布；这两个参数
+不依赖树数据。于是 Cauchy--Schwarz 给出
+\[
+ \TV(\mathsf P,\mathsf U)
+ =\frac12\E_{\mathsf U}\abs{\frac{Z}{Tp_0}-1}
+ \leq\frac12\sqrt{\frac{1-p_0}{Tp_0}}.
+\]
+Equation~\eqref{eq:unplanted-score} 中的分数是所列数据（不含标记）
+的 $[0,1]$ 值函数。特别地，$q^*$ 是 Equation~\eqref{eq:decoder-choice}
+定义的固定函数；它不使用标记、不使用采样关联边（超出其 $Y$
+端点）、也不使用采样噪声。它与零槽位的统计依赖不造成困难。该分数
+在两律下的期望之差至多其全变差距离。
+Equations~\eqref{eq:unplanted-score} 与 \eqref{eq:decoder-repetition}
+因此蕴含 Equation~\eqref{eq:planted-score}。
+\end{proof}
+
+\subsection{仿射限制下的傅里叶质量}
+
+下一个初等观察解释解码的损失。设 $\rho:\widetilde{\mathcal A}\to\mathcal A$
+为纤维为二元的满射仿射映射，并记
+\[
+ \widetilde H=\Aff(\widetilde{\mathcal A},\F),\qquad
+ \iota=\rho^*:H\hookrightarrow\widetilde H.
+\]
+即使在 $\rho$ 有非零平移部分时，拉回在仿射型向量空间上仍是线性的。
+$\iota$ 的像余维数为 1，且 $\iota(\one)=\one$。其对偶限制映射
+$\iota^*:\widetilde H^*\to H^*$ 纤维为二元，且在求值泛函上与
+$\rho$ 一致。
+
+\begin{lemma}[平移质量的限制]\label{lem:restriction}
+固定上下文与切片外的表。设 $\widetilde f(\widetilde L,F_{\mathcal D})$
+是 $\widetilde H^{2s}$ 与切片表上的函数。设其平移傅里叶支撑具有
+公共对和性质
+\[
+ \widetilde Q_{g0}+\widetilde Q_{g1}
+ =\widetilde Q_{h0}+\widetilde Q_{h1}
+ \quad\text{对所有 }g,h\in[s].
+\]
+令 $f(L,F_{\mathcal D})=
+\widetilde f(\iota L,F_{\mathcal D})$，其中 $\iota$ 作用于每个
+平移。对每个标记 $q\in\mathcal A$，
+\begin{equation}\label{eq:restriction-mass}
+ m_q(f)\leq 2^{2s}
+       \sum_{\substack{\widetilde q\in\widetilde{\mathcal A}\\
+                       \rho(\widetilde q)=q}}
+          \widetilde m_{\widetilde q}(\widetilde f).
+\end{equation}
+两边的质量都用 Equation~\eqref{eq:mass} 的公共对和定义，配各自的
+仿射行空间。
+\end{lemma}
+
+\begin{proof}
+对每组固定的切片表，傅里叶反演与特征正交性给出
+\[
+ \widehat f(Q)=
+ \sum_{\substack{\widetilde Q\\
+                  \iota^*\widetilde Q_{gb}=Q_{gb}\ \forall g,b}}
+       \widehat{\widetilde f}(\widetilde Q).
+\]
+该和含 $2^{2s}$ 个指标。故其绝对值平方至多为各项绝对值平方和的
+$2^{2s}$ 倍。对所有对和为 $q$ 的 $Q$ 求和：右侧每个非零系数的公共
+对和 $\widetilde q$ 限制后为 $q$。此外，
+\[
+ \widetilde q(\one)=\widetilde q(\iota(\one))=q(\one)=1,
+\]
+故 $\widetilde q$ 是求值泛函，从而是 $\widetilde{\mathcal A}$ 中的
+标记，且 $\rho(\widetilde q)=q$。每个提升指标只被计一次。对切片表
+取平均即证 Equation~\eqref{eq:restriction-mass}。
+\end{proof}
+
+\subsection{端点染色者}
+
+Equation~\eqref{eq:planted-score} 是对完整边元组的平均。为把它转
+换成原博弈的染色，我们把输入边放在被植入的坐标处，并公开所有其他
+边。零系数保证所需的上下文提升不需要输入边上的投影。
+
+\begin{proposition}[解码]\label{prop:decoding}
+设 Proposition~\ref{prop:extraction} 的抽取结论以常数 $p_*,\theta>0$
+成立。若 $T$ 满足 Equation~\eqref{eq:decoder-repetition}，则原仿射
+博弈的值至少为
+\begin{equation}\label{eq:decoded-value}
+ \Val(\mathcal G)\geq 2^{-2s}\frac{p_*\theta}{2}.
+\end{equation}
+\end{proposition}
+
+\begin{proof}
+我们构造只使用自身端点与公共随机性的随机化染色者。整个博弈与固定
+的割表都作为背景数据可用。为给出博弈值的下界，不需要对染色者的
+效率作任何断言。
+
+\paragraph{共享数据与 $Y$ 染色者。}
+给定来自原边律的随机输入边 $e=(x,y)$，选均匀的公开标记
+$a_*\in[T]$。在每个其他槽位，公开采样一条独立边（含端点与投影）。
+把输入边插入被标记的槽位。其投影只在分析中使用；不向任何染色者
+透露。在任意标记的条件下，所得完整边元组具有乘积边律；故该元组
+与标记独立。每个染色者知道自己的端点元组，且两者都知道被标记槽位
+之外的所有边。
+
+按上述植入实验公开采样深度、切片、节点、切片外的表、上下文、潜在
+行与掩码。行采样使用固定的字母表维数、公开的树坐标与标记，且与
+输入边独立。连同边元组，这些数据恰具有 Equation~\eqref{eq:planted-score}
+使用的植入律。$Y$ 染色者形成其端点元组 $\underline y$，由
+Equation~\eqref{eq:decoder-choice} 计算标记 $q^*$，并输出其被标记
+分量 $q^*_{a_*}$。该计算用到的所有量对此染色者可用：特别是定义
+$\bar G_{\underline y}$ 的条件平均可以由作为固定背景数据的博弈与
+割算出。它不使用实际的被标记边或其投影。
+
+\paragraph{$X$ 染色者。}
+为定义 $X$ 染色者，把 $\mathcal A$ 的被标记因子换成 $X$ 字母表：
+\[
+ \widetilde{\mathcal A}
+ =\prod_{a\ne a_*}\F^n\ \times\ \F^{n+1},
+\]
+因子按原槽位顺序排列。令 $\mathcal B=(\F^{n+1})^T$。完整投影分解为
+\[
+ \mathcal B\xrightarrow{\ \kappa\ }
+ \widetilde{\mathcal A}\xrightarrow{\ \rho\ }\mathcal A.
+\]
+这里 $\kappa$ 在每个未标记槽位是公开边投影、在被标记槽位是恒等；
+$\rho$ 在每个未标记槽位是恒等、在被标记槽位是未知映射 $\pi_e$。
+于是 $\kappa$ 为 $X$ 染色者所知，而 $\rho$ 只在分析中使用。
+
+植入的零意味着 $\Gamma$ 与 $R^{\mathrm{new}}$ 中的每行在被标记
+槽位的线性系数块为零。$E$、$E_\Gamma$ 与 $\Gamma'=\Gamma+E_\Gamma$
+亦然，因为噪声掩码与上下文变换只作标量乘与行加法。因此
+$\widetilde\Gamma'=\rho^*\Gamma'$ 为 $X$ 染色者所知：把每个未标记
+系数与常数系数保持不变、把所有被标记系数置零即得。该描述不需要
+$\pi_e$，包括其仿射平移部分。
+
+$X$ 染色者形成有界原始函数
+\[
+ \widetilde G(\widetilde R,F)
+ =\sigma^o_{\underline x}
+   \bigl(W_{\widetilde{\mathcal A}}(\widetilde R,F)
+                \circ\kappa\bigr),
+ \qquad \widetilde R\in\widetilde H^k.
+\]
+把其上下文固定为 $\widetilde\Gamma'$、其切片外的表固定为公开的
+$F_{\mathrm{out}}$，在 $\widetilde H$ 中留下全部 $2s$ 个平移自由。
+记其质量为 $\widetilde m_{\widetilde q}$。它们非负，且由 Parseval
+与 $\abs{\widetilde G}\leq1$，其对标记之和至多 1。染色者按每个
+标记至少 $\widetilde m_{\widetilde q}$ 的概率采样标记
+$\widetilde q$，把剩余概率指派给固定标记。它用额外的独立公开均匀
+随机数从该分布采样，并输出 $\widetilde q$ 的被标记分量。该采样不
+使用 $q^*$。
+
+\paragraph{在采样边上比较。}
+我们验证把这些概率与分数比较所需的限制假设。对任意
+$h\in\widetilde H$，把一对中两个子节点的生成子都平移 $h$，会使门
+$v$ 的输出在每个标记 $\widetilde l$ 处乘以 $(-1)^{h(\widetilde l)}$。
+在两个不同的对中施加该平移，该输出（从而整张词）不变。这些运算只
+平移自由平移并保持上下文。因此特征正交性表明 $\widetilde G$ 的每
+个平移傅里叶指标都有公共对和。该论证对每组固定的门表都成立。
+
+词的生成与行的拉回交换（逐点于标记）。由于
+$\pi_{\underline e}=\rho\circ\kappa$，把 $\widetilde G$ 的每个自由
+平移限制到 $\rho^*H$ 上，恰得具有上下文 $\Gamma'$ 与同样表的
+$G_{\underline e}$。映射 $\rho$ 的纤维为二元，故
+Lemma~\ref{lem:restriction} 适用并给出
+\[
+ \sum_{\rho(\widetilde q)=q^*}\widetilde m_{\widetilde q}
+ \geq 2^{-2s}
+ m_{q^*}(G_{\underline e};\Gamma',F_{\mathrm{out}}).
+\]
+在全部植入数据的条件下，左边下界了采样到的完整标记投影到 $q^*$
+的概率。该事件特别蕴含被标记的输入边被满足。取平均并用
+Equation~\eqref{eq:planted-score}，成功概率至少
+$2^{-2s}p_*\theta/2$。
+
+最后固定所有共享随机性，包括用于采样 $X$ 标记的均匀数。同一组固定
+数据在每个端点定义这两个策略，因此它们给出原博弈的确定性染色。
+其关于共享随机性的平均具有刚才证明的下界，故某个固定选择达到它。
+这证明 Equation~\eqref{eq:decoded-value}。
+\end{proof}
+
+解码损失依赖 $s,p_*,\theta$，从而依赖目标割间隙，但不依赖字母表
+维数或重复长度。因此，在把博弈可靠性选得小于
+Equation~\eqref{eq:decoded-value} 右端之后，可以先固定字母表维数，
+再由 Equation~\eqref{eq:decoder-repetition} 选 $T$。

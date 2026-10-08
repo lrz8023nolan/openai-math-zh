@@ -1,0 +1,78 @@
+\section{转换到简单无权图}\label{sec:unweighted}
+
+我们给出一个显式的确定性转换，使有理边权与自环不引入额外的复杂度
+假设。比较使用原始的、未归一化的权重尺度。我们把每个顶点换成一颗
+星团（cluster），并把每条带权边近似为一张二部图：其在每个矩形上的
+边数以一致的绝对误差逼近加权密度的预测。任意割可以分裂每颗星团；
+其星团比例于是描述原图的一个随机割，因此矩形估计控制放大图的所有
+割，而不仅在星团上为常数的割。
+
+\begin{lemma}\label{lem:unweighted}
+设 $G$ 是 $N$ 个顶点的图，无序不同顶点对上有非负有理权重 $w_{uv}$，
+且 $\sum_{u<v}w_{uv}\le1$。对每个固定 $\epsilon'>0$，可以在确定性
+多项式时间内构造简单无权图 $G'$ 与整数尺度 $Q$，使
+\[
+ \left|\frac{\operatorname{MaxCut}(G')}{Q}
+             -\operatorname{MaxCut}(G)\right|\le\epsilon'.
+\]
+当输入图有自环时，同样的结论在删除自环、且不对其余权重重新归一化
+之后成立。
+\end{lemma}
+
+\begin{proof}
+选素数 $p>\max\{2,2N^2/\epsilon'\}$。多项式规模的素数可以逐个检验
+整数确定性地找到，用 Bertrand 公设界定搜索范围。把每个顶点换成以
+$\mathbb F_p^6$ 索引的星团。对每个 $u<v$，设 $I_{uv}\subseteq\mathbb F_p$
+为任意固定的、含 $\lfloor p w_{uv}\rfloor$ 个剩余类的集合，例如按
+通常顺序取前面那些。当且仅当
+\[
+ x\cdot y\in I_{uv}
+\]
+时，把星团 $u$ 中的 $x$ 与星团 $v$ 中的 $y$ 相连。星团内部没有边。
+这定义了 $Np^6$ 个顶点上的简单图，可通过枚举所有可能的对构造。
+取 $Q=p^{12}$。
+
+我们先估计它在两颗星团之间任意矩形上的边数。固定剩余类集 $I$ 与
+子集 $S,T\subseteq\mathbb F_p^6$。记 $\psi(a)=\exp(2\pi i a/p)$，
+傅里叶反演给出
+\[
+ \one_I(a)=\sum_{h\in\mathbb F_p}\beta_h\psi(ha),\qquad
+ \beta_h=\frac1p\sum_{a\in I}\psi(-ha),\qquad
+ |\beta_h|\le1.
+\]
+对 $h\ne0$，矩阵 $M_h(x,y)=\psi(hx\cdot y)$ 由特征正交性满足
+\[
+ M_hM_h^*=p^6 I,
+\]
+故其算子范数为 $p^3$。因此
+\begin{align*}
+ \left|\#\{(x,y)\in S\times T:x\cdot y\in I\}
+                -\frac{|I|}{p}|S||T|\right|
+ &\le\sum_{h\ne0}|\beta_h|p^3\sqrt{|S||T|}\\
+ &\le p^{10}.
+\end{align*}
+取 $I=I_{uv}$，除以 $p^{12}$ 并用
+$\bigl||I|/p-w_{uv}\bigr|\le1/p$，得
+\begin{equation}\label{eq:rectangle-discrepancy}
+ \left|\frac{e_{uv}(S,T)}{p^{12}}
+       -w_{uv}\frac{|S|}{p^6}\frac{|T|}{p^6}\right|
+ \le\frac1p+\frac1{p^2}.
+\end{equation}
+
+现在固定 $G'$ 的任意割，设 $a_u\in[0,1]$ 为星团 $u$ 在其正侧的
+比例。星团 $u,v$ 之间的跨越边构成两个矩形。
+Equation~\eqref{eq:rectangle-discrepancy} 于是把其缩放边数与
+\[
+ w_{uv}\bigl(a_u(1-a_v)+(1-a_u)a_v\bigr)
+\]
+比较，误差至多 $2/p+2/p^2$。对至多 $N(N-1)/2$ 个顶点对求和的代价
+至多 $N(N-1)(1/p+1/p^2)$。上式显示的加权表达式对顶点对求和后，恰
+是以概率 $a_u$ 独立地给顶点 $u$ 指派正号所得的期望割权重，因而至多
+$\operatorname{MaxCut}(G)$。这证明了对 $G'$ 每个割的所需上界。
+
+反之，把每颗星团中的所有顶点都取 $G$ 的最大割的符号。同一矩形界
+把其缩放权重与 $\operatorname{MaxCut}(G)$ 比较到同样的误差，给出
+反向不等式。$p$ 的选取保证
+$N(N-1)(1/p+1/p^2)<\epsilon'$，断言得证。
+自环对每个割的贡献为零，可在开头删除。
+\end{proof}

@@ -1,0 +1,76 @@
+\section{完成难度证明}\label{sec:completion}
+
+参数顺序为
+\[
+ (t,\eps,\mu)\longrightarrow(s,m,p_*,\theta)
+ \longrightarrow b\longrightarrow n\longrightarrow T\longrightarrow a.
+\]
+抽取常数在字母表维数 $n$ 已知之前就固定所需的博弈可靠性 $b$。
+重复次数随后选定以隐藏被植入坐标，博弈的完备性误差 $a$ 最后选取。
+
+\begin{proof}[\Cref{thm:gap} 的证明]
+按定理固定 $t$ 与 $\eps$。取 $\delta=\eps$。由于
+$\eps<(t-B(t))/4<(1-B(t))/4$，这满足 $0<\delta<1-B(t)$。选有理数
+$0<\mu<1/2$ 使 $t\mu\le\eps/4$。
+以 $t,\delta,\mu$ 应用 \Cref{prop:extraction}，固定
+$s,m,p_*,\theta$，从而固定 $k,d,r$。选有理数
+\[
+ 0<b<2^{-2s}\frac{p_*\theta}{2}.
+\]
+由 \Cref{prop:affine-games}，这固定字母表维数 $n$，使博弈具有任意
+小的完备性误差。选整数 $T$ 满足
+\[
+ T\ge\frac{2^{n(2k-2s)}}{(p_*\theta)^2}.
+\]
+最后选正有理数 $a<1-b$ 足够小使 $2Ta\le\eps/4$，并从 NP 难的博弈
+间隙 $\Val(\mathcal G)\ge1-a$ 对 $\Val(\mathcal G)\le b$ 出发。
+
+在 YES 情形，\Cref{lem:completeness} 给出割值至少
+$(1+t)/2-\eps/2$，强于所需。在 NO 情形，假设存在值至少
+$(1+B(t))/2+\eps/2$ 的割。由 \Cref{lem:cut-stability}，其奇平均的
+期望切片稳定性至少为 $B(t)+\eps$。
+\Cref{prop:extraction,prop:decoding} 随后将蕴含
+$\Val(\mathcal G)\ge2^{-2s}p_*\theta/2>b$，矛盾。故每个割的值都
+小于 $(1+B(t))/2+\eps/2$。
+
+为完备起见：该测试是确定性的多项式规模图构造。顶点集有
+\[
+ |X|^T\,2^{|\mathcal B|}
+ =|X|^T\,2^{2^{(n+1)T}}
+\]
+个顶点。除 $|X|$ 外的所有因子对固定的 $t,\eps$ 都是常数。端点与边
+元组只有多项式多个，且所有词生成样本空间规模为常数。枚举每个测试
+结果，把其概率加到相应边权上。初始博弈权重、$t$ 与 $r$ 都是有理
+数，故这些权重具有多项式位复杂度。条件边概率同样具有多项式位复杂
+度。所有字母表与词都可以在相对输入规模为常数的时间内枚举。因此所
+得图可在确定性多项式时间内算出。它具有有理边分布，并满足所述的、
+带 $\eps$ 损失的较弱界。
+\end{proof}
+
+\begin{proof}[\Cref{thm:main} 的证明]
+把 $\rho=-t$ 代入 \eqref{eq:gw-constant} 给出
+\begin{equation}\label{eq:gw-ratio}
+ \GW=\min_{-1<t\le1}\frac{1+B(t)}{1+t},
+\end{equation}
+其中同一公式对负 $t$ 定义 $B(t)=2\arcsin(t)/\pi$。
+当 $-1<t\le0$ 时比值至少为 1，而当 $0<t<1$ 时小于 1。在 $t=1$ 处
+等于 1，当 $t\downarrow-1$ 时发散。故其最小值在 $(0,1)$ 内取得。
+
+固定 $\GW<\alpha\le1$。由连续性与有理数的稠密性，选有理数
+$t\in(0,1)$ 使
+\[
+ \alpha\frac{1+t}{2}>\frac{1+B(t)}{2}.
+\]
+选正有理数 $\eps$ 与 $\epsilon'$ 足够小，使 $\eps<(t-B(t))/4$ 且
+\begin{equation}\label{eq:strict-final-gap}
+ \alpha\left(\frac{1+t}{2}-\eps-\epsilon'\right)
+ >\frac{1+B(t)}{2}+\eps+\epsilon'.
+\end{equation}
+应用 \Cref{thm:gap}。删除自环并保留原权重尺度，使剩余权重之和至多
+为 1。以误差 $\epsilon'$ 应用 \Cref{lem:unweighted}，产生简单无权
+图：在公共尺度 $Q$ 上，其最大割与原最大割权重相差至多 $\epsilon'$。
+在该图上，$\alpha$-近似算法在 YES 情形返回缩放值至少为
+\eqref{eq:strict-final-gap} 左端的割。在 NO 情形，没有割的缩放值
+超过其右端。取严格介于二者之间的固定有理阈值即可区分 NP 难的承诺
+情形。定理得证。
+\end{proof}

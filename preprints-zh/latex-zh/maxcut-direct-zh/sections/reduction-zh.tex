@@ -1,0 +1,146 @@
+\section{Max-Cut 归约}\label{sec:reduction}
+
+固定有理数 $t\in(0,1)$、树参数 $s,m$、有理数 $0<\mu<1/2$ 与
+$r=1-\mu/d$。这些参数将在 \Cref{sec:completion} 中选定。设
+$\mathcal G$ 是 \Cref{prop:affine-games} 中的仿射博弈，边律为
+$\lambda$，字母表维数为 $n+1,n$。设 $T\ge1$ 为整数。我们使用乘积
+标记空间
+\[
+ \mathcal B=(\F^{n+1})^T,\qquad
+ \mathcal A=(\F^n)^T,
+\]
+以及行空间 $H=\Aff(\mathcal A,\F)$。
+
+\subsection{顶点与边分布}
+
+对每个 $\underline x\in X^T$，为每个词 $w\in\bits^{\mathcal B}$ 建一个
+图顶点 $(\underline x,w)$。这是标准的长码字域~\cite{BGS98,Hastad01}；
+树构造规定测试如何采样其查询。于是任意割恰是一族函数
+\[
+ \sigma_{\underline x}:\bits^{\mathcal B}\longrightarrow\bits.
+\]
+这些函数只接收所得的词；它们不接收生成词的行、门表、切片或采样到的
+博弈边。
+
+图的边分布是下述测试。
+\begin{enumerate}
+\item 从 $\lambda$ 的乘积右端点边际中抽取 $\underline y\in Y^T$。
+独立地由给定 $\underline y$ 的乘积条件边律抽取两条元组
+$\underline e,\underline e'$。记其左端点为 $\underline x,\underline x'$，
+其逐坐标投影为 $\pi_{\underline e},\pi_{\underline e'}:\mathcal B\to\mathcal A$。
+
+\item 与所有博弈数据独立地抽取随机切片 $\mathcal D$。按
+\Cref{lem:tree-correlation} 抽取 $F,F'$：在 $\mathcal D$ 上相应表项
+为独立的 $t$-相关均匀对，在 $\mathcal D$ 外为相同的均匀对。
+
+\item 抽取均匀的公共行数组 $R\in H^k$。在两个副本中各自独立地以概率
+$r$ 保留每行、否则均匀重采样，得到 $R^1,R^2$。
+
+\item 输出以
+\begin{equation}\label{eq:test-queries}
+ \bigl(\underline x,W(R^1,F)\circ\pi_{\underline e}\bigr),
+ \qquad
+ \bigl(\underline x',-W(R^2,F')\circ\pi_{\underline e'}\bigr)
+\end{equation}
+为端点的无序边。
+\end{enumerate}
+所有边权即为这些结果的概率；相同无序端点的结果被合并聚合。
+
+\begin{lemma}[完备性]\label{lem:completeness}
+若 $\Val(\mathcal G)\ge1-a$，则图有值至少为
+\begin{equation}\label{eq:completeness}
+ (1-2Ta)\frac{1+t r^{2d}}2
+ \ge\frac{1+t}{2}-t\mu-2Ta
+\end{equation}
+的割。第一个下界在 $2Ta\le1$ 时有用，这正是下文使用的范围。
+\end{lemma}
+
+\begin{proof}
+选取以概率至少 $1-a$ 满足边的博弈标记 $\ell_X,\ell_Y$。用左端标记
+元组处的取值为每个词顶点染色：
+\[
+ \sigma_{\underline x}(w)=
+ w\bigl(\ell_X(x_1),\ldots,\ell_X(x_T)\bigr).
+\]
+采样到的边元组的每个坐标都具有原边律。并界表明：所有 $2T$ 个采样
+约束都以至少 $1-2Ta$ 的概率被满足。当所有约束被满足时，两个被查询
+的元组投影到同一标记
+$l=(\ell_Y(y_1),\ldots,\ell_Y(y_T))\in\mathcal A$。此时割符号之积为
+$-W(R^1,F)(l)W(R^2,F')(l)$。词生成数据与博弈边独立，故
+\Cref{lem:tree-correlation} 给出条件割概率 $(1+t r^{2d})/2$。在其余
+事件上割概率非负。当 $2Ta\le1$ 时即得第一个界；若 $2Ta>1$，该界为
+负，自动成立。最后，$r^{2d}\ge1-2\mu$，且前因子带来的损失至多
+$2Ta$，得第二个界。
+\end{proof}
+
+\subsection{大割产生超额稳定性}
+
+任意割在其被查询的词取反时未必变号。我们把它分解为两个奇偶部，因为
+第二个查询前的负号使奇性依赖增加割值、偶性依赖减少割值。对每张割表
+定义其偶部与奇部：
+\[
+ \sigma^{\mathrm{even}}(w)=\frac{\sigma(w)+\sigma(-w)}2,
+ \qquad
+ \sigma^o(w)=\frac{\sigma(w)-\sigma(-w)}2.
+\]
+对边元组与右端点元组，令
+\begin{align}
+ G_{\underline e}(R,F)
+ &=\sigma^o_{\underline x(\underline e)}
+       (W(R,F)\circ\pi_{\underline e}),\label{eq:edge-function}\\
+ G_{\underline y}(R,F)
+ &=\E_{\underline e\mid\underline y}G_{\underline e}(R,F),
+ \qquad \bar G_{\underline y}=T_rG_{\underline y}.
+ \label{eq:average-function}
+\end{align}
+把用 $\sigma^{\mathrm{even}}$ 所作的类似平均记为
+$A_{\underline y}$ 与 $\bar A_{\underline y}=T_rA_{\underline y}$。
+这些函数的绝对值以 1 为界。此外，
+\[
+ G_{\underline y}(R,F)=\phi_{\underline y}(W(R,F)),\qquad
+ \phi_{\underline y}(w)=\E_{\underline e\mid\underline y}
+ \sigma^o_{\underline x(\underline e)}(w\circ\pi_{\underline e}),
+\]
+其中 $\phi_{\underline y}$ 是奇的，且不依赖任何切片或行数据。于是由
+\Cref{lem:tree-correlation} 之后的观察，对每个固定的
+$\underline y,\mathcal D,R,F_{\mathrm{out}}$，$\bar G_{\underline y}$
+在切片表项上均值为零。后文的抽取论证（\Cref{prop:extraction}）恰好
+适用于这种有界奇性的生成词函数。
+
+\begin{lemma}[稳定性恒等式]\label{lem:cut-stability}
+对构造出的图的每个割，
+\begin{equation}\label{eq:cut-stability}
+ \cut(\sigma)=\frac12+
+ \frac12\E\Stab_t^{F_{\mathcal D}}(\bar G_{\underline y})
+ -\frac12\E\Stab_t^{F_{\mathcal D}}(\bar A_{\underline y}),
+\end{equation}
+其中两个期望都取遍 $\underline y,\mathcal D,R,F_{\mathrm{out}}$。
+特别地，
+\begin{equation}\label{eq:cut-upper-stability}
+ \cut(\sigma)\le\frac12+
+ \frac12\E\Stab_t^{F_{\mathcal D}}(\bar G_{\underline y}).
+\end{equation}
+\end{lemma}
+
+\begin{proof}
+以 $\underline y,\mathcal D,R,F_{\mathrm{out}}$ 为条件。采样到的边
+元组与两次行重采样在两个副本之间独立。对它们取平均后，作为
+$F_{\mathcal D}$ 的函数，第一个符号的期望是
+$\bar A_{\underline y}+\bar G_{\underline y}$。第二个被查询词前的负
+号使第二个符号在 $F'_{\mathcal D}$ 处的期望为
+$\bar A_{\underline y}-\bar G_{\underline y}$。两个切片输入是普通的
+$t$-相关均匀立方输入。这些函数中的行是公共潜数组 $R$；两次独立的行
+重采样已被吸收进 $T_r$。把每个切片表项取反，$\bar A_{\underline y}$
+不变而 $\bar G_{\underline y}$ 变号。因此二者的傅里叶支撑的总奇偶性
+相反，交叉项消失。期望符号积为
+$\Stab_t(\bar A_{\underline y})-\Stab_t(\bar G_{\underline y})$。
+一条边以「二分之一减符号积的二分之一」的概率被割，给出
+\eqref{eq:cut-stability}。$t>0$ 时稳定性非负给出
+\eqref{eq:cut-upper-stability}。
+\end{proof}
+
+若某割的值至少为 $(1+B(t))/2+\delta/2$，则其奇平均的期望切片稳定性
+至少为 $B(t)+\delta$。接下来三节表明：这一超额稳定性产生一个承载
+可观傅里叶质量的标记，且常数与博弈维数及重复次数无关；形式化陈述是
+\Cref{prop:extraction}。\Cref{sec:decoding} 再把该质量转换为对原
+博弈单个副本的染色。

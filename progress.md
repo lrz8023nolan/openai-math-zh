@@ -24,6 +24,15 @@
 - 状态：**✅ 完成**——[CONTENTS-zh.md](contents-zh/CONTENTS-zh.md) 覆盖全部 **372 个成果族 / 722 篇手稿**（235 个族带 Lean 形式化标记），编号与上游一一对应，按 17 个学科分组。
 - 后续深化：各手稿摘要的中文翻译与逐节精读，通过 issue 认领（见 CONTRIBUTING.md，待建）。
 
+## 全文翻译（LaTeX 原版复刻，preprints-zh/latex-zh/）
+
+用 XeLaTeX + ctexart 翻译上游 .tex 源码并重编译，章节、公式编号、定理环境与英文原文一一镜像。
+
+| # | 手稿 | 所属成果族 | 状态 | 源码 / PDF |
+|---|---|---|---|---|
+| 102-2 | A Direct Proof of Optimal Max-Cut Hardness（最优 Max-Cut 难度的直接证明） | 102 唯一游戏猜想 | ✅ 完成（37 页） | [latex-zh/maxcut-direct-zh/](preprints-zh/latex-zh/maxcut-direct-zh/) ｜ [102-maxcut-direct-zh.pdf](preprints-zh/pdf/102-maxcut-direct-zh.pdf) |
+| — | 其余 9 篇精选 | — | ⏳ 待译 | 逐篇推进，流程同上 |
+
 ## 上游同步
 
 - 本翻译基于上游 commit `adc7f12`（2026-10-06）。

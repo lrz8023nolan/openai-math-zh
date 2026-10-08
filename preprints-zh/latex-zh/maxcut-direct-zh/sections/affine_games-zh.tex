@@ -1,0 +1,473 @@
+\section{由二对一博弈定理给出的仿射博弈}
+\label{sec:affine-games}
+
+Max-Cut 归约需要超出通常数值型二对一博弈间隙的两个特性：投影必须是
+$\F$ 上的仿射映射，且字母表必须在选取完备性误差之前固定。
+我们从 \cite[Sections~4--5]{DKKMS25} 的构造与可靠性分析推导这些
+特性。其 Grassmann 一致性假设由 Khot、Minzer 与 Safra 的扩张定理
+~\cite{KMS23} 以及 Barak、Kothari 与 Steurer 的扩张到一致性蕴含
+~\cite[Theorems~9--11]{BKS19} 提供；\cite{DKKMS25} 发表版的引言
+记录了这一补全。
+
+我们先描述折叠博弈及其仿射投影。源的顶点定义排除了其显示采样器
+可能产生的某些子空间。我们指明由此产生的条件化，补全其可靠性证明
+所用的表，并给出带所需例外子空间估计的不变列表论证。对第二个
+玩家，我们在商空间上使用有界列表，把每条限制到建议空间的部分分开
+处理。完备性则通过最后选取初始 3Lin 误差得到。
+
+\subsection{折叠博弈及其边律}
+
+\paragraph{起始实例。}
+\cite{DKKMS25} 的 Theorem~4.1（由 H\aa stad 定理~\cite{Hastad01}
+得到）给出绝对常数 $s_*<1$：对每个足够小的 $\varepsilon>0$，区分
+值至少 $1-\varepsilon$ 与值至多 $s_*$ 的正则二元 3Lin 实例是 NP 难
+的。正则性包括变量的出现次数有界、每条方程三个不同变量、以及两个
+不同方程至多共享一个变量。
+
+现设 $\ell\ge2$、$k_0\ge\ell$ 与 $\beta\in(0,1)$（$\beta$ 有理）
+为固定参数。两个字母表维数将是 $\ell$ 与 $\ell-1$，故
+\Cref{prop:affine-games} 中的维数为 $n=\ell-1$。下文的可靠性论证
+只用 $b$ 与绝对常数 $s_*$ 选取 $\ell,k_0,\beta$。
+
+\paragraph{空间、标记与折叠。}
+设 $\mathcal Z$ 为 3Lin 实例的变量集，令 $V_0=\F^{\mathcal Z}$，
+把每条方程 $e$ 视为
+\[
+  \langle x_e,\alpha\rangle=b_e,
+  \qquad x_e\in V_0,\quad b_e\in\F,
+\]
+其中 $x_e$ 的三个变量坐标为 1。\emph{合法}元组 $U$ 由 $k_0$ 条
+互不相交的方程组成，并附加 \cite[Section~4.2]{DKKMS25} 施加的分离
+条件：$U$ 中不同方程的变量不出现在任何输入方程中。令
+\[
+  V_U=\F^{\operatorname{var}(U)},
+  \qquad H_U=\operatorname{span}\{x_e:e\in U\}.
+\]
+向量 $x_e$（$e\in U$）线性无关，故 $\dim V_U=3k_0$、$\dim H_U=k_0$，
+且存在唯一线性函数 $h_U:H_U\to\F$ 使 $h_U(x_e)=b_e$。
+
+折叠前，一个左问题是 $(U,L)$，其中
+\[
+  L\leq V_U,\qquad \dim L=\ell,\qquad L\cap H_U=\{0\}.
+\]
+对变量子集 $V\subseteq\mathcal Z$，记 $V_V=\F^V\le V_0$；$V$ 的
+采样规则见下。右问题是 $(V,L')$，其中 $L'\leq V_V$、$\dim L'=\ell-1$。
+在关联对上有 $L'\leq L$。两边的答案分别是 $L$ 与 $L'$ 上的线性
+函数，约束是限制。选定基后，未折叠字母表即等同于 $\F^\ell$ 与
+$\F^{\ell-1}$。
+
+\cite[Section~4.2]{DKKMS25} 的折叠把 $(U,L)$ 与 $(U_1,L_1)$ 放入
+同一类，当
+\[
+ L+H_U+H_{U_1}=L_1+H_U+H_{U_1}.
+\]
+其 Lemma~4.2 证明这是等价关系，并对每个类 $\mathcal C$ 给出固定的
+$\ell$ 维空间 $R_{\mathcal C}$ 使
+\begin{equation}
+  R_{\mathcal C}+H_U=L+H_U
+  \quad\text{对每个 }(U,L)\in\mathcal C.
+  \label{eq:affine-complements}
+\end{equation}
+两边维数都是 $\ell+k_0$；因此也有 $R_{\mathcal C}\cap H_U=\{0\}$。
+折叠答案是线性函数 $\sigma:R_{\mathcal C}\to\F$。其在 $(U,L)$ 上的
+展开是唯一延拓
+\begin{equation}
+  \widetilde\sigma_U(r+h)=\sigma(r)+h_U(h),
+  \qquad r\in R_{\mathcal C},\quad h\in H_U
+  \label{eq:affine-unfolding}
+\end{equation}
+在 $L$ 上的限制。
+
+为清晰起见，这里的仿射性是\emph{答案空间}之间映射的性质。对
+$z\in L$，唯一地写 $z=A_Uz+B_Uz$（$A_Uz\in R_{\mathcal C}$、
+$B_Uz\in H_U$）。由 \eqref{eq:affine-complements}，映射
+$A_U:L\to R_{\mathcal C}$ 是线性同构。于是展开为
+\[
+  \sigma\longmapsto\sigma\circ A_U+h_U\circ B_U,
+\]
+这是从 $R_{\mathcal C}^*$ 到 $L^*$ 的仿射双射。与满射限制
+$L^*\to(L')^*$ 复合，得到线性部分核为 1 维的满射仿射映射，每个
+纤维恰有两个元素。在固定基之后即证得所需的仿射承诺。
+\cite{DKKMS25} 的 Claim~4.4 表明：当若干未折叠边聚合为同一折叠边
+时，这些投影彼此一致。等价地，这些边可以带各自的权重分开保留。
+
+\paragraph{边采样的有效性。}
+我们指明显示采样器省略的对病态样本的处理。独立采样 $k_0$ 条方程
+产生非合法元组的概率为 $O(k_0^2/|\mathcal Z|)$（由有界出现次数）。
+对固定的 $k_0$ 这可以任意小。必要时取输入实例的足够多个不相交
+副本；这保持其值与正则性。
+
+给定合法的 $U$，对每条方程独立地：右变量集 $V$ 以概率 $1-\beta$
+包含全部三个变量，否则包含均匀选取的一个变量。若有 $f_0$ 条方程
+贡献全部三个变量，则
+\[
+  \dim V_V=k_0+2f_0,
+  \qquad \dim(V_V\cap H_U)=f_0.
+\]
+对均匀选取的 $(\ell-1)$-空间 $L'\leq V_V$，数非零向量得
+\begin{align*}
+  \Pr[L'\cap H_U\ne\{0\}]
+  &\leq
+  \frac{(2^{f_0}-1)(2^{\ell-1}-1)}{2^{k_0+2f_0}-1}
+  \leq 2^{\ell-k_0}.
+\end{align*}
+若 $L'\cap H_U=\{0\}$，则包含 $L'$ 的均匀 $\ell$-空间
+$L\leq V_U$ 可通过在 $V_U/L'$ 中选非零向量得到。它非平凡地交
+$H_U$，当且仅当该向量属于 $(H_U+L')/L'$。故
+\[
+  \Pr[L\cap H_U\ne\{0\}\mid L']
+  =\frac{2^{k_0}-1}{2^{3k_0-\ell+1}-1}
+  \leq 2^{\ell-2k_0}.
+\]
+我们把采样条件化在合法性与 $L\cap H_U=\{0\}$ 上。被丢弃的概率
+至多
+\begin{equation}
+  \kappa=O(k_0^2/|\mathcal Z|)
+          +2^{\ell-k_0}+2^{\ell-2k_0}.
+  \label{eq:affine-invalid-probability}
+\end{equation}
+固定 $\ell$ 后增大 $k_0$，两个几何项可以任意小。取其和至多 $1/4$，
+并且必要时使用输入的不相交副本，把非合法性概率取至多 $1/4$。于是
+从原独立方程采样器保留一个样本的总概率 $q_{\rm all}$ 至少为
+$1/2$。我们把这一总保留概率与已在合法性条件化之后的归一化区分
+开来。
+
+设 $P$ 为对合法 $U$ 条件化后的该采样器，令 $E=\{L\cap H_U=\{0\}\}$
+与 $\eta=2^{\ell-k_0}+2^{\ell-2k_0}$。我们的边律是
+$R=P(\,\cdot\mid E)$，故 $\TV(P,R)=P(E^c)\leq\eta$。在源的有效边
+集上定义次概率权重
+\[
+ w(e)=\sum_{\substack{\omega\in E\\\omega\mapsto e}}P(\omega),
+ \qquad q_{\rm edge}=\sum_e w(e)=P(E)\geq1-\eta.
+\]
+于是 $R(e)=w(e)/q_{\rm edge}$。对任意折叠染色，其在 $R$ 下的接受
+率是其原始有效接受率除以 $q_{\rm edge}$。原始有效接受使用上述律
+$P$（对合法 $U$ 条件化但不条件化于 $E$），无效结果收益为零。下面
+用已发表可靠性分析中补全的表来界定这个量。
+
+\subsection{补全的表与其列表编码的方程}
+
+可靠性证明在每个 $\ell$ 维子空间上使用表，尽管折叠染色只在有效
+顶点处给出答案。我们先延拓这些答案，同时保持 $V_U$ 与 $V_V$ 上的
+表之间的一致性。再证明从这些表解码出的线性函数仍满足 $U$ 中的
+方程。
+
+\paragraph{补全表。}
+对与合法 $U$ 一起出现的右变量集 $V$，定义
+\[
+  H(V)=\operatorname{span}\{x_e:e\text{ 为输入方程且 }
+                                     \operatorname{var}(e)\subseteq V\}.
+\]
+支撑在 $\operatorname{var}(U)$ 中的每条输入方程都属于 $U$：使用
+两个元组块的方程违反合法性，而同一块内的不同方程会与该块的方程
+共享三个变量。由于 $U$ 的方程支撑两两不交，这证明
+\begin{equation}
+  H_U\cap V_V=H(V).
+  \label{eq:affine-validity-common-side-space}
+\end{equation}
+特别地，对 $L\subseteq V_V$，$(U,L)$ 的有效性与包含它的合法元组
+$U$ 无关。
+
+固定一个折叠染色。记 $F_U[L]$ 为其在每个有效 $(U,L)$ 处的展开
+答案，并在 $L\cap H_U\ne\{0\}$ 时为零线性函数。对每个 $V$：当
+$L\cap H(V)=\{0\}$ 时用任一包含它的 $U$ 定义 $F_V[L]$，否则取零。
+对有效的 $L$，具有同一 $L$ 的所有顶点 $(U,L)$ 属于同一折叠类；其
+展开答案由 \cite[Claim~4.4]{DKKMS25} 彼此一致。
+Equation~\eqref{eq:affine-validity-common-side-space} 对无效的 $L$
+给出同样的无关性。故补全的表满足
+\begin{equation}
+  F_U[L]=F_V[L]\qquad(L\subseteq V_V,\ \dim L=\ell).
+  \label{eq:affine-validity-completed-consistency}
+\end{equation}
+辅助表 $F_V$ 定义在 $\ell$-空间上；它不同于博弈在 $(\ell-1)$-空间
+上的右答案表。
+
+补全的 $F_U$ 还有第二个性质。固定维数 $\ell+k_0$ 的
+$K\supseteq H_U$。满足 $L+H_U=K$ 的所有有效 $L$ 属于同一折叠类。
+公共折叠标记及其 $(H_U,h_U)$ 延拓给出一个线性函数 $f_K:K\to\F$：
+$f_K|_{H_U}=h_U$ 且对每个这样的 $L$ 有 $F_U[L]=f_K|_L$。
+该条件对无效表项不施加限制。
+
+\paragraph{一致性与列表参数。}
+表 $F$ 的 Grassmann 一致性测试先选均匀的 $(\ell-1)$-空间，再选
+两个包含它的独立均匀 $\ell$-空间，当二者在公共 $(\ell-1)$-空间上
+表项一致时接受。记其接受概率为 $\operatorname{agreement}(F)$。
+
+固定可靠性参数 $\delta\in(0,1)$。一致性引理
+\cite[Lemma~3.7]{DKKMS25} 在一致性阈值 $\delta^2/8$ 处给出常数
+$q,r,C$ 与正函数 $\alpha(\ell)$（如其 Lemma~5.3 的证明）。取阈值
+\[
+  \tau_r=\min\{C/2,1/2\},\qquad
+  \tau_i=10^{-9}\tau_{i+1}^{12}\quad(0\le i<r).
+\]
+于是 $0<\tau_i\le1/2$，且一致性引理给出的对的严格高于相关阈值。
+再固定第二组列表阈值
+\[
+ \zeta_r=\tau_0/2,\qquad
+ \zeta_i=10^{-9}\zeta_{i+1}^{12}\quad(0\le i<r).
+\]
+两个向量都在选取 $\ell$ 之前固定；$\ell$ 固定后 $\alpha(\ell)$ 为
+正。我们选 $\ell$ 足够大，满足该一致性引理以及普通列表界
+~\cite[Lemma~3.12]{DKKMS25}（对带阈值 $(\zeta_i)$ 的
+$(\ell-q)$-空间）。还要求 $q\le\ell-1$ 与
+\begin{equation}
+  2^{q-\ell}\le\tau_0/4.
+  \label{eq:affine-validity-ell-margin}
+\end{equation}
+重复参数 $k_0$ 随后选取，足够大使所引的环境维数要求在 $k_0$ 到
+$3k_0$ 之间的每个维数及其对某个 $q$-空间的商上都成立。
+
+对固定的 $q$-空间 $Q$，列表记录「限制在超过指定比例的含 $Q$ 的
+$\ell$-空间上与表一致、余维数至多 $r$ 的空间上的线性函数」。只保留
+无出现延拓的对。下一个引理表明：对上述补全的表，只要 $Q$ 避开其
+张成，这些极大对就尊重原方程。
+
+\begin{lemma}[可容建议空间上的不变列表断言]
+\label{lem:affine-validity-invariance}
+设 $X$ 维数为 $3k_0$，$H\le X$ 维数为 $k_0$，$h:H\to\F$ 线性。设表
+$F$ 给每个 $\ell$-空间指派一个线性函数，且对每个
+$(\ell+k_0)$-空间 $K\supseteq H$ 存在线性函数 $f_K:K\to\F$ 使
+$f_K|_H=h$，且只要 $L+H=K$ 就有 $F[L]=f_K|_L$。固定满足
+$Q\cap H=\{0\}$ 的 $q$-空间 $Q$，并令
+\[
+  e_{k_0}=2^{\ell+r-2k_0+1}.
+\]
+假设 $q\le\ell$、$3k_0-r>\ell$、\eqref{eq:affine-validity-ell-margin}
+与 $e_{k_0}\le\tau_0/4$。对余维数 $i\le r$ 的 $Q\subseteq W\subseteq X$，
+称 $(g,W)$ \emph{出现}，若 $g:W\to\F$ 线性且
+\[
+  \Pr_{Q\subseteq L\subseteq W,\ \dim L=\ell}
+       [F[L]=g|_L]>\tau_i.
+\]
+若它没有到严格更大空间的出现延拓，则称其为极大的。每个极大出现对
+满足 $H\subseteq W$ 且 $g|_H=h$。
+\end{lemma}
+
+\begin{proof}
+令 $H'=H\cap W$。在 $W/Q$ 中，像 $(H'+Q)/Q$ 的维数为 $\dim H'$
+（因为 $Q\cap H=\{0\}$）。数均匀 $(\ell-q)$-空间中的非零向量得
+\begin{align*}
+ d_W&:=\Pr_{Q\subseteq L\subseteq W}[L\cap H\ne\{0\}]\\
+ &\le
+ \frac{(2^{\dim H'}-1)(2^{\ell-q}-1)}{2^{\dim W-q}-1}
+ \le 2^{\ell+\dim H'-\dim W+1}
+ \le e_{k_0}.
+\end{align*}
+把 $W$ 换成任何余维数至多 $r$ 的包含空间，同一界成立。
+
+把满足 $Q\subseteq L\subseteq W$ 的有效空间 $L$ 按 $Y=L+H'$ 分
+类。在固定类内，表是 $Y$ 上某个尊重 $h|_{H'}$ 的线性函数的限制；
+这由限制 $f_{L+H}$ 得到。若 $g|_{H'}\ne h|_{H'}$，这两个函数之差
+在 $H'$ 上非零。$Y$ 中包含 $Q$ 的对 $H'$ 的补是 $(\ell-q)$ 维商
+空间上线性映射的图像。其 $\ell-q$ 个独立提升选择必须各满足一个
+非平凡线性方程，两个函数才会一致。故该类内的一致性至多
+$2^{q-\ell}$（若两函数已在 $Q$ 上不一致则为零）。总一致性至多
+\[
+  d_W+(1-d_W)2^{q-\ell}
+  \le e_{k_0}+2^{q-\ell}\le\tau_0/2<\tau_i,
+\]
+矛盾。故 $g|_{H'}=h|_{H'}$。
+
+于是存在到 $\widetilde W=W+H$ 的唯一延拓 $\widetilde g$，尊重
+$h$。在 $W$ 与 $\widetilde W$ 中含 $Q$ 的有效 $\ell$-空间的两种
+均匀分布下，$L$ 在
+\[
+  W/(W\cap H)\simeq\widetilde W/H
+\]
+中的像在含 $Q$ 之像的 $\ell$-空间中均匀。事实上，每个这样的像在
+$W$ 中有同样多的含 $Q$ 补，即 $2^{(\ell-q)\dim(H\cap W)}$，在
+$\widetilde W$ 中为 $2^{(\ell-q)\dim H}$。此外，一致性只依赖该
+像：$f_{L+H}$ 与 $\widetilde g$ 在 $H$ 上一致，故其差在一个补上
+为零当且仅当在每个补上为零。因此两种环境空间中在有效空间上的
+条件一致性相同。由于 $W$ 中的一致性至少为 $\tau_i$，
+$\widetilde W$ 中的一致性至少为
+\[
+  (1-d_{\widetilde W})\frac{\tau_i-d_W}{1-d_W}
+  \ge(1-e_{k_0})(\tau_i-e_{k_0})
+  \ge\tau_i-2e_{k_0}\ge\tau_i/2.
+\]
+若 $H\not\subseteq W$，则 $\widetilde W$ 的余维数 $j$ 严格小于
+$i$，且 $\tau_j\le\tau_{i-1}<\tau_i/2$。这给出一个出现延拓，与
+极大性矛盾。
+\end{proof}
+
+取 $X=V_U$、$H=H_U$、$h=h_U$ 应用该引理可知：只要
+$Q\cap H_U=\{0\}$，从 $F_U$ 解码的每个极大对都尊重 $U$ 的所有
+方程。接下来估计该条件在源的可靠性证明所用分布下的概率。
+
+\subsection{可靠性、完备性与参数顺序}
+
+\paragraph{建议分布。}
+\cite[Section~5.2]{DKKMS25} 的外层博弈先采样 $(U,V)$，再从 $V_V$
+的 $q$-空间中均匀取 $Q$。它把 $(U,Q)$ 与 $(V,Q)$ 送给两个玩家，
+要求分别在 $\operatorname{var}(U)$ 与 $V$ 上给出赋值。当这些赋值
+在 $V$ 上一致且第一个满足 $U$ 的每条方程时接受。若 $f_0$ 条方程
+贡献全部三个变量，则 $\dim V_V=k_0+2f_0$、$\dim H(V)=f_0$。因此
+在该实际分布下，对 $U,V$ 一致地有
+\begin{equation}
+ \Pr[Q\cap H_U\ne\{0\}\mid U,V]
+ \le\frac{(2^{f_0}-1)(2^q-1)}{2^{k_0+2f_0}-1}
+ \le2^{q-k_0}.
+ \label{eq:affine-validity-advice-loss}
+\end{equation}
+我们继续增大 $k_0$ 直到
+\begin{equation}
+ e_{k_0}\le\tau_0/4,
+ \qquad 2^{q-k_0}\le\delta\alpha(\ell)/8.
+ \label{eq:affine-validity-k-margins}
+\end{equation}
+
+\paragraph{从博弈接受到非空列表。}
+设某折叠染色在 $P$（对合法 $U$ 条件化但不条件化于 $L$ 有效性的
+采样器）下原始有效接受率大于 $\delta$。用补全的 $F_U[L]$ 对照
+$(V,L')$ 上的原右答案只会提高该接受率：有效表项不变，而无效结果
+此前的收益为零。因此我们可以把 \cite[Lemma~5.3, Claim~5.6, and
+Equation~(5.1)]{DKKMS25} 的一致性/列表与覆盖论证用于补全的表。
+在调用不变性之前，这些论证使用完全线性表、其一致性以及
+\eqref{eq:affine-validity-completed-consistency}；现在它们在每个
+采样到的子空间上都有定义。
+
+对固定的 $U,Q$，记 $\mathcal L_{U,Q}$ 为 $V_U$ 中含 $Q$ 的
+$\ell$-空间上的均匀律。$\mathcal L'_{U,Q}$ 先在外层问题 $(U,Q)$
+的条件下采样 $V$，再取 $V_V$ 中含 $Q$ 的均匀 $\ell$-空间。这正是
+\cite[Lemma~4.11]{DKKMS25} 的条件律。事实上，设 $N_q(d)$ 为
+$\F^d$ 中 $q$-空间的个数，则对 $Q\subseteq V_V$，均匀
+$\ell$-空间 $L\le V_V$ 满足
+\[
+ \Pr[Q\subseteq L\mid V]=\frac{N_q(\ell)}{N_q(\dim V_V)}.
+\]
+于是把源的 $V,L$ 采样器以 $Q\subseteq L$ 为条件，会给每个 $V$
+赋以正比于 $\Pr[V\mid U]/N_q(\dim V_V)$ 的权重，与外层博弈完全
+一致。
+
+设 $E_1$ 为事件 $\operatorname{agreement}(F_U)>\delta^2/8$，$E_2$
+为
+\[
+ \TV(\mathcal L_{U,Q},\mathcal L'_{U,Q})
+ \le 2^{\ell+5}\sqrt\beta\,k_0^{1/4},
+\]
+$E_3$ 为 $F_U$ 的 $Q$-列表在阈值 $(\tau_i)$ 下非空。事件 $E_2$
+正是源 Equation~(4.3) 的光滑性条件。对 $E_3$：只要 $E_1$ 成立，
+源的 Lemma~3.7 对 $\alpha(\ell)$ 比例的均匀 $Q$ 给出一个出现对；
+任一这样的对都有极大的出现延拓。这只用第一列表的存在性，不用其
+规模界。所引论证给出这些事件的联合概率至少 $\delta\alpha(\ell)/4$。
+与 $E_4=\{Q\cap H_U=\{0\}\}$ 相交后概率至少
+$\delta\alpha(\ell)/8$（由
+\eqref{eq:affine-validity-advice-loss}--\eqref{eq:affine-validity-k-margins}）。
+事件 $E_4$ 只依赖 $U,Q$。因此在 $U,Q$ 固定后，它不改变 $V$ 的
+后续条件律。
+
+\paragraph{第二个玩家的商列表。}
+对每个问题 $(V,Q)$ 与每个线性型 $\gamma:Q\to\F$，固定一个线性
+延拓 $p_\gamma:V_V\to\F$。设 $\nu:V_V\to V_V/Q$ 为商映射。用
+\[
+ T_\gamma[L/Q]=
+ \begin{cases}
+  \overline{F_V[L]-p_\gamma|_L},&F_V[L]|_Q=\gamma,\\
+  0,&F_V[L]|_Q\ne\gamma
+ \end{cases}
+\]
+在 $V_V/Q$ 的 $(\ell-q)$-空间上定义完全表 $T_\gamma$。
+此处 $Q\subseteq L\subseteq V_V$、$\dim L=\ell$，上横线表示
+$L/Q$ 上诱导的线性型；第一种情形下它有定义，因为该差在 $Q$ 上
+为零。
+
+对该完全表，使用带阈值 $(\zeta_i)$ 的普通极大列表：$(g,S)$ 出现
+当且仅当 $S\le V_V/Q$ 余维数 $i\le r$ 且 $T_\gamma$ 在 $S$ 中
+超过 $\zeta_i$ 比例的 $(\ell-q)$-空间上与 $g$ 一致。
+由~\cite[Lemma~3.12]{DKKMS25}，每个这样的列表规模至多
+$M_0=M_0(\ell-q,r,\zeta_r)$，与 $k_0$ 无关。
+第二个玩家选均匀的 $\gamma\in Q^*$，再从该列表均匀选一对 $(g,S)$。
+它把 $g$ 提升为 $\nu^{-1}(S)$ 上的线性型 $g\circ\nu+p_\gamma$，
+再均匀延拓到 $V_V$，并输出相应赋值。若其列表为空，则用任意赋值。
+整个过程只用 $(V,Q)$ 与固定的表。
+
+零表项可能在辅助表中产生额外的出现延拓。这不造成困难：下面的
+证明只需要某个指定线性型的延拓，而不需要把这些辅助极大对等同于
+$F_V$ 的极大对。
+
+\paragraph{两个策略的成功。}
+第一个玩家从 $F_U$ 的 $\tau$-列表中均匀选极大对 $(f,W)$，并把
+$f$ 均匀延拓到 $V_U$（列表为空时用任意赋值）。这个有限列表不必
+有与 $k_0$ 无关的规模界：成功估计对其每个元素都成立。第二个玩家
+使用刚构造的商列表。
+
+固定 $E_1\cap E_2\cap E_3\cap E_4$ 中的 $U,Q$ 与第一个玩家的
+任意选择 $(f,W)$（$i=\operatorname{codim}_{V_U}W\le r$）。由
+\Cref{lem:affine-validity-invariance}，$H_U\subseteq W$ 且
+$f|_{H_U}=h_U$。于是第一个玩家选的每个延拓都满足 $U$ 的所有
+方程。这是源的解码论证中不变列表断言的唯一用途。
+
+\cite[Lemmas~4.11 and~5.5 and the proof of Lemma~5.3]{DKKMS25} 的
+覆盖步骤（使用 \eqref{eq:affine-validity-completed-consistency}）
+给出：对 $V$ 以至少 $0.3\tau_i\ge0.3\tau_0$ 的概率，
+\[
+ \operatorname{codim}_{V_V}(W\cap V_V)=i,
+ \qquad
+ \Pr_{Q\subseteq L\subseteq W\cap V_V}
+       [F_V[L]=f|_L]>\tau_i/2.
+\]
+此处 $L$ 的维数为 $\ell$。令 $S_0=W\cap V_V$ 与 $\gamma=f|_Q$。
+上式中的每个等式 $F_V[L]=f|_L$ 在 $T_\gamma$ 中保持。由于
+$\zeta_i\le\tau_0/2\le\tau_i/2$，商对
+\[
+ \bigl(\overline{f|_{S_0}-p_\gamma|_{S_0}},\ S_0/Q\bigr)
+\]
+对 $T_\gamma$ 出现，从而在该辅助表中有极大的出现延拓。用同一个
+$p_\gamma$ 提升任何这样的延拓，得到与 $f$ 在整个 $S_0$ 上一致的
+函数。该结论只关乎函数延拓，不受零补全可能引入的额外一致性的
+影响。
+
+第二个玩家以至少 $1/M$ 的概率选中该标签与一个这样的极大延拓，
+其中 $M:=2^qM_0$ 与 $k_0$ 无关。其最终答案与 $f$ 在
+$W\cap V_V$ 上一致。第一个玩家的均匀延拓以概率
+$2^{-i}\ge2^{-r}$ 与该答案在整个 $V_V$ 上一致：商
+$V_V/(W\cap V_V)$ 的维数为 $i$。于是，在 $E_1\cap E_2\cap E_3\cap E_4$
+的条件下，该策略获胜概率至少为
+\[
+ c_*:=2^{-r}\frac{0.3\tau_0}{M}>0.
+\]
+总成功概率至少为 $\delta\alpha(\ell)c_*/8$，这是与 $k_0$ 无关的
+正常数。\cite[Lemma~5.4]{DKKMS25} 的上界在 $\beta k_0\to\infty$
+时趋于零。取足够大的 $k_0$ 即得与源中相同的矛盾，证明原始有效
+接受率至多为 $\delta$。
+
+\paragraph{先定可靠性后定完备性。}
+对 \Cref{prop:affine-games} 中的博弈，取 $\delta=b/4$ 并保留有效的
+原始权重。由前述拒绝估计，其总质量 $q_{\rm edge}$ 至少为 $1/2$。
+归一化后
+\[
+  \Val\le\delta/q_{\rm edge}\le b/2<b.
+\]
+上文的每个限制都只涉及 $b$ 与由它固定的参数。选定 $\ell$ 后，取
+$k_0=j^4$、$\beta=j^{-3}$（$j$ 足够大）。则 $\beta k_0\to\infty$、
+$\beta\sqrt{k_0}\to0$、$\sqrt\beta\,k_0^{1/4}\to0$。这些极限满足
+外层博弈的可靠性与覆盖要求（包括 $2^\ell\beta\le1/8$）以及所有
+显示的余量。特别地，字母表维数 $n=\ell-1$ 已只用 $b$ 固定。
+
+\paragraph{字母表固定下的完备性。}
+设 $\alpha:\mathcal Z\to\F$ 满足除 $\varepsilon$ 比例外的所有输入
+方程，并把其线性延拓也记为 $\alpha:V_0\to\F$。给折叠左问题
+$\mathcal C$ 答案 $\alpha|_{R_{\mathcal C}}$，给 $(V,L')$ 答案
+$\alpha|_{L'}$。只要采样到的 $U$ 的每条方程都被满足，就有
+$h_U=\alpha|_{H_U}$，故 \eqref{eq:affine-unfolding} 恰为
+$\alpha|_{R_{\mathcal C}+H_U}$。因此该边被满足。此论证针对采样到
+的边；不要求其折叠类的每个成员都涉及被满足的方程。
+
+在任一条件化步骤之前，并界给出采样到未满足方程的概率至多
+$k_0\varepsilon$。由于总保留概率 $q_{\rm all}$ 至少为 $1/2$，
+条件化后的博弈值至少为
+$1-k_0\varepsilon/q_{\rm all}\ge1-2k_0\varepsilon$。
+在为可靠性固定 $\ell,k_0$ 之后，在初始 3Lin 间隙中取
+$\varepsilon\leq a/(2k_0)$。这给出所述完备性而不改变 $n$。
+
+\paragraph{有效性与规模。}
+单个问题中的所有空间维数有界。输入方程的 $k_0$ 元组只有多项式
+多个，且每个元组只有常数多个子空间、基与局部采样结果。折叠等价
+关系可以由线性代数显式检验。为有效求出 $R_{\mathcal C}$，从类中
+任一 $(U,L)$ 出发，枚举 $L+H_U$ 内的 $\ell$-空间（其维数为固定
+常数 $\ell+k_0$），对每个类成员用 \eqref{eq:affine-complements}
+检验每个候选。Lemma~4.2 保证有成功的候选。随后高斯消去计算基与
+仿射边映射。有限采样分布、其条件化与平行边的聚合都具有多项式位长
+的有理权重。这些观察给出命题所断言的确定性多项式归约。
+\Cref{prop:affine-games} 证毕。

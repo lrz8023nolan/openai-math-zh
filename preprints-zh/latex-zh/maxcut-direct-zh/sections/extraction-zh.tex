@@ -1,0 +1,260 @@
+\section{从超额稳定性到标记}\label{sec:extraction}
+
+本节给出归约所用的解析命题。其常数不依赖仿射标记空间的维数。函数
+可以依赖额外的随机参数 $\omega$，其律与所有行、门表及随机切片独立。
+在应用中，$\omega$ 将是博弈的右端点元组。
+
+设 $\phi_\omega:\bits^{\mathcal A}\to[-1,1]$ 是奇的，即
+$\phi_\omega(-w)=-\phi_\omega(w)$，并令
+\[
+ f_\omega(R,F)=\phi_\omega(W(R,F)),\qquad
+ \bar f_\omega=T_r f_\omega,\qquad r=1-\mu/d.
+\]
+词、树与随机切片 $\mathcal D$ 均为 \Cref{sec:tree} 中者。把
+$\mathcal D$ 之外的表记为 $F_{\mathrm{out}}$。一旦
+$\omega,\mathcal D,R,F_{\mathrm{out}}$ 固定，$\bar f_\omega$ 便是
+独立切片表比特的函数。
+
+对节点 $v\in\mathcal D$，使用 \Cref{lem:shift-coordinates} 的自由
+平移坐标 $(L_{gb})_{g\in[s],b\in\{0,1\}}$ 与剩余上下文
+$\Gamma\in H^{k-2s}$。带下标 ``shifts'' 的帽子表示只对这 $2s$ 个
+自由行作展开。对标记 $q\in\mathcal A$（等价地，$q\in H^*$ 且
+$q(\one)=1$），定义
+\begin{equation}\label{eq:mass}
+ m_q(f;\Gamma,F_{\mathrm{out}})
+ =\E_{F_{\mathcal D}}
+ \sum_{\substack{Q\in(H^*)^{2s}\\
+                  Q_{g0}+Q_{g1}=q\ (g\in[s])}}
+ \abs{\widehat f^{\,\mathrm{shifts}}(Q)}^2.
+\end{equation}
+对 $v,\mathcal D,\omega$ 的依赖从略。此定义中的指标集随 $q$ 变化
+两两不交。对固定的 $q$，该质量包含把公共和分派到每对两个子节点的
+一切方式。我们要为原平滑函数 $\bar f_\omega$ 寻找这样的质量。
+不分裂投影与表次数截断只用于找出承载该质量的标记；两个投影都不是
+结论的一部分。保留具有给定公共和的全部指标，将使我们在
+\Cref{sec:decoding} 中能在仿射拉回下比较质量。
+
+特别地，若 $|f|\le1$，则在每个固定上下文处
+\begin{equation}\label{eq:mass-bound}
+ 0\le\sum_{q\in\mathcal A}m_q(f;\Gamma,F_{\mathrm{out}})\le1.
+\end{equation}
+
+\begin{proposition}[维数无关的抽取]\label{prop:extraction}
+固定 $t\in(0,1)$、$0<\delta<1-B(t)$ 与 $0<\mu<1/2$。
+存在只依赖 $t,\delta,\mu$ 的树参数 $s\ge2,m\ge1$ 与常数
+$p_*,\theta>0$，具有以下性质。对任意仿射标记空间 $\mathcal A$ 与
+如上任意一族 $\phi_\omega$，若
+\begin{equation}\label{eq:excess-stability}
+ \E_{\omega,\mathcal D,R,F_{\mathrm{out}}}
+ \Stab_t^{F_{\mathcal D}}(\bar f_\omega)
+ \ge B(t)+\delta,
+\end{equation}
+则
+\begin{equation}\label{eq:extraction-event}
+ \Pr\left[
+   \max_{q\in\mathcal A}
+   m_q(\bar f_\omega;\Gamma,F_{\mathrm{out}})\ge\theta
+ \right]\ge p_*.
+\end{equation}
+这里采样 $\omega$、随机切片 $\mathcal D$ 与均匀节点 $v\in\mathcal D$；
+在其条件下，独立均匀地采样 $F_{\mathrm{out}}$ 与 $\Gamma$。
+\end{proposition}
+
+\begin{proof}
+超额稳定性首先产生一个有影响的切片表项。我们在不分裂投影之后保留
+该影响，丢弃其门表中偶性的部分，并把剩余影响表示为由标记索引的
+向量的仿射哈希。哈希引理随后迫使某个标记承载可观的条件下质量。
+
+下文选取的所有常数都与 $\mathcal A$ 及 $\omega$ 的律无关。先选
+次数截断 $K$ 与影响阈值 $\tau$。估计过程中暂不指定 $s,m$：
+第 4 步将选 $s$ 以控制偶性与哈希贡献，再选 $m$ 以控制不分裂投影的
+代价。
+
+\paragraph{第 1 步：找出有影响的切片表项。}
+把切片表同时取反会把词取反。由于 $\phi_\omega$ 是奇的且平滑保持该
+性质，$\bar f_\omega$ 在每个固定的
+$\omega,\mathcal D,R,F_{\mathrm{out}}$ 处于切片比特上均值为零。
+它也落在 $[-1,1]$ 中。以 $\xi=\delta/2$ 应用 \Cref{lem:mis}，得
+$K\ge1$ 与 $\tau>0$。不妨缩小 $\tau$ 以保证 $\tau\le1$。
+由于稳定性至多为 1，\eqref{eq:excess-stability} 蕴含：以至少
+\[
+ \eta=\delta/2
+\]
+的概率，某个 $v\in\mathcal D$ 的某表项 $z\in\F^s$ 满足
+$\Inf_{v,z}^{\le K}(\bar f_\omega)\ge\tau$。
+事实上，若该事件的概率为 $p$，则期望稳定性至多
+$B(t)+\delta/2+p$。
+
+设 $S_v$ 为到在 $v$ 处不分裂的指标的正交行投影。令
+\[
+ H_v=P_{\le K}^{F_{\mathcal D}}S_v\bar f_\omega.
+\]
+由 \Cref{lem:unsplit}，投影损失所需的界是
+\begin{equation}\label{eq:choose-m}
+ \E\sum_{v\in\mathcal D}
+ \norm{(1-S_v)\bar f_\omega}_{2,R,F}^2
+ \le\frac{s}{2em\mu}\le\frac{\eta\tau}{8}.
+\end{equation}
+对任意固定的 $s$，增大 $m$ 即可保证最后一个不等式。同一期望也是
+相应的 $F_{\mathcal D}$ 条件范数平方之和在
+$\omega,\mathcal D,R,F_{\mathrm{out}}$ 上的期望。Markov 不等式
+表明：除一个概率 $\eta/2$ 的事件外，该和至多 $\tau/4$。在与有影响
+表项事件的交上，定义该影响的投影的三角不等式给出
+\[
+ \sqrt{\Inf_{v,z}(H_v)}
+ \ge\sqrt{\Inf_{v,z}^{\le K}(\bar f_\omega)}
+      -\norm{(1-S_v)\bar f_\omega}_{2,F_{\mathcal D}}
+ \ge\frac{\sqrt\tau}{2}.
+\]
+因此
+\begin{equation}\label{eq:large-max-sum}
+ \E\sum_{v\in\mathcal D}\max_z\Inf_{v,z}(H_v)
+ \ge\frac{\eta\tau}{8}=:\Lambda.
+\end{equation}
+
+我们还要用
+\begin{equation}\label{eq:total-influence}
+ \E\sum_{v\in\mathcal D}\sum_z\Inf_{v,z}(H_v)\le K.
+\end{equation}
+验证如下：对全部行积分。每个 $S_v$ 是行中的正交投影，与切片比特的
+傅里叶投影交换，故只会减少其表项处的积分影响。逐个去掉 $S_v$ 后，
+左边以 $P_{\le K}^{F_{\mathcal D}}\bar f_\omega$ 的总影响对其余
+变量的平均为界。Equation~\eqref{eq:degree-influence} 与
+$|\bar f_\omega|\le1$ 给出 \eqref{eq:total-influence}。
+不断言也不需要 $H_v$ 的逐点有界性。
+
+\paragraph{第 2 步：丢弃对某张门的偶性依赖。}
+固定 $v\in\mathcal D$，把 $H_v$ 在仅把 $F_v$ 取反下分解为偶部与
+奇部。两部分在切片比特上的傅里叶支撑不交，在保留含任一指定表项的
+单项式后亦然。于是
+\[
+ \Inf_{v,z}(H_v)=
+ \Inf_{v,z}(H_v^{\mathrm{even}})
+ +\Inf_{v,z}(H_v^{\mathrm{odd}}).
+\]
+由 \Cref{lem:row-symmetry} 的符号作用，偶部在行支撑上满足
+$q_v(\one)=0$。由于指标不分裂，其所有子节点指标要么为 $0$ 要么为
+$q_v$，故在 $\one$ 上也取零。该引理中的定义域平移作用表明：在行与
+切片外的表固定时，偶部在 $F_v$ 的定义域平移下不变。这些平移在其
+表项上传递。因此 $v$ 处的所有表项影响相等。由
+\eqref{eq:total-influence}，
+\begin{equation}\label{eq:even-influence}
+ \E\sum_{v\in\mathcal D}
+ \max_z\Inf_{v,z}(H_v^{\mathrm{even}})\le\frac{K}{2^s}.
+\end{equation}
+
+\paragraph{第 3 步：把奇影响表示为仿射哈希。}
+固定 $\omega,\mathcal D,v,\Gamma,F_{\mathrm{out}}$。剩余行坐标
+$L_{gb}$ 是 $H$ 中独立均匀元素。在奇部上，公共对和 $q$ 由
+\eqref{eq:labels-dual} 是标记，因而非零。具有公共和 $q$ 的不分裂
+平移指标在子集 $I\subseteq[s]$ 上把 $q$ 放在第二个子节点、其余放在
+第一个子节点。记其在 $H_v^{\mathrm{odd}}$ 中的系数为
+$a_{q,I}(F_{\mathcal D})$。
+
+令
+\[
+ L_\Sigma=\sum_{g=1}^sL_{g0},\qquad J_g=L_{g0}+L_{g1},\qquad
+ \mathbf J(q)=(q(J_1),\ldots,q(J_s)).
+\]
+$s+1$ 个型 $L_\Sigma,J_1,\ldots,J_s$ 独立且均匀：所示的从 $H^{2s}$
+到 $H^{s+1}$ 的线性映射是满射。其余 $s-1$ 个坐标不出现在不分裂
+展开中。平移指标 $(q,I)$ 的特征是
+\[
+ \chi_q(L_\Sigma)(-1)^{\sum_{g\in I}q(J_g)}.
+\]
+另一方面，定义域平移恒等式给出
+\[
+ a_{q,I}(F_v(\cdot+z),F_{\mathcal D\setminus\{v\}})
+ =(-1)^{\sum_{g\in I}z_g}a_{q,I}(F_{\mathcal D}).
+\]
+令 $\Psi_q=\sum_{I\subseteq[s]}a_{q,I}$，我们得到
+\begin{equation}\label{eq:odd-hash-form}
+ H_v^{\mathrm{odd}}
+ =\sum_{q\in\mathcal A}\chi_q(L_\Sigma)
+ \Psi_q\bigl(F_v(\cdot+\mathbf J(q)),
+                   F_{\mathcal D\setminus\{v\}}\bigr).
+\end{equation}
+不同 $I$ 的函数 $a_{q,I}$ 在均匀切片比特上正交：两个特征不同的定义
+域平移保持其内积并改变其符号。因此
+\begin{equation}\label{eq:psi-mass}
+ \norm{\Psi_q}_{2,F_{\mathcal D}}^2
+ =\sum_I\norm{a_{q,I}}_{2,F_{\mathcal D}}^2
+ \le m_q(\bar f_\omega;\Gamma,F_{\mathrm{out}}).
+\end{equation}
+该不等式成立是因为不分裂行投影由自由平移指标决定，而次数与奇偶
+投影在每个固定上下文处是切片比特中的正交投影。每个 $\Psi_q$ 的
+次数至多为 $K$。
+
+Equation~\eqref{eq:odd-hash-form} 已把自由平移特征转换为门表的
+平移。接下来我们把它的布尔傅里叶系数收集成范数平方即表项影响的
+向量。这些傅里叶系数由表项集合索引；此前的指标 $I\subseteq[s]$
+刻画的则是表的定义域 $\F^s$ 的一个特征。
+
+把门 $v$ 处表项集 $B\subseteq\F^s$、其余切片门表项集 $D$ 的切片
+傅里叶系数记为 $\widehat\Psi_q(B,D)$。对 $z\in\F^s$ 定义实向量
+$c(q,z)$，其坐标由对 $(A,D)$（$0\in A\subseteq\F^s$）索引：
+\[
+ c(q,z)_{A,D}=\widehat\Psi_q(z+A,D).
+\]
+用相对于 $z$ 的表项集，使该向量空间对每个 $z$ 与每个标记 $q$ 都
+相同。对非标记的泛函置 $c(q,z)=0$。对 $z$ 处的影响，含 $z$ 的切片
+傅里叶集 $B$ 有唯一形式 $B=z+A$（$0\in A$）。平移
+$\mathbf J(q)$ 把其系数送到 $\widehat\Psi_q(z+A+\mathbf J(q),D)$。
+于是恰好有
+\begin{equation}\label{eq:influence-hash}
+ \Inf_{v,z}(H_v^{\mathrm{odd}})
+ =\norm*{\sum_q\chi_q(L_\Sigma)c(q,z+\mathbf J(q))}^2.
+\end{equation}
+记 $w_q=\sum_z\norm{c(q,z)}^2$ 与 $M_v=\sum_qw_q$，则
+\begin{equation}\label{eq:wq-mq}
+ w_q=\sum_{B,D}|B|\abs{\widehat\Psi_q(B,D)}^2
+ \le K\norm{\Psi_q}_2^2
+ \le K m_q(\bar f_\omega;\Gamma,F_{\mathrm{out}}).
+\end{equation}
+因子 $|B|$ 计其影响含该傅里叶单项式的表项个数；它至多单项式的总
+次数，从而至多 $K$。
+于是每个上下文处 $M_v\le K$。\Cref{lem:hashing} 的总质量恒等式与
+\eqref{eq:influence-hash} 一并给出
+\begin{equation}\label{eq:sum-M}
+ \E\sum_{v\in\mathcal D}M_v
+ =\E\sum_{v\in\mathcal D}\sum_z
+     \Inf_{v,z}(H_v^{\mathrm{odd}})\le K.
+\end{equation}
+对该恒等式，每个节点的自由坐标分开积分；它们不同的坐标系不影响
+均匀行律。
+
+\paragraph{第 4 步：迫使出现重标记。}
+选 $\zeta>0$ 使 $\zeta K\le\Lambda/4$。应用 \Cref{lem:hashing}，
+得 $\gamma>0$ 与 $s$ 的下界。选足够大的 $s\ge2$ 满足该引理与
+$K2^{-s}\le\Lambda/4$。再按 \eqref{eq:choose-m} 选 $m$。最后令
+\begin{equation}\label{eq:extraction-constants}
+ M_0=\frac{\Lambda}{4\cdot2^m},\qquad
+ \theta=\frac{\gamma M_0}{K},\qquad
+ p_* =\frac{\Lambda}{4K\,2^m}.
+\end{equation}
+
+对每个节点，以 $\omega,\mathcal D,v,\Gamma,F_{\mathrm{out}}$ 为
+条件并对自由平移积分。把这些上下文分成三类：
+\begin{enumerate}[label=(\roman*)]
+\item 对每个 $q$ 有 $w_q\le\gamma M_v$；
+\item 第一条不成立且 $M_v<M_0$；
+\item $M_v\ge M_0$ 且存在 $q$ 使 $w_q>\gamma M_v$。
+\end{enumerate}
+在类 (i) 上，哈希引理把期望最大奇影响界定为 $\zeta M_v$。求和并用
+\eqref{eq:sum-M}，代价至多 $\Lambda/4$。在类 (ii) 上，期望意义的
+最大值以总影响即 $M_v<M_0$ 为界。由于 $|\mathcal D|\le2^m$，这些
+上下文代价至多 $\Lambda/4$。在类 (iii) 上，同一总质量界对每节点
+至多为 $K$。
+Equation~\eqref{eq:even-influence} 把所有偶性贡献界定在 $\Lambda/4$。
+设 $N_{\mathrm{iii}}$ 计其导出上下文落在类 (iii) 的节点个数。把
+四项贡献与 \eqref{eq:large-max-sum} 比较：
+\[
+ \Lambda
+ \le K2^{-s}+\zeta K+2^m M_0+K\E N_{\mathrm{iii}}
+ \le\frac{3\Lambda}{4}+K\E N_{\mathrm{iii}}.
+\]
+于是 $\E N_{\mathrm{iii}}\ge\Lambda/(4K)$。在每个这样的节点处，
+\eqref{eq:wq-mq} 给出标记使 $m_q>\gamma M_0/K=\theta$。
+从切片中均匀选节点至多损失因子 $2^m$，得
+\eqref{eq:extraction-event}。命题得证。
+\end{proof}
