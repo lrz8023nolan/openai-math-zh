@@ -1,0 +1,16 @@
+# 上游原始仓库（只读镜像，不纳入本仓库版本管理）
+upstream/
+
+# LaTeX 编译产物
+*.aux
+*.log
+*.out
+*.synctex.gz
+*.fls
+*.fdb_latexmk
+*.bbl
+*.blg
+
+# 系统文件
+.DS_Store
+Thumbs.db
