@@ -1,0 +1,45 @@
+\contentsline {section}{\numberline {1}引言}{3}{section.1}%
+\contentsline {subsection}{\numberline {1.1}定理}{3}{subsection.1.1}%
+\contentsline {subsection}{\numberline {1.2}证明、编码与量词}{3}{subsection.1.2}%
+\contentsline {subsection}{\numberline {1.3}Grassmann 扩张与完备性障碍}{4}{subsection.1.3}%
+\contentsline {subsection}{\numberline {1.4}构造与证明}{5}{subsection.1.4}%
+\contentsline {section}{\numberline {2}约定}{8}{section.2}%
+\contentsline {paragraph}{带权博弈。}{8}{paragraph*.2}%
+\contentsline {paragraph}{二元线性代数与傅里叶分析。}{8}{paragraph*.3}%
+\contentsline {paragraph}{概率与有限构造。}{8}{paragraph*.4}%
+\contentsline {section}{\numberline {3}潜在字母表 gadget}{8}{section.3}%
+\contentsline {subsection}{\numberline {3.1}二次块}{9}{subsection.3.1}%
+\contentsline {paragraph}{非线性响应。}{10}{paragraph*.5}%
+\contentsline {paragraph}{线性限制。}{11}{paragraph*.6}%
+\contentsline {subsection}{\numberline {3.2}一般的特征空间}{11}{subsection.3.2}%
+\contentsline {subsection}{\numberline {3.3}级联及其噪声}{13}{subsection.3.3}%
+\contentsline {subsection}{\numberline {3.4}线性提升与秩损失}{15}{subsection.3.4}%
+\contentsline {subsection}{\numberline {3.5}商与放大}{16}{subsection.3.5}%
+\contentsline {section}{\numberline {4}外层问题与置换测试}{18}{section.4}%
+\contentsline {subsection}{\numberline {4.1}带权奇偶方程与不同位置}{19}{subsection.4.1}%
+\contentsline {subsection}{\numberline {4.2}元组、局部答案副本与齐次坐标}{20}{subsection.4.2}%
+\contentsline {subsection}{\numberline {4.3}精确表键与折叠}{20}{subsection.4.3}%
+\contentsline {subsection}{\numberline {4.4}潜在矩阵测试与完备性}{22}{subsection.4.4}%
+\contentsline {section}{\numberline {5}矩阵抽取与傅里叶解码}{23}{section.5}%
+\contentsline {subsection}{\numberline {5.1}逆短码定理}{23}{subsection.5.1}%
+\contentsline {subsection}{\numberline {5.2}建议实验与解码陈述}{25}{subsection.5.2}%
+\contentsline {subsection}{\numberline {5.3}比较两种矩阵扰动}{26}{subsection.5.3}%
+\contentsline {subsection}{\numberline {5.4}获得许多有用的行纤维}{26}{subsection.5.4}%
+\contentsline {subsection}{\numberline {5.5}转移所选切片}{28}{subsection.5.5}%
+\contentsline {subsection}{\numberline {5.6}解码行建议}{30}{subsection.5.6}%
+\contentsline {section}{\numberline {6}干净坐标与可靠性间隙}{34}{section.6}%
+\contentsline {subsection}{\numberline {6.1}经典投影博弈重复}{34}{subsection.6.1}%
+\contentsline {subsection}{\numberline {6.2}干净坐标上消失的建议}{34}{subsection.6.2}%
+\contentsline {subsection}{\numberline {6.3}矩阵博弈间隙}{36}{subsection.6.3}%
+\contentsline {section}{\numberline {7}完成归约}{37}{section.7}%
+\contentsline {subsection}{\numberline {7.1}去掉权重与重复边}{37}{subsection.7.1}%
+\contentsline {subsection}{\numberline {7.2}最终归约}{38}{subsection.7.2}%
+\contentsline {paragraph}{多项式编码。}{40}{paragraph*.7}%
+\contentsline {section}{\numberline {8}近似推论}{40}{section.8}%
+\contentsline {subsection}{\numberline {8.1}约束满足与顶点覆盖}{40}{subsection.8.1}%
+\contentsline {subsection}{\numberline {8.2}排序约束}{42}{subsection.8.2}%
+\contentsline {subsection}{\numberline {8.3}割、删除与聚类推论}{42}{subsection.8.3}%
+\contentsline {paragraph}{核聚类。}{43}{paragraph*.8}%
+\contentsline {section}{\numberline {A}推论的有限表述}{44}{appendix.A}%
+\contentsline {subsection}{\numberline {A.1}唯一游戏的简单强左形式}{44}{subsection.A.1}%
+\contentsline {subsection}{\numberline {A.2}有限排序转移}{46}{subsection.A.2}%

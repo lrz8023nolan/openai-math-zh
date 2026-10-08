@@ -1,0 +1,259 @@
+\section{近似推论}\label{sec:consequences}
+
+Theorem~\ref{thm:ugc} 把已有的条件难度结果转化为 NP 难度结果。底层
+的条件归约与近似阈值出自所引作者。我们给出下述精确实例模型所需的
+附加论证。同时记录姊妹手稿的两个结果。对最大化问题，比值 \(r\)
+指返回至少 \(r\) 倍最优值的解；对最小化问题，因子 \(c\) 指返回至多
+\(c\) 倍最优值的解。下文所有因子与容差都独立于输入规模固定。在每
+个使用 Theorem~\ref{thm:ugc} 的归约中，它们在字母表被选定之前决定
+唯一游戏误差。若 \(\mathrm P\ne\mathrm{NP}\)，所得难度陈述排除
+所示严格阈值处的确定性多项式时间近似。
+
+\subsection{约束满足与顶点覆盖}
+
+对 \textsc{Max-Cut}（最大化二分后跨越的边数），Khot、Kindler、
+Mossel 与 O'Donnell 的归约给出：在 \((\alpha_{\mathrm{GW}},1)\) 中
+每个固定比值处的近似都是 NP 难的，其中 Goemans--Williamson 常数为
+\(\alpha_{\mathrm{GW}}\simeq0.87856\)~\cite[Theorem~1]{KKMO07}。
+这匹配 Goemans 与 Williamson 的半定近似阈值~\cite{GW95}。该归约
+使用 Mossel、O'Donnell 与 Oleszkiewicz 的 Majority Is Stablest
+定理~\cite{MOO10}。对 \textsc{Vertex Cover}（最小化与每条边相交的
+顶点数），Khot 与 Regev 的归约给出 \((1,2)\) 中每个固定因子处的
+NP 难度~\cite{KhotRegev2008}。
+
+约束满足问题（CSP）在此由有限的非空域 \(D\) 与 \(D\) 上有限多
+个有界元的布尔谓词族 \(\Lambda\) 指定。带权 \(\Lambda\)-实例有
+有限变量集与有限多个「来自 \(\Lambda\) 的谓词作用于变量元组」，
+其非负有理权重之和为 1。赋值把变量映到 \(D\)；其值是被满足的
+总权重，\(\operatorname{OPT}\) 是该值在所有赋值上的最大值。
+Raghavendra 定理以一个基础半定松弛刻画了每个这种固定语言的最优
+近似（至任意小的正误差）
+\cite[Theorem~1.1 and Corollary~1.3]{Raghavendra08}。
+顶点覆盖结果使用其自己的归约。把 Raghavendra 松弛的值记为
+\(\operatorname{SDP}_{R}\)，如~\cite[Section~4.5]{RaghavendraThesis09}
+所定义。
+
+Raghavendra 定理的固定实例形式与下文排序定理使用唯一游戏的强化
+二部表述。在其 YES 情形，一个染色满足每个左顶点关联边的至少
+\(1-\zeta\) 比例；在其 NO 情形，每个染色至多满足 \(\nu\) 比例的
+边。这分别是左顶点与边的均匀比例。
+Lemma~\ref{lem:simple-strong-left} 在显式非空简单图（其公共正左度
+可以达到任何固定下界并被任何固定正整数整除）上给出该承诺。它遵循
+Khot 与 Regev 的归一化与序列构造
+~\cite[Lemmas~3.3, 3.4, and~3.6]{KhotRegev2008}，外加使图为简单的
+一个附加限制。其误差参数与度在字母表选取之前固定，因此
+Theorem~\ref{thm:ugc} 提供所需前提。
+
+\begin{corollary}[Raghavendra 推论]\label{cor:raghavendra-consequence}
+设 \(J\) 为固定的 \(\Lambda\)-实例，
+\(A=\operatorname{OPT}(J)<B=\operatorname{SDP}_{R}(J)\)。对每个
+固定 \(0<\eta<(B-A)/2\)，区分满足
+\[
+ \operatorname{OPT}(I)\ge B-\eta
+ \qquad\text{的 \(\Lambda\)-实例 \(I\) 与满足}\qquad
+ \operatorname{OPT}(I)\le A+\eta
+\]
+的实例是 NP 难的。
+\end{corollary}
+\begin{proof}
+按该论文的公共元约定
+\cite[Definitions~7.2.1--7.2.2]{RaghavendraThesis09}，把 \(D\)
+等同于固定的 \([q]\)，并把每个谓词用被忽略的尾随参数补齐到公共
+正元数：新增位置填入 \(J\) 的某个固定变量（因 \(A<B\) 而存在）。
+这保持每个被应用收益及其依赖集不变，因而保持
+\(\operatorname{OPT}\) 与 \cite[Section~4.5]{RaghavendraThesis09}
+的松弛。在该松弛中，每个局部分布定义在其被应用收益真正依赖的
+变量上的赋值上。在发出一个出现时，只丢弃新增的尾随位置，保留
+\(\Lambda\) 中的原谓词及其权重。
+
+以容差 \(\eta/2\) 应用 Raghavendra 的固定实例定理
+\cite[Theorem~7.9]{RaghavendraThesis09}；另见 \cite[Theorem~1.1
+and Lemma~2.3]{Raghavendra08}。固定见证与容差决定其强化的唯一
+游戏误差，于是上述表述与 Theorem~\ref{thm:ugc} 提供其前提，字母表
+为固定的 \([M]\)。其验证者实例在 YES 情形最优值大于 \(B-\eta/2\)，
+在 NO 情形至多 \(A+\eta/2\)。
+
+我们把验证者的概率权重换成所述的有理权重。对这次固定调用，
+\cite[Sections~7.3.1 and~7.5]{RaghavendraThesis09} 的构造在字母表
+\([M]\) 固定之后给出有限集 \(\mathcal S\) 上的局部概率律
+\(\theta\)。记录 \(s\in\mathcal S\) 指定 \(J\) 的一个被应用谓词、
+其在 \(D^M\) 中的 \(a(s)\) 个有序神谕查询串、以及其应答填充的
+位置。该律可以依赖 \(J,\eta,M\)，但没有变化的输入参数进入它。
+有理概率向量在这个有限单纯形中稠密，故取
+\(\widehat\theta\in\mathbb Q_{\ge0}^{\mathcal S}\) 使
+\[
+ \sum_{s\in\mathcal S}\widehat\theta(s)=1,
+ \qquad
+ \delta:=\frac12\sum_{s\in\mathcal S}
+       |\widehat\theta(s)-\theta(s)|<\frac{\eta}{2}.
+\]
+这张有理表是归约的固定有限数据；其描述长度可以依赖
+\(J,\eta,M\)。
+
+设 \(L_\Phi,V_\Phi\) 为上述非空简单博弈的左右两侧，\(h\ge1\) 为其
+公共左度。列出所引论文 Section~7.5 中使用的变量
+\(V_\Phi\times D^M\)。其外层验证者选均匀左顶点 \(u\)，并对每个
+神谕查询独立地选 \(u\) 的均匀邻居、按该边的置换重标记查询串。对
+每个 \(s\in\mathcal S\)、\(u\in L_\Phi\) 与有序邻居元组
+\(\in N(u)^{a(s)}\)，在所得查询变量上发出 \(s\) 规定的
+\(\Lambda\)-谓词。测试中未被使用的任何语法变量，其所有位置都填
+第一个列出的输出变量；被应用谓词与这类变量无关，故其值不变。给
+出现权重
+\[
+ \frac{\widehat\theta(s)}{|L_\Phi|h^{a(s)}}.
+\]
+这些权重是和为 1 的非负有理数。保持相同出现分开，得到
+\(|L_\Phi|\sum_{s\in\mathcal S}h^{a(s)}\) 个出现与
+\(|V_\Phi||D|^M\) 个变量。局部集与每个 \(a(s)\) 固定，而图是
+多项式规模的；因此这是多项式出现列表。显式的邻居列表与边置换使我
+们能以多项式时间写出它。每个权重有多项式二进制长度：可以用固定
+分母乘 \(|L_\Phi|h^{a(s)}\) 表示。
+
+对赋值 \(\sigma\)，设 \(g_\sigma(s)\in[0,1]\) 为其关于这些外层
+选择的条件接受概率。原实例与有理化实例用同一变量集，且
+\[
+ \bigl|\operatorname{val}_{\widehat\theta}(\sigma)
+       -\operatorname{val}_{\theta}(\sigma)\bigr|
+ =\left|\sum_{s\in\mathcal S}
+       \bigl(\widehat\theta(s)-\theta(s)\bigr)g_\sigma(s)\right|
+ \le\delta<\frac{\eta}{2}.
+\]
+取最大值即对其最优值给出同样的界。因此引入的间隙给出 YES 情形
+最优值至少 \(B-\eta\)、NO 情形至多 \(A+\eta\)，如所需。
+\end{proof}
+
+\subsection{排序约束}
+
+排序 CSP 使用输入变量的全局序，而不是从固定有限域取值的赋值。
+固定整数 \(k\ge2\) 与非空真子集 \(\Pi\subset S_k\)（\(S_k\) 为
+\(\{1,\ldots,k\}\) 的置换群）。在 Guruswami、H\aa stad、Manokaran、
+Raghavendra 与 Charikar 的有限概率加权模型
+~\cite[Definition~8.2]{GuruswamiEtAl2011OrderingCSP} 中，我们使用
+显式列出的有限变量集 \(V\) 与有限的约束出现列表。其非负有理权重
+用二进制分子分母编码且和为 1。每个出现是互异变量的有序 \(k\)
+元组 \((v_1,\ldots,v_k)\)，线性序 \(\prec\) 在
+\[
+ v_{\pi(1)}\prec\cdots\prec v_{\pi(k)}
+ \quad\text{对某个 }\pi\in\Pi
+\]
+时满足它。记 \(\OPT_\Pi(I)\) 为被满足权重的最大值。均匀随机序满足
+期望权重 \(\rho_\Pi=|\Pi|/k!\)。由于 \(\OPT_\Pi(I)\le1\)，这是
+\(\rho_\Pi\)-近似。对固定的 \(k\)，条件期望使该保证去随机化。当
+序的任何前缀已暴露后，一条约束与之相容的相对顺序至多 \(k!\) 种。
+其条件成功概率因此可以精确计算；选下一个变量以保持期望值只需
+多项式多次、多项式位长的精确有理运算。\(V\) 的规模属于输入，
+故这不是前一推论中固定有限域上的 CSP。
+
+\begin{corollary}[排序 CSP 推论]\label{cor:ordering-csp}
+固定 \(k\ge2\) 与 \(\varnothing\ne\Pi\subsetneq S_k\)，令
+\(\rho_\Pi=|\Pi|/k!\)。对每个固定 \(0<\varepsilon<(1-\rho_\Pi)/2\)，
+区分满足
+\[
+ \OPT_\Pi(I)\ge1-\varepsilon
+ \qquad\text{与}\qquad
+ \OPT_\Pi(I)\le\rho_\Pi+\varepsilon
+\]
+的有限带权 \(\Pi\)-排序 CSP 实例 \(I\) 是 NP 难的。因此，每个
+固定比值 \(r\in(\rho_\Pi,1]\) 处的近似都是 NP 难的。连同随机排序
+保证，这给出最优阈值 \(\rho_\Pi\)。
+\end{corollary}
+\begin{proof}
+Proposition~\ref{prop:finite-ordering-transfer} 从简单强左唯一游戏
+实例构造所述有限实例。它使用 Guruswami 等人的局部间隙与解析估计
+~\cite{GuruswamiEtAl2011OrderingCSP}，并在字母表选取之前固定所需的
+博弈误差与度条件。Lemma~\ref{lem:simple-strong-left} 从
+Theorem~\ref{thm:ugc} 提供该博弈；复合归约即对原谓词 \(\Pi\) 证得
+所示间隙。
+
+对固定的 \(r\in(\rho_\Pi,1]\)，把正误差取得更小使
+\(\varepsilon<(r-\rho_\Pi)/(1+r)\)。则
+\(r(1-\varepsilon)>\rho_\Pi+\varepsilon\)，于是 \(r\)-近似将区分
+两种情形。
+\end{proof}
+
+对有限带权有向图模型中的 \textsc{Maximum Acyclic Subgraph}，取
+\(k=2\)、\(\Pi=\{12\}\)（一行记号）。约束 \((u,v)\) 要求边指向前
+方；前向边构成无圈子图，而每个无圈子图都有拓扑序。故其阈值为
+\(1/2\)。对 \textsc{Betweenness}，约束 \((a,b,c)\) 要求 \(b\)
+位于 \(a\) 与 \(c\) 之间，故 \(\Pi=\{123,321\}\subset S_3\)，阈值
+为 \(2/3!=1/3\)
+\cite[Theorem~1.1 and Section~1.2]{GuruswamiEtAl2011OrderingCSP}。
+这些有限带权推论具有固定正误差的近完美完备性。
+
+\subsection{割、删除与聚类推论}
+
+对 Chawla、Krauthgamer、Kumar、Rabani 与 Sivakumar 的割问题
+~\cite[Section~1]{CKKRS2006}，设 \(G=(V,E)\) 为有限无向图，正有理
+边代价 \(c_e\)，\(\mathcal D=\{\{s_i,t_i\}:1\le i\le k\}\) 含
+\(k\ge1\) 个互异的需求对（\(s_i\ne t_i\)）。对 \(M\subseteq E\)，
+记 \(c(M)=\sum_{e\in M}c_e\)，\(q_{\mathcal D}(M)\) 计
+\(G-M\) 中断开的需求对数。带权 \textsc{Multicut} 在
+\(q_{\mathcal D}(M)=k\) 的条件下最小化 \(c(M)\)。其非均匀
+\textsc{Sparsest Cut} 搜索问题在 \(q_{\mathcal D}(M)>0\) 的割集
+\(M\) 上最小化 \(c(M)/q_{\mathcal D}(M)\)。只有被选的对携带单位
+需求；它们不必是全部顶点对。
+
+对带权 Min-\(2\mathrm{CNF}^{\equiv}\) Deletion，输入是带正有理
+权重的子句 \((\ell\equiv\ell')\)（\(\ell,\ell'\) 为布尔文字），
+赋值支付假子句的总权重。允许的子句因此表达变量的相等或不等。
+
+在 \textsc{Correlation Clustering} 的任意带权图形式中，每条出现的
+边有 \(+\) 或 \(-\) 标签与非负有理权重。分成任意多个簇的划分支付
+「端点落在不同簇的 \(+\) 边」与「端点落在同一簇的 \(-\) 边」。
+缺失的边不产生惩罚。这是 \cite[Section~2.1]{DemaineEtAl2006Clustering}
+的最小分歧目标。
+
+\begin{corollary}[割、删除与聚类难度]
+\label{cor:cut-clustering}
+对每个固定实常数 \(C>1\)，上述四个最小化问题中每一个在因子 \(C\)
+内的近似都是 NP 难的。对 \textsc{Sparsest Cut}，这是搜索任务在
+多项式时间 Cook 归约下的难度：算法必须输出割集，而不只是最优值的
+估计。因此除非 \(\mathrm P=\mathrm{NP}\)，这些问题都不容许任何
+固定常数因子的确定性多项式时间近似。
+\end{corollary}
+\begin{proof}
+\cite{CKKRS2006} 的 Corollary~1.3 在其普通的边值唯一游戏假设下给
+出前三个结论。对请求的因子 \(C\)，在任一更大的固定因子 \(L\) 处
+使用其难度陈述：\(C\)-近似也是 \(L\)-近似。为提供该假设，把
+Theorem~\ref{thm:ugc} 的二部约束定向为左到右，把其固定字母表重新
+编号为 \([d]\)（\(d=2^s\ge2\)），并给其边权和为 1 的相等权重。
+必要时用孤立问题补齐较小的顶点侧，这保持值与多项式规模。
+\textsc{Sparsest Cut} 的搜索版本限定见所引来源的 Section~1.3。
+
+对 \textsc{Correlation Clustering}，\cite[Section~2.1]{CKKRS2006}
+中困难的 \textsc{Multicut} 实例的需求对是 \(d\)-立方内互异的
+对径对，而 Multicut 图的边是立方体的边或连接不同立方体。此处
+\(d\ge2\)（该来源 Lemma~1.5 不改变这一点），故需求对是非边。
+Demaine、Emanuel、Fiat 与 Immorlica 的变换
+~\cite[Theorem~4.7 and Corollary~4.8]{DemaineEtAl2006Clustering}
+因此不会产生异号的平行边。它保持最优值，并把每个聚类转换为代价
+不超过它的 multicut，故同样的固定因子难度得以转移。
+\end{proof}
+
+独立手稿 \cite[Theorem~1.1]{OpenAIUniformSparsest2026} 证明：对
+「非负有理容量、每对互异顶点之间恰为单位需求」的二分目标，每个
+固定因子 \(C>1\) 处都是 NP 难的。这一均匀需求定理不依赖
+Theorem~\ref{thm:ugc}，也不由上述非均匀归约提供。
+
+\paragraph{核聚类。}
+独立的姊妹应用关心如下最大化问题。对\emph{恒等目标核聚类}，固定
+整数 \(k\ge3\)。输入是显式表示的有理对称矩阵
+\(A=(a_{pq})_{p,q=1}^N\succeq0\) 且 \(A\mathbf1=0\)（\(\mathbf1\)
+为全一向量）。赋值 \(\sigma:\{1,\ldots,N\}\to\{1,\ldots,k\}\) 的
+值为
+\[
+ \val_A(\sigma)=\sum_{p,q=1}^N
+ a_{pq}\mathbf1_{\{\sigma(p)=\sigma(q)\}},
+ \qquad
+ \OPT_k(A)=\max_\sigma\val_A(\sigma).
+\]
+求和包含有序对与对角线；允许空簇，且不按簇大小归一化。损失因子
+\(\alpha\ge1\) 指返回至少 \(\OPT_k(A)/\alpha\) 的值。高斯螺旋桨
+姊妹篇用 Theorem~\ref{thm:ugc} 证明：对每个固定 \(k\ge3\)，达到
+每个固定损失因子
+\[
+ 1\le\alpha<\alpha_k,
+ \qquad \alpha_k=\frac{8\pi}{9}\left(1-\frac1k\right)
+\]
+是 NP 难的~\cite[Theorem~6.1]{OpenAIGaussianPropeller2026}。
+这是低于螺旋桨舍入因子 \(\alpha_k\) 的严格难度。

@@ -6,30 +6,28 @@
  text width=3.3cm,inner sep=7pt,minimum height=14mm},
  flow/.style={-{Latex[length=2mm]},thick}]
 \node[block] (left) at (0,0)
- {One child input\\$u_{AJ}\in P_{t-1}$\\$J C_{t-1}(u_{AJ})$};
+ {一个子节点输入\\$u_{AJ}\in P_{t-1}$\\$J C_{t-1}(u_{AJ})$};
 \node[block,draw=red!70!black] (selected) at (4.8,0)
- {Selected child input\\$u_{A_*J_*}+\xi_{t-1}$\\$J_*C_{t-1}(u_{A_*J_*}+\xi_{t-1})$};
+ {被选中的子节点输入\\$u_{A_*J_*}+\xi_{t-1}$\\$J_*C_{t-1}(u_{A_*J_*}+\xi_{t-1})$};
 \node[block] (right) at (9.6,0)
- {Other child inputs\\$u_{AJ}\in P_{t-1}$\\$J C_{t-1}(u_{AJ})$};
+ {其余子节点输入\\$u_{AJ}\in P_{t-1}$\\$J C_{t-1}(u_{AJ})$};
 \node at (2.4,0) {$\cdots$};
 \node at (7.2,0) {$\cdots$};
 \node[block,text width=7cm] (sum) at (4.8,-2)
- {Sum over every child $(A,J)\in\mathcal I$\\
- noisy aggregate $(x',y')=(x,y)+J_*\Delta$};
+ {对所有子节点 $(A,J)\in\mathcal I$ 求和\\
+ 噪声聚合 $(x',y')=(x,y)+J_*\Delta$};
 \draw[flow] (left.south) -- (sum.north west);
 \draw[flow,draw=red!70!black] (selected) -- (sum);
 \draw[flow] (right.south) -- (sum.north east);
 \node[block,text width=7cm] (out) at (4.8,-3.8)
- {Noisy parent output $y'+Q(x')\in B$};
+ {噪声父输出 $y'+Q(x')\in B$};
 \draw[flow] (sum) -- (out);
 \end{tikzpicture}
-\caption{One level of the latent recursion, shown under its additive noise.
-The input space is a product over all child indices $(A,J)$; only one
-uniformly chosen child is perturbed. Each child output is embedded in
-$U_A\le X\oplus B$, all embedded outputs are added, and the quadratic
-map is applied once at the parent. Here $(x,y)$ is the initial aggregate,
-and $\Delta$ is the selected child's output difference, so the noisy
-aggregate is $(x',y')=(x,y)+J_*\Delta$. The omitted children obey the
-same rule. The highlighted perturbation may disappear at the parent.}
+\caption{潜在递归的一层（在其加性噪声下）。输入空间是全部子节点
+指标 $(A,J)$ 上的乘积；只有一个均匀选中的子节点被扰动。每个子
+节点输出被嵌入 $U_A\le X\oplus B$，全部嵌入输出相加，二次映射在
+父节点处作用一次。此处 $(x,y)$ 是初始聚合，$\Delta$ 是被选子节点
+的输出差，故噪声聚合为 $(x',y')=(x,y)+J_*\Delta$。被省略的子节点
+遵循同一规则。高亮的扰动可能在父节点处消失。}
 \label{fig:latent-recursion}
 \end{figure}

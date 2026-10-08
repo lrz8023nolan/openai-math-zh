@@ -1,0 +1,844 @@
+\section{推论的有限表述}
+\label{app:finite-consequences}
+
+Section~\ref{sec:consequences} 的部分归约使用这样的二部唯一游戏
+实例：近满足的染色满足大多数左顶点关联的全部约束。我们先得到具有
+该性质、且公共左度有指定下界的简单图。随后用它给出排序推论的有限
+有理表述。局部排序构造遵循 Guruswami、H\aa stad、Manokaran、
+Raghavendra 与 Charikar~\cite{GuruswamiEtAl2011OrderingCSP}，使用
+下文所引的低影响结果。复合过程指明图、独立的邻居选取，以及到互异
+变量上的约束的转换。
+
+\subsection{唯一游戏的简单强左形式}
+
+把二部博弈的约束从左侧定向到右侧。若某个染色的满足一个左顶点关联
+的每条边，则称该左顶点被\emph{强满足}。
+
+\begin{lemma}[简单强左博弈]\label{lem:simple-strong-left}
+固定 \(0<\zeta,\nu<1\) 与整数 \(d,H\ge1\)。存在整数
+\(h,R\ge1\)（\(h\ge H\) 且 \(d\mid h\)）与一个确定性多项式时间
+归约，从 \(\mathrm{3SAT}\) 到 \([R]\) 上非空、显式、无权的简单
+二部唯一游戏实例 \(\Phi_\varphi=(A,B,E)\)，具有以下性质。每个左
+顶点的度为 \(h\)。若 \(\varphi\) 可满足，则一个染色强满足 \(A\)
+的至少 \(1-\zeta\) 比例。若 \(\varphi\) 不可满足，则
+\(\val(\Phi_\varphi)<\nu\)。度 \(h\) 与 Theorem~\ref{thm:ugc}
+所用的两个误差可以只由 \(\zeta,\nu,d,H\) 选定，先于该定理给出
+字母表 \(R\)。
+\end{lemma}
+
+\begin{proof}
+我们改编 Khot 与 Regev 的归一化与序列构造
+\cite[Lemmas~3.3, 3.4, and~3.6]{KhotRegev2008}。下文对右顶点使用
+的多份副本保证最终图为简单图。
+
+选 \(d\) 的倍数 \(h\) 使
+\[
+ h\ge\max\{H,2\},\qquad \frac1h<\frac{\nu}{4}.
+\]
+对 \((T)_h=T(T-1)\cdots(T-h+1)\)，选固定整数 \(T\ge h\) 使
+\[
+ p_{\mathrm{graph}}:=\frac{(T)_h}{T^h}>\frac34.
+\]
+这样的选取存在，因为 \(1-(T)_h/T^h\le\binom h2/T\)。
+选正有理数 \(\beta,\gamma,u\) 与正整数 \(L_2\)，使
+\[
+ \beta<\frac{\nu}{4},\qquad
+ h^2\gamma<\frac{\nu}{4},\qquad
+ (h+1)u<\frac{\zeta}{2},\qquad
+ \frac1{L_2}<\min\left\{\frac{\beta\gamma}{2},
+                            \frac{\zeta}{2h}\right\}.
+\]
+最后选正有理数 \(\gamma_0,\zeta_0<1/2\) 使
+\[
+ 2\gamma_0<\frac{\beta\gamma}{2},
+ \qquad \sqrt{2\zeta_0}<u.
+\]
+以上选取都在以完备性误差 \(\zeta_0\)、可靠性误差 \(\gamma_0\)
+调用 Theorem~\ref{thm:ugc} 之前完成。
+
+把其输出写成 \(\Phi_0=(X_0,Y,E_0)\)，每个置换定向为左到右，并把
+固定字母表重新编号为 \([R]\)。令 \(M_0=|E_0|>0\)，给每条边权重
+\(1/M_0\)，令 \(w_x\) 为 \(x\) 处的关联总权重。简单性给出每对正
+权重处恰有一个置换。创建
+\[
+ n_x=\lfloor 2|X_0|w_x\rfloor
+\]
+个 \(x\) 的副本，各带局部边权 \(w_{xy}/w_x\)。只有 \(w_x>0\) 的
+顶点有副本。设 \(X_1\) 为副本集，则
+\[
+ |X_0|\le |X_1|=\sum_x n_x\le2|X_0|,
+\]
+且每个副本处的关联权重为 1。
+
+此处及下文，局部被满足权重使用该左顶点处的标记与共享右顶点处的
+标记。给定副本博弈的任意染色，保留右标记，并给每个 \(x\) 的所有
+副本一个使其公共局部目标最大化的标记。相应的 \(\Phi_0\) 的染色
+\(L\) 满足
+\[
+ \sum_{x'\in X_1} w_{\mathrm{sat}}(x')
+ \le
+ \sum_{x:n_x>0}\frac{n_x}{w_x}w_{\mathrm{sat},L}(x)
+ \le 2|X_0|\,w_{\mathrm{sat},L}(\Phi_0).
+\]
+因此副本博弈的归一化值在 NO 输入上至多 \(2\gamma_0\)。在 YES
+输入上，提升 \(\Phi_0\) 的一个未满足权重至多 \(\zeta_0\) 的染色。
+对未满足权重作同样计算，得平均局部损失至多 \(2\zeta_0<u^2\)。
+Markov 不等式留下 \(X_1\) 中超过 \(1-u\) 比例的副本，其局部被满足
+权重至少 \(1-u\)。
+
+为去掉权重，令 \(\alpha=L_2|Y|\)。在每个 \(x\in X_1\) 处，把其
+归一化局部权重记为 \(\widetilde w_{xy}\)。选一个局部权重为正的
+邻居 \(y_0\)，对每个 \(y\ne y_0\) 把 \(\alpha\widetilde w_{xy}\)
+向下取整，并把剩余的出现都指派给 \(y_0\)。同一对上的所有出现保留
+该对的置换。这给出左度 \(\alpha\) 的无权多重图
+\(\Phi_{\mathrm{occ}}\)。对邻居的任何子集，其旧权重与新出现比例
+之差的绝对值至多 \(|Y|/\alpha=1/L_2\)：若该子集不含 \(y_0\)，对
+子集内求取整损失之和；否则对其补集求和。这对每个染色的被满足子集
+都适用。故
+\begin{equation}
+ \val(\Phi_{\mathrm{occ}})\le 2\gamma_0+\frac1{L_2}<\beta\gamma
+ \quad\text{在 NO 输入上。}
+\label{eq:strong-left-base-soundness}
+\end{equation}
+在 YES 输入上，上述染色在超过 \(1-u\) 比例的 \(X_1\) 处的被满足
+出现比例至少 \(1-a\)，其中 \(a=u+1/L_2\)。
+
+把 \(x\) 处的 \(\alpha\) 个出现用 \(j\) 索引，右端点为 \(y_j\)、
+置换为 \(\pi_j\)。把每个 \(y\in Y\) 换成 \((y,t)\)（\(t\in[T]\)），
+并把出现 \(j\) 换成从 \(x\) 到 \((y_j,t)\) 的全部 \(T\) 个出现
+（置换 \(\pi_j\)）。称所得左 \(\alpha T\)-正则多重图为
+\(\Phi_{\mathrm{tag}}\)。对 \(\Phi_{\mathrm{tag}}\) 的任意染色，
+保留其左标记，并对每个原 \(y\) 独立地给 \(y\) 一个均匀所选副本
+\((y,t)\) 的标记。\(\Phi_{\mathrm{occ}}\) 中的期望边值（计其出现）
+恰是 \(\Phi_{\mathrm{tag}}\) 中的给定边值。故
+\begin{equation}
+ \val(\Phi_{\mathrm{tag}})\le\val(\Phi_{\mathrm{occ}})<\beta\gamma
+ \quad\text{在 NO 输入上。}
+\label{eq:strong-left-tag-value}
+\end{equation}
+YES 染色的与标签无关的提升保持每个局部被满足比例。
+
+考虑完整的序列图：其左顶点为
+\[
+ \bigl(x,(j_1,t_1),\ldots,(j_h,t_h)\bigr),
+ \qquad j_i\in[\alpha],\quad t_i\in[T],
+\]
+位置 \(i\) 经 \(\pi_{j_i}\) 连到 \((y_{j_i},t_i)\)。这是 Khot 与
+Regev 的序列构造；其左顶点标识符包含整个有序出现序列。我们以允许
+左标记依赖整个序列的形式记录可靠性估计。每个 \(x\) 恰贡献
+\((\alpha T)^h\) 个完整序列顶点，度全为 \(h\)。因此均匀边值是：
+对均匀 \(x\)、其处一列有序的 \(h\) 个独立均匀出现、以及该元组中
+的均匀位置，取被满足比例的平均。
+
+固定 \(\Phi_{\mathrm{tag}}\) 中的任意右标记。\(x\) 处的每个出现
+决定唯一满足它的左标记。设 \(p_x(\ell)\) 为决定标记 \(\ell\) 的
+比例。诸 \(p_x(\ell)\) 之和为 1，且在每个 \(x\) 处选最好的左标记
+给出
+\[
+ \mathbb E_x\max_\ell p_x(\ell)\le\val(\Phi_{\mathrm{tag}})<\beta\gamma.
+\]
+因此少于 \(\beta\) 比例的 \(x\) 有
+\(\max_\ell p_x(\ell)\ge\gamma\)。在每个其余的 \(x\) 处，\(h\) 个
+独立出现所决定的两个标记一致的概率至多
+\[
+ \binom h2\sum_\ell p_x(\ell)^2
+ \le \binom h2\max_\ell p_x(\ell)<h^2\gamma.
+\]
+若没有任何两个被决定的标记一致，则序列顶点的任一标记至多满足其
+\(h\) 条边中的一条。在其余序列上其被满足比例至多为 1。先对序列
+取平均、再对 \(x\) 取平均，并用 \(1/h+h^2\gamma<1\)，把完整序列
+图的值界定在
+\begin{equation}
+ s:=\beta+\frac1h+(1-\beta)h^2\gamma<\frac{3\nu}{4}.
+\label{eq:strong-left-full-value}
+\end{equation}
+该估计对右标记的每种取法、以及左标记的每种依赖序列的取法都
+成立。
+
+只保留 \(t_1,\ldots,t_h\) 两两不同的序列顶点。对每个 \(x\) 与每
+个基序列 \((j_1,\ldots,j_h)\)，恰有 \((T)_h\) 个标签序列存活。
+每个 \(x\) 因此贡献 \(\alpha^h(T)_h\) 个存活顶点，占其完整集合的
+比例 \(p_{\mathrm{graph}}\)。每个存活顶点的 \(h\) 个右邻居互异
+（因标签互异）。不同的出现序列仍是不同的左顶点，故该存活图是
+简单图且公共左度为 \(h\)。
+
+给基于 \(x\) 的每个序列顶点 \(x\) 的旧标记，并保持与标签无关的
+右标记。对这个提升的 YES 染色，位置 \(i\) 处的满足只依赖
+\(j_i\)。把标签限制为互异，使基出现序列保持独立均匀。若
+\(\Phi_{\mathrm{occ}}\) 中 \(x\) 处的被满足比例为 \(f_x\)，则恰
+有 \(f_x^h\) 比例的其存活序列顶点被强满足。由于每个 \(x\) 的贡献
+相同，强满足比例至少为
+\[
+ (1-u)(1-a)^h
+ \ge 1-u-ha
+ =1-(h+1)u-\frac h{L_2}>1-\zeta.
+\]
+此处 \(0<a<1\) 由参数选取得到。
+
+对 NO：把存活图的任意染色延拓到完整图——给被丢弃的左顶点任意
+标记并保留所有右标记。所有左度都是 \(h\)，故其完整边值至少是其
+存活边值的 \(p_{\mathrm{graph}}\) 倍。由
+\eqref{eq:strong-left-full-value}，后者至多
+\[
+ \frac{s}{p_{\mathrm{graph}}}<\frac{3\nu/4}{3/4}=\nu.
+\]
+该延拓容许存活的左标记任意依赖其标签。
+
+所有操作都是有限且确定性的。设 \(N\) 界定 \(\Phi_0\) 的显式规模，
+则 \(|X_1|=O(N)\)、\(\alpha=L_2|Y|=O(N)\)。存活图有
+\(|X_1|\alpha^h(T)_h=O(N^{h+1})\) 个左顶点、每个左顶点 \(h\) 条
+边。其标识符与取整所用的有理算术具有多项式位长，其置换表使用从
+\(\Phi_0\) 继承的固定字母表。这证明了所述多项式界并完成归约。
+\end{proof}
+
+\subsection{有限排序转移}
+
+Guruswami 等人的排序定理使用多尺度局部实例与低影响舍入估计。其
+一般的外层复合被描述为类似其 Section~7 中的双问题构造。下面的
+命题针对 Section~\ref{sec:consequences} 的有理出现列表模型给出该
+复合。它把为排序间隙选取的常数与随后选取的唯一游戏字母表分开。
+
+\begin{proposition}[有限排序转移]
+\label{prop:finite-ordering-transfer}
+固定 \(k\ge2\) 与 \(\varnothing\ne\Pi\subsetneq S_k\)，令
+\(\rho_\Pi=|\Pi|/k!\)，并固定 \(0<\delta<(1-\rho_\Pi)/2\)。存在
+只依赖 \(k,\Pi,\delta\) 的整数 \(q,H\ge1\) 与正有理数
+\(\zeta,\nu<1\)，对每个固定整数 \(R\ge1\) 有如下性质。
+
+设 \(\Phi=(A,B,E)\) 为 \([R]\) 上的非空显式无权简单二部唯一游戏
+实例（从 \(A\) 定向到 \(B\)），其公共左度 \(h\) 满足 \(h\ge H\)
+且 \(q\mid h\)。存在确定性变换（对固定 \(R\) 在 \(\Phi\) 的显式
+规模上多项式），产生显式的 \(\Pi\)-排序约束列表：约束内变量互异，
+带非负有理权重（每个用二进制分子与正二进制分母编码），权重之和为
+1。若某染色强满足至少 \((1-\zeta)|A|\) 个左顶点，则
+\(\OPT_\Pi(I)\ge1-\delta\)。若 \(\val(\Phi)\le\nu\)，则
+\(\OPT_\Pi(I)\le\rho_\Pi+\delta\)。常数 \(q,H,\zeta,\nu\) 与
+\(R,h\) 都无关。
+\end{proposition}
+
+输出变量将是 \((b,z)\in B\times[m]^R\)（\([m]\) 为下文选定的固定
+局部符号集）。在每个 \(a\in A\) 处，把全局序限制到
+\(N(a)\times[m]^R\)，并把该局部有序表分成 \(q\) 个等长连续块。
+对邻居取块隶属的平均（其边置换作用于 \(z\)），得到 \(z\) 的一个
+单纯形值函数，其分量在均匀 \(z\) 下均值为 \(1/q\)。对固定的
+\(a\)，在局部查询串的条件下，独立的邻居选取使块秩独立、概率由该
+函数给出。局部估计在小影响下界定其期望粗收益；碰撞估计容许相关
+的串，并界定共享块的概率（粗化可能在共享块上改变诱导序）。平均秩
+区间中的大影响反而给出博弈标记，而许多这样的顶点与低边值矛盾。
+随后以互异邻居为条件得到合法约束，并把粗完备映射细化成严格序。
+
+对 \(P=\mathbf1_\Pi\)，选 \(\pi_0\in\Pi\) 并设
+\[
+ P_0(\sigma)=P(\pi_0\circ\sigma),\qquad \sigma\in S_k.
+\]
+则 \(P_0(\mathrm{id})=1\)，其平均为 \(\rho_\Pi\)。
+对整数秩向量 \(r=(r_1,\ldots,r_k)\)，记 \(\operatorname{Ref}(r)\)
+为与其弱序相容的置换：它们按秩递增列出位置，相同秩的位置可以任意
+排序。定义
+\begin{equation}
+ \overline{P_0}(r)=
+ \frac1{|\operatorname{Ref}(r)|}
+ \sum_{\sigma\in\operatorname{Ref}(r)}P_0(\sigma).
+\label{eq:ordering-tie-payoff}
+\end{equation}
+这是 \cite[Section~8.2]{GuruswamiEtAl2011OrderingCSP} 使用的均匀
+平局延拓。它落在 \([0,1]\) 中，且秩互异时与 \(P_0\) 一致。
+
+该归一化在元组位置经一次置换后保持谓词。给定原始元组
+\(w=(w_1,\ldots,w_k)\)，定义发出的元组 \(v\) 为
+\begin{equation}
+ v_{\pi_0(j)}=w_j\qquad(j\in[k]).
+\label{eq:ordering-slot-permutation}
+\end{equation}
+若严格序在 \(w\) 上诱导 \(\sigma\)，则它在 \(v\) 上诱导
+\(\pi_0\circ\sigma\)。更一般地，对位置重标记给出双射
+\[
+ \operatorname{Ref}\bigl(f(v_1),\ldots,f(v_k)\bigr)
+ =
+ \{\pi_0\circ\sigma:
+       \sigma\in\operatorname{Ref}(f(w_1),\ldots,f(w_k))\}
+\]
+（对每个秩映射 \(f\)）。这些集合上的均匀平均因此给出相等的
+\(P\)-与 \(P_0\)-收益，包括平局。\eqref{eq:ordering-slot-permutation}
+中的位置置换保持互异性与权重。
+
+对有限局部实例 \(J=(U,\mathcal C,\omega)\)，把出现
+\(c\in\mathcal C\) 的元组记为 \(t_c=(u_{c,1},\ldots,u_{c,k})\)，
+其概率权重记为 \(\omega_c\)。其 \(q\)-排序值为
+\[
+ \operatorname{opt}_q(J)=
+ \max_{g:U\to[q]}
+ \sum_{c\in\mathcal C}\omega_c\,
+ \overline{P_0}\bigl(g(u_{c,1}),\ldots,g(u_{c,k})\bigr).
+\]
+
+\begin{lemma}[有理局部排序数据]\label{lem:ordering-local-data}
+对每个整数 \(q\ge1\) 与有理 \(\eta>0\)，存在有限局部实例
+\(J=(U,\mathcal C,\omega)\)（\(|U|=m\ge2\)）与 \([m]^k\) 上的
+概率律 \(\mu_c\)，具有以下性质。每个元组 \(c\) 有 \(k\) 个互异
+变量；权重 \(\omega_c\) 与 \(\mu_c\) 的全部原子都是有理的。
+\(\mu_c\) 的每个一位边际在 \([m]\) 上均匀，且存在固定的
+\(0<\alpha\le1/2\) 使 \(\mu_c(x)>\alpha\)（对所有 \(c,x\)）。
+此外
+\begin{equation}
+ \operatorname{opt}_q(J)\le\rho_\Pi+\eta,\qquad
+ v_{\mathrm{loc}}:=
+ \sum_c\omega_c\mathbb E_{X\sim\mu_c}\overline{P_0}(X)
+ \ge1-\eta.
+\label{eq:ordering-local-gap}
+\end{equation}
+这些局部律为 \cite[Section~8.3]{GuruswamiEtAl2011OrderingCSP} 的
+松弛提供公共的可行 Gram 数据：存在单位向量 \(I\) 与向量
+\(b_{u,j}\)（\(u\in U,j\in[m]\)）使
+\[
+ \sum_j b_{u,j}=I,\quad
+ \langle b_{u,i},b_{u,j}\rangle=0\ (i\ne j),\quad
+ \|b_{u,j}\|^2=\frac1m,
+\]
+且对 \(c\) 的每两个位置 \(r,s\)，
+\begin{equation}
+ \langle b_{u_{c,r},i},b_{u_{c,s},j}\rangle
+ =\Pr_{X\sim\mu_c}[X_r=i,\ X_s=j].
+\label{eq:ordering-local-moments}
+\end{equation}
+所有这些数据都由 \(k,\Pi,q,\eta\) 固定。
+\end{lemma}
+
+\begin{proof}
+\cite[Theorem~11.1, Definition~11.2, and the proof of
+Theorem~2.5]{GuruswamiEtAl2011OrderingCSP} 中显式的递增元组构造
+（应用于 \(P_0\)）给出有限实例 \(J^*\)：
+\(\operatorname{opt}_q(J^*)\le\rho_\Pi+\eta\)，且存在满足每条约束
+的线性序。其分布只用有限集上的均匀选取，故其权重是有理的。其元组
+位置落在相继的不相交区间中，因而互异。
+
+使用 \cite[Lemma~8.9]{GuruswamiEtAl2011OrderingCSP} 证明中的有限
+副本平滑，特化到这条完整序上。取 \(J^*\) 的 \(L\) 个不相交副本
+（各权重 \(1/L\)），把它们的完整序按某个序 \(\sigma:U\to[m]\)（
+\(m=L|U^*|\)）连续排列。所得实例 \(J\) 仍满足
+\(\operatorname{opt}_q(J)\le\rho_\Pi+\eta\)，因为任何 \(q\)-赋值
+的值是其各副本上值的平均。选 \(L\) 与正有理 \(s_0<1\) 使
+\(1/L+s_0<\eta\)。定义随机赋值 \(X:U\to[m]\) 如下：以概率
+\(1-s_0\) 取 \(\sigma\) 的秩的一个均匀循环移位；以概率 \(s_0\)
+从 \([m]\) 独立均匀地给变量赋值。
+
+每个变量在混合的任一部分都均匀。一次循环切割至多切开 \(L\) 个
+连续副本中的一个，故每个移位的收益至少 \(1-1/L\)。混合的收益
+因此至少 \((1-s_0)(1-1/L)>1-\eta\)。令 \(\mu_c\) 为其在 \(c\)
+的变量上的限制。若 \(n_c(x)\) 是 \(m\) 个循环移位中限制为 \(x\)
+的个数，则
+\[
+ \mu_c(x)=(1-s_0)\frac{n_c(x)}m+\frac{s_0}{m^k}.
+\]
+这些原子是有理的且超过 \(\alpha:=s_0/(2m^k)\)。分母 \(m^k\)
+合法，因为 \(c\) 中的变量互异。
+
+最后，把有限混合视为概率空间，在其 \(L^2\) 空间中取
+\(I=\mathbf1\) 与 \(b_{u,j}=\mathbf1_{\{X(u)=j\}}\)。均匀边际、
+同一变量不同标签的不相交事件、以及到每个 \(c\) 的限制，给出全部
+所示的 Gram 恒等式。这就为这个特定的局部实例构造了所需的可行
+数据。
+\end{proof}
+
+对均匀乘积 \([m]^R\) 上的标量函数，用
+\[
+ \operatorname{Inf}_\ell(F)
+ =\mathbb E\!\left[\operatorname{Var}_{z_\ell}
+       (F\mid z_{-\ell})\right].
+\]
+噪声算子 \(T_\theta\)（\(0\le\theta\le1\)）以概率 \(\theta\)
+独立保留每个坐标、否则均匀重采样，再对函数取平均。在正交规范乘积
+展开中
+\begin{equation}
+ T_\theta F=\sum_\sigma\theta^{|\sigma|}\widehat F(\sigma)\chi_\sigma,
+ \qquad
+ \operatorname{Inf}_\ell(F)
+ =\sum_{\sigma:\sigma_\ell\ne0}\widehat F(\sigma)^2.
+\label{eq:ordering-noise-influence}
+\end{equation}
+特别地，进一步平滑会降低每个影响。
+
+\begin{lemma}[均匀碰撞估计]\label{lem:ordering-collision}
+对每个 \(0<\kappa<1/2\)，存在 \(\mu_0(\kappa)>0\)。对每个
+\(m\ge2\)，存在非负函数 \(r_c^{m,\kappa}(t)\to0\)
+（\(t\downarrow0\)）具有下述性质（对所有 \(R\ge1\) 一致）。设
+\(F,G:[m]^R\to[0,1]\) 有相同的均值 \(0<\mu\le\mu_0(\kappa)\) 且
+\[
+ \operatorname{Inf}_\ell(T_{1-\kappa}F)\le t,\qquad
+ \operatorname{Inf}_\ell(T_{1-\kappa}G)\le t
+ \quad(\ell\in[R]).
+\]
+对两个边际都在 \([m]^R\) 上均匀的任何耦合 \((Z,Z')\)，
+\begin{equation}
+ \mathbb E\bigl[
+   (T_{1-2\kappa}F)(Z)(T_{1-2\kappa}G)(Z')\bigr]
+ \le \mu^{1+\kappa/2}+r_c^{m,\kappa}(t).
+\label{eq:ordering-collision}
+\end{equation}
+函数 \(r_c^{m,\kappa}\) 与 \(R,\mu,F,G\) 及耦合无关。
+\end{lemma}
+
+\begin{proof}
+这是 \cite[Lemmas~3.4 and~3.5]{GuruswamiEtAl2011OrderingCSP} 此处
+所需的维数一致形式。对 \(H=T_{1-\kappa}F\)，傅里叶公式给出
+\[
+ \|T_{1-2\kappa}F\|_2^2
+ \le \operatorname{Stab}_{1-\kappa}(H),
+\]
+其中 \(\operatorname{Stab}_\theta(H)
+=\sum_\sigma\theta^{|\sigma|}\widehat H(\sigma)^2\)。
+事实上，
+\((1-\kappa)^3-(1-2\kappa)^2
+=\kappa(1-\kappa-\kappa^2)>0\)。
+\(H\) 的每个完整坐标影响界蕴含 Mossel、O'Donnell 与 Oleszkiewicz
+定理~\cite{MOO10} 中相应的低次影响界。以乘积维数 \(R\)、单坐标
+原子界 \(1/m\)、相关 \(1-\kappa\) 应用该定理。对足够小的 \(t\)
+它给出
+\[
+ \operatorname{Stab}_{1-\kappa}(H)
+ \le \Gamma_{1-\kappa}(\mu)
+ +C\frac{\log(2m)}{\kappa}
+       \frac{\log\log(1/t)}{\log(1/t)}.
+\]
+截断与该误差都与 \(R\) 和 \(\mu\) 无关。此处
+\(\Gamma_\theta(\mu)\) 是高斯测度为 \(\mu\) 的集合的高斯半空间
+噪声稳定性。
+
+对固定的 \(\kappa\)，同一来源的 Theorem~B.5 给出：当
+\(\mu\downarrow0\) 时
+\(\Gamma_{1-\kappa}(\mu)=\mu^{2/(2-\kappa)+o(1)}\)。由于
+\[
+ \frac{2}{2-\kappa}-\left(1+\frac{\kappa}{2}\right)
+ =\frac{\kappa^2}{2(2-\kappa)}>0,
+\]
+存在与 \(m,R\) 无关的截断 \(\mu_0(\kappa)>0\)，在其之下
+\(\Gamma_{1-\kappa}(\mu)\le\mu^{1+\kappa/2}\)。这证明对 \(F\) 与
+\(G\) 的相应平方 \(L^2\) 界，误差 \(r_c^{m,\kappa}(t)\to0\) 与
+所述变量无关。在所示界的范围内选截断 \(t_0<e^{-e}\)，对
+\(0<t<t_0\) 用其非负误差，对 \(t\ge t_0\) 置
+\(r_c^{m,\kappa}(t)=1\)。后一范围平凡成立，因为乘积至多 1。在任何
+具有指定边际的耦合下用 Cauchy--Schwarz 即证
+\eqref{eq:ordering-collision}。
+\end{proof}
+
+记 \(\mathcal S_q=\{p\in[0,1]^q:\sum_jp_j=1\}\)，并在 \([q]^k\)
+上定义 \(\overline{P_0}\) 的多重线性延拓
+\begin{equation}
+ P_0^{\mathrm{ml}}(p_1,\ldots,p_k)
+ =\sum_{r\in[q]^k}\overline{P_0}(r)
+       \prod_{i=1}^k p_i^{r_i},
+ \qquad p_i\in\mathcal S_q.
+\label{eq:ordering-multilinear}
+\end{equation}
+
+\begin{lemma}[单纯形值的局部估计]\label{lem:ordering-rounding}
+设 \(J,\mu_c,\alpha\) 为 Lemma~\ref{lem:ordering-local-data} 的
+数据，固定 \(0<\lambda<1\)。对整数 \(R\ge1\)，以概率 \(\omega_c\)
+选 \(c\)。在这一选定的 \(c\) 的条件下，从 \(\mu_c\) 独立采样
+\(R\) 个坐标元组，得串 \(Z_1,\ldots,Z_k\in[m]^R\)。再以概率
+\(\lambda\) 独立地把每个位置与坐标均匀重采样，得
+\(\widetilde Z_i\)。设单个函数
+\(F=(F^1,\ldots,F^q):[m]^R\to\mathcal S_q\) 对每个 \(c\) 与每个
+位置通用，且 \(0<t<1/(kq)\)、
+\[
+ \operatorname{Inf}_\ell(T_{1-\lambda}F^j)\le t
+ \quad(\ell\in[R],\ j\in[q]).
+\]
+则
+\begin{equation}
+ \mathbb E_{c,Z,\widetilde Z}
+ P_0^{\mathrm{ml}}\bigl(F(\widetilde Z_1),\ldots,
+                         F(\widetilde Z_k)\bigr)
+ \le \operatorname{opt}_q(J)+r_s(kqt),
+\label{eq:ordering-rounding}
+\end{equation}
+其中 \(r_s(u)\to0\)（\(u\downarrow0\)），与 \(R\) 无关。函数
+\(r_s\) 只依赖固定的局部数据与 \(k,q,\lambda\)。
+\end{lemma}
+
+\begin{proof}
+这是 \cite[Lemma~10.5]{GuruswamiEtAl2011OrderingCSP} 的单纯形值
+估计，其充分的标量影响界及其依赖被显式化。令 \(H=T_{1-\lambda}F\)。
+位置间噪声的独立性与多重线性把
+\eqref{eq:ordering-rounding} 的左边变成
+\begin{equation}
+ \mathbb E_c\mathbb E_{Z\sim\mu_c^{\otimes R}}
+ P_0^{\mathrm{ml}}\bigl(H(Z_1),\ldots,H(Z_k)\bigr).
+\label{eq:ordering-noise-factorization}
+\end{equation}
+
+对每个坐标，积分系综由 \(\mu_c\) 下的示性
+\(\mathbf1_{\{X_i=j\}}\) 组成；其原子概率大于 \(\alpha\)。公共
+Gram 数据 \eqref{eq:ordering-local-moments} 为 \(J\) 的所有变量
+提供同一高斯系综，在每条约束上有相同的一、二阶矩（如
+\cite[Lemma~10.4]{GuruswamiEtAl2011OrderingCSP}）。显式地，对 Gram
+向量张成中的标准高斯向量 \(g\)，变量
+\[
+ G_{u,j}=\langle I,b_{u,j}\rangle+
+   \langle b_{u,j}-\langle I,b_{u,j}\rangle I,g\rangle
+\]
+具有那些矩。在 \(R\) 个坐标中使用该系综的独立副本。每个 \(H^j\)
+经由其多重线性乘积展开在这些系综上求值；等价地，把 \([m]\) 上的
+正交规范基写成符号示性的线性组合，并对积分与高斯系综使用同一个
+多项式。
+
+对固定的 \(c\)，设 \(\mathcal T_\theta^c\) 以概率 \(\theta\) 保留
+每个完整的坐标元组、否则从 \(\mu_c\) 重采样。均匀的一位边际给出
+（逐分量）
+\[
+ \mathcal T_{1-\lambda}^c[F^j(Z_i)]
+ =(T_{1-\lambda}F^j)(Z_i)=H^j(Z_i).
+\]
+于是这些正是不变性定理在元组系综乘积上所需的平滑分量。同样的
+边际给出下面的精确影响恒等式；上标指计算影响所用的乘积测度：
+\begin{equation}
+ \operatorname{Inf}^{\mu_c^{\otimes R}}_\ell
+       \bigl(H^j(Z_i)\bigr)
+ =
+ \operatorname{Inf}^{[m]^R}_\ell(H^j).
+\label{eq:ordering-vector-influence}
+\end{equation}
+事实上，以除第 \(\ell\) 个之外的每个坐标元组为条件，位置 \(i\)
+处的第 \(\ell\) 个符号均匀，而该位置的其他符号具有均匀乘积律。
+对向量，影响是其分量影响之和
+\cite[Definition~2.6]{IsakssonMossel2009}。因此向量
+\((H^j(Z_i))_{i\in[k],j\in[q]}\) 的每个坐标影响至多 \(kqt\)；每
+个分量的方差至多 1。
+
+对剩余的尾部假设，设 \((F^j(Z_i))_S\)（\(S\subseteq[R]\)）为元组
+乘积 \(\mu_c^{\otimes R}\) 上的 Hoeffding 分量，上标 \(>d\) 保留
+\(|S|>d\) 的项。上面的元组噪声恒等式把分量 \(S\) 乘以
+\((1-\lambda)^{|S|}\)。由于未平滑的 \(F^j\) 取值于 \([0,1]\)，
+对每个实 \(d>0\)，
+\[
+\begin{aligned}
+ \operatorname{Var}\bigl((H^j(Z_i))^{>d}\bigr)
+ &=\sum_{|S|>d}(1-\lambda)^{2|S|}
+       \bigl\|(F^j(Z_i))_S\bigr\|_2^2\\
+ &\le (1-\lambda)^{2d}\operatorname{Var}(F^j(Z_i))
+ \le (1-\lambda)^{2d}.
+\end{aligned}
+\]
+此处的范数与方差都用 \(\mu_c^{\otimes R}\)。这给出
+\cite[Theorem~3.6]{IsakssonMossel2009} 中的尾部界。它们是
+\cite[Theorem~10.1]{GuruswamiEtAl2011OrderingCSP} 中向量值不变性
+估计的充分假设。
+
+设 \(\mathsf p:\mathbb R^q\to\mathcal S_q\) 为欧氏投影。它不扩张。
+函数
+\[
+ \Psi(x_1,\ldots,x_k)=
+ P_0^{\mathrm{ml}}(\mathsf p(x_1),\ldots,\mathsf p(x_k))
+\]
+的 Lipschitz 常数至多 \(\sqrt{kq}\)：在单纯形上，对位置裂项把收益
+差界定在 \(\sum_i\|x_i-y_i\|_1\)，投影与 Cauchy--Schwarz 给出该
+断言。对每个 \(c\) 分别把所引不变性估计用于该函数，向量维数
+\(kq\)、影响阈值 \(kqt\)。其显示的误差至多
+\[
+ r_s(kqt),\qquad
+ r_s(u)=C_{kq}\sqrt{kq}\,
+             u^{\lambda/(18\log(1/\alpha))}.
+\]
+特别地，误差与 \(R\) 无关。
+
+在积分系综上，\(H(Z_i)\in\mathcal S_q\)，故 \(\Psi\) 等于
+\eqref{eq:ordering-noise-factorization} 中的收益。在公共高斯系综
+上，把每个 \(u\in U\) 的 \(H(G_u)\) 投影到 \(\mathcal S_q\)，并
+按这些概率独立地为每个 \(u\) 抽一个 \(q\)-标记。这是 \(J\) 的一
+个随机赋值。每个局部元组中的变量互异，故其在那个元组处的条件期望
+收益是多重线性收益 \(\Psi\)。每个实现的赋值的价值至多
+\(\operatorname{opt}_q(J)\)。把不变性比较对 \(c\) 取平均即证
+\eqref{eq:ordering-rounding}。
+\end{proof}
+
+\begin{proof}[Proposition~\ref{prop:finite-ordering-transfer} 的
+证明]
+我们先推导对每个 \(R\) 都成立的估计，再独立于 \(R\) 选取其数值
+参数。暂固定 \(0<\kappa<1/2\)、满足 \(1/q\le\mu_0(\kappa)\) 的
+\(q\)，以及来自 Lemma~\ref{lem:ordering-local-data} 的局部数据。
+使用 Lemma~\ref{lem:ordering-rounding} 的局部实验，取实际重采样
+概率 \(\lambda=2\kappa\)。再固定辅助常数 \(0<t<1/(kq)\) 与
+\(\chi>0\)。
+
+对输入图 \(\Phi\)，把边 \(ab\) 上的置换记为 \(\pi_{a\to b}\)。
+其对串的作用由
+\[
+ (\pi_{a\to b}z)_{\pi_{a\to b}(\ell)}=z_\ell
+ \qquad(\ell\in[R])
+\]
+固定。输出变量集将是 \(\mathcal V=B\times[m]^R\)。考虑如下独立
+邻居实验：从 \(A\) 均匀选 \(a\)，从 \(N(a)\) 独立均匀地选
+\(b_1,\ldots,b_k\)，并独立地执行局部实验，得
+\(\widetilde Z_1,\ldots,\widetilde Z_k\)。其原始输出位置为
+\begin{equation}
+ w_i=(b_i,\pi_{a\to b_i}\widetilde Z_i)\in\mathcal V.
+\label{eq:ordering-iid-queries}
+\end{equation}
+对任何秩映射 \(f:\mathcal V\to\mathbb Z\)，定义
+\[
+ V(f)=\mathbb E\,
+   \overline{P_0}\bigl(f(w_1),\ldots,f(w_k)\bigr),
+ \qquad V_a(f)=\mathbb E[
+   \overline{P_0}(f(w_1),\ldots,f(w_k))\mid a].
+\]
+有界的收益 \eqref{eq:ordering-tie-payoff} 在实验重复某个输出 ID
+时也适用。我们将对一个粗秩映射得到下界，对每个单射序得到上界，
+随后把两个界转移到互异变量的约束上。
+
+设染色 \(L\) 强满足至少 \(1-\zeta\) 比例的左顶点。定义粗秩映射
+\(f(b,z)=z_{L(b)}\)。在每个强满足的 \(a\) 与每个邻居 \(b\) 处，
+\[
+ f(b,\pi_{a\to b}z)=z_{\pi_{a\to b}^{-1}(L(b))}=z_{L(a)}.
+\]
+于是对邻居的每种取法，全部 \(k\) 个位置读取同一个标记坐标。以
+概率 \((1-2\kappa)^k\) 这 \(k\) 个符号都未被重采样；在该事件下
+其元组的律为 \(\mu_c\)。收益的非负性给出
+\begin{equation}
+ V(f)\ge (1-\zeta)(1-2\kappa)^k v_{\mathrm{loc}}.
+\label{eq:ordering-iid-completeness}
+\end{equation}
+
+对可靠性，固定单射序 \(O:\mathcal V\to[|\mathcal V|]\)。在固定的
+\(a\) 处，其局部集 \(N(a)\times[m]^R\) 恰有 \(M=hm^R\) 个互异
+ID。按 \(O\) 排序该集，并把有序表分成 \(q\) 个连续块
+\(C_{a,1},\ldots,C_{a,q}\)（各 \(M/q\) 大小）。由 \(q\mid h\)，
+这些大小是整数。每块是局部集与一个全局秩区间的交。定义
+\begin{equation}
+ F_a^j(z)=\frac1h\sum_{b\in N(a)}
+  \mathbf1_{\{(b,\pi_{a\to b}z)\in C_{a,j}\}},
+ \qquad F_a=(F_a^1,\ldots,F_a^q).
+\label{eq:ordering-block-functions}
+\end{equation}
+对每个 \(z\) 有 \(F_a(z)\in\mathcal S_q\)。每条边置换是串上的
+双射，故
+\begin{equation}
+ \mathbb E_z F_a^j(z)=\frac{|C_{a,j}|}{hm^R}=\frac1q.
+\label{eq:ordering-block-mass}
+\end{equation}
+
+对整数秩的任何区间 \(I\)，令
+\[
+ F_a^I(z)=\frac1h\sum_{b\in N(a)}
+   \mathbf1_{\{O(b,\pi_{a\to b}z)\in I\}}.
+\]
+若对每个 \(I\) 与每个 \(\ell\in[R]\) 都有
+\(\operatorname{Inf}_\ell(T_{1-\kappa}F_a^I)\le t\)，称 \(a\)
+\emph{在阈值 \(t\) 处伪随机}。在这样的 \(a\) 处，该界对每个块
+函数 \(F_a^j\) 成立。
+
+设 \(j_a(w)\) 为局部 ID \(w\) 的块指标。在局部查询串的条件下，
+邻居选取的独立性给出精确恒等式
+\begin{equation}
+ \mathbb E_{b_1,\ldots,b_k}
+ \overline{P_0}\bigl(j_a(w_1),\ldots,j_a(w_k)\bigr)
+ =
+ P_0^{\mathrm{ml}}\bigl(F_a(\widetilde Z_1),\ldots,
+                         F_a(\widetilde Z_k)\bigr).
+\label{eq:ordering-neighbor-factorization}
+\end{equation}
+该恒等式包括邻居相等的结果。进一步平滑降低块影响，故
+\(\operatorname{Inf}_\ell(T_{1-2\kappa}F_a^j)\le t\)。把
+Lemma~\ref{lem:ordering-rounding} 用于单个函数 \(F_a\)，把
+\eqref{eq:ordering-neighbor-factorization} 中的期望粗收益界定在
+\(\operatorname{opt}_q(J)+r_s(kqt)\) 以内。
+
+当 \(k\) 个粗秩互异时，其诱导的置换就是细秩 \(O(w_i)\) 诱导的
+那个；否则两个收益相差至多 1。这也涵盖重复的输出 ID——它必然
+产生粗平局。对两个位置 \(i\ne i'\)，噪声与邻居选择的独立性给出
+其粗平局概率为
+\[
+ \sum_{j=1}^q
+ \mathbb E_c\mathbb E_{Z\sim\mu_c^{\otimes R}}
+ \bigl[
+  (T_{1-2\kappa}F_a^j)(Z_i)
+  (T_{1-2\kappa}F_a^j)(Z_{i'})
+ \bigr].
+\]
+在 \(c\) 的条件下，两个串都有均匀乘积边际。其相关性由
+Lemma~\ref{lem:ordering-collision} 允许。把该引理用于
+\eqref{eq:ordering-block-mass} 的固定均值 \(1/q\)，记
+\(r_c=r_c^{m,\kappa}\)。上一个展示式至多
+\(q^{-\kappa/2}+q r_c(t)\)。对顶点对的并界给出：在每个伪随机
+\(a\) 处，
+\begin{equation}
+ V_a(O)\le
+ S_{\mathrm{loc}}:=\operatorname{opt}_q(J)
+ +\binom{k}{2}\bigl(q^{-\kappa/2}+q r_c(t)\bigr)
+ +r_s(kqt).
+\label{eq:ordering-pseudorandom-bound}
+\end{equation}
+
+接下来把超出该界的部分转换为 \(\Phi\) 的染色。对每个 \(b\in B\)，
+把 \(O\) 限制到 \(\{b\}\times[m]^R\) 并压缩其秩，得 \([m]^R\) 的
+严格序 \(o_b\)。令
+\[
+ \mathcal L_b=\left\{\ell\in[R]:
+   \operatorname{Inf}_\ell
+    \bigl(T_{1-\kappa}\mathbf1_{\{o_b(z)\in I\}}\bigr)>t/2
+   \text{ 对某个秩区间 }I\right\}.
+\]
+少数有影响坐标引理
+\cite[Definition~4.2 and Lemma~4.3]{GuruswamiEtAl2011OrderingCSP}
+给出
+\begin{equation}
+ |\mathcal L_b|\le\frac{400}{\kappa(t/2)^3}
+ =\frac{3200}{\kappa t^3}.
+\label{eq:ordering-right-candidates}
+\end{equation}
+该界对 \(R\) 一致。
+
+若 \(a\) 非伪随机，选一个见证区间 \(I_a\) 与坐标 \(\ell_a\) 使
+\(\operatorname{Inf}_{\ell_a}(T_{1-\kappa}F_a^{I_a})>t\)。噪声与
+坐标置换及平均交换，而影响是凸的范数平方。故
+\begin{equation}
+ \operatorname{Inf}_{\ell_a}(T_{1-\kappa}F_a^{I_a})
+ \le\frac1h\sum_{b\in N(a)}
+ \operatorname{Inf}_{\pi_{a\to b}(\ell_a)}
+ \left(T_{1-\kappa}
+       \mathbf1_{\{O(b,z)\in I_a\}}\right).
+\label{eq:ordering-influence-average}
+\end{equation}
+每项至多 1。平均大于 \(t\) 迫使超过 \(t/2\) 比例的项超过
+\(t/2\)。全局秩区间限制到单个右码上是其相对序的区间，故这些邻居
+满足 \(\pi_{a\to b}(\ell_a)\in\mathcal L_b\)。
+
+给每个这样的 \(a\) 标记 \(\ell_a\)，其他左顶点任意标记。在每个
+\(\mathcal L_b\ne\varnothing\) 的右顶点处独立地选 \(\mathcal L_b\)
+中的均匀标记；集合为空时用任意标记。由
+\eqref{eq:ordering-right-candidates}，每个非伪随机 \(a\) 处各边
+的期望被满足比例大于
+\[
+ \frac t2\,\frac{\kappa t^3}{3200}
+ =\frac{\kappa t^4}{6400}.
+\]
+一个随机的右染色被用于所有左顶点。期望的线性性与公共左度把所得
+平均等同于普通的均匀边比例。
+
+若 \(V(O)>S_{\mathrm{loc}}+\chi\)，则超过 \(\chi\) 比例的左顶点
+非伪随机：设该比例为 \(g\)，由 \(0\le V_a(O)\le1\) 与
+\eqref{eq:ordering-pseudorandom-bound} 得
+\(V(O)\le(1-g)S_{\mathrm{loc}}+g\le S_{\mathrm{loc}}+g\)。于是
+前面的解码器给出边值大于 \(\chi\kappa t^4/6400\) 的染色。因此
+\begin{equation}
+ \val(\Phi)\le\nu<\frac{\chi\kappa t^4}{6400}
+ \quad\Longrightarrow\quad
+ V(O)\le S_{\mathrm{loc}}+\chi\quad\text{对每个单射 }O.
+\label{eq:ordering-iid-soundness}
+\end{equation}
+
+剩下把独立实验转化为严格排序约束。设 \(D\) 为事件
+\(b_1,\ldots,b_k\) 互异。对 \(h\ge k\)，
+\begin{equation}
+ p_D:=\Pr(D)=\frac{(h)_k}{h^k},\qquad
+ \delta_h:=1-p_D\le\frac{\binom{k}{2}}h.
+\label{eq:ordering-distinct-probability}
+\end{equation}
+该概率在每个 \(a\) 处相同，且 \(D\) 与局部实验独立。在 \(D\) 的
+条件下，\(a\) 仍均匀，且其有序互异邻居元组在其 \((h)_k\) 种可能
+中均匀。此时所有输出 ID 互异（因其首坐标 \(b_i\) 互异）。把这个
+有限的带权严格 \(P_0\) 约束分布记为 \(I_0\)，其最大严格收益记为
+\(\OPT_{P_0}(I_0)\)。
+
+设 \(V_D(f)\) 为该条件化之后的平局延拓期望收益，
+\(V_{\neg D}(f)\) 为以其补为条件者。对任何秩映射 \(f\)（粗或
+单射），
+\begin{equation}
+ V(f)=p_DV_D(f)+(1-p_D)V_{\neg D}(f),
+ \qquad |V_D(f)-V(f)|\le\delta_h,
+\label{eq:ordering-conditioning}
+\end{equation}
+因为所有收益都落在 \([0,1]\)。先把它用于
+\eqref{eq:ordering-iid-completeness} 的粗映射。在该映射的每个
+有限纤维内选互异 ID 的一个均匀随机置换（各纤维独立），并按秩顺序
+连接纤维。在每个条件化元组上，这些置换对其 ID 的限制在每个并列
+秩类内均匀。于是这一个随机全局序的期望严格 \(P_0\)-收益等于
+\(V_D(f)\)。某个全局序至少达到该值。对可靠性：单射 \(O\) 在每个
+条件化元组上有互异的秩，故其平局延拓收益即其严格 \(P_0\)-收益。
+Equations \eqref{eq:ordering-iid-completeness}、
+\eqref{eq:ordering-iid-soundness} 与 \eqref{eq:ordering-conditioning}
+因此给出严格界
+\begin{equation}
+\begin{aligned}
+ \mathrm{YES}：\quad&
+ \OPT_{P_0}(I_0)\ge(1-\zeta)(1-2\kappa)^k v_{\mathrm{loc}}-\delta_h,\\
+ \mathrm{NO}：\quad&
+ \OPT_{P_0}(I_0)\le S_{\mathrm{loc}}+\chi+\delta_h
+ \quad\text{若 }\nu<\chi\kappa t^4/6400.
+\end{aligned}
+\label{eq:ordering-conditioned-gap}
+\end{equation}
+这些界针对条件化后的 \(P_0\) 元组。应用
+\eqref{eq:ordering-slot-permutation} 使每个出现以完全相同的值
+使用原谓词 \(\Pi\)。称发出的实例为 \(I\)。
+
+现在为指定的 \(\delta\) 作出选取。选正有理 \(\eta\) 使
+\(10\eta<\delta\)，选有理 \(0<\kappa<1/2\) 使 \(2\kappa k<\eta\)。
+令 \(K=\binom{k}{2}\)。选足够大的整数 \(q\) 使
+\[
+ \frac1q\le\mu_0(\kappa),\qquad Kq^{-\kappa/2}<\eta.
+\]
+在误差 \(\eta\) 处取 Lemma~\ref{lem:ordering-local-data} 的数据
+\(J,m,\alpha\)。两个解析误差函数现在有固定参数且对 \(R\)
+一致。选足够小的正有理 \(t<1/(kq)\) 使
+\[
+ Kq r_c(t)<\eta,\qquad r_s(kqt)<\eta.
+\]
+置 \(\chi=\eta\)。选正有理 \(\zeta,\nu<1\) 使
+\[
+ \zeta<\eta,\qquad
+ \nu<\frac{\eta\kappa t^4}{6400},
+\]
+并选整数 \(H\ge\max\{k,q\}\) 使 \(K/H<\eta\)。
+这些选取只依赖 \(k,\Pi,\delta\)。特别地，它们先于
+Lemma~\ref{lem:simple-strong-left} 中 \(h\) 的选取，也先于
+Theorem~\ref{thm:ugc} 提供的字母表。
+
+对每个 \(h\ge H\) 有 \(\delta_h<\eta\)。局部间隙
+\eqref{eq:ordering-local-gap}、Bernoulli 不等式与
+\eqref{eq:ordering-conditioned-gap} 给出
+\[
+ \mathrm{YES}：\quad
+ \OPT_\Pi(I)\ge1-\zeta-2\kappa k-\eta-\delta_h
+ >1-4\eta>1-\delta,
+\]
+而 \eqref{eq:ordering-pseudorandom-bound} 给出
+\[
+ \mathrm{NO}：\quad
+ \OPT_\Pi(I)\le S_{\mathrm{loc}}+\chi+\delta_h
+ <\rho_\Pi+6\eta<\rho_\Pi+\delta.
+\]
+这同时对每个 \(R\) 证明了数值断言。
+
+最后指明编码后的变换。一旦 \(R\) 固定，\(c\) 的选取、乘积
+\(\mu_c^{\otimes R}\) 与独立的有理 \(2\kappa\)-噪声就构成局部
+结果 \(\xi\) 上的一个固定的有限有理律 \(\theta_R\)。这些就是
+上述的实际局部结果；解析比较所用的高斯变量不属于输出。把 \(B\)
+重新编号为 \([|B|]\)，显式列出 \(\mathcal V=B\times[m]^R\)。
+对每个 \(a\in A\)、每个有序互异邻居元组、以及每个
+\(\xi\in\operatorname{supp}\theta_R\)，列出
+\eqref{eq:ordering-iid-queries} 的元组（经
+\eqref{eq:ordering-slot-permutation} 置换），权重为
+\begin{equation}
+ \frac{\theta_R(\xi)}{|A|(h)_k}.
+\label{eq:ordering-rational-weight}
+\end{equation}
+权重和为 1 且非负有理。每个列出的元组有互异的 ID；同一元组可以
+出现在多个条目中。变量有 \(|B|m^R\) 个，条目至多
+\(|A|(h)_k|\operatorname{supp}\theta_R|\) 个。对固定的
+\(k,m,R,\theta_R\)，即使 \(h\) 变化，这些计数也在显式图规模上
+多项式。\(\theta_R\) 的固定公共分母表明每个权重有
+\(O(\log|A|+k\log h)\) 比特加一个固定常数。ID 有
+\(O(\log|B|)\) 比特加一个固定常数。因此这些条目的精确枚举对
+固定 \(R\) 是确定性的多项式，如所断言。
+\end{proof}
+
+同一出现列表编码也为 Section~\ref{sec:consequences} 中的确定性
+随机序保证提供了依据。逐次暴露下一个变量来构建序。若某约束恰有
+\(s\) 个变量已被暴露，其条件成功概率是 \(\Pi\) 中「前 \(s\) 个
+位置恰为这些变量在已暴露序中的角色」的置换个数除以 \((k-s)!\)。
+可以通过检查固定的集合 \(S_k\) 计算它。对下一个变量的每种取法，
+把这些概率对列出的有理权重求和，并选条件期望不低于各取法平均值的
+下一个变量。这保持初始期望 \(|\Pi|/k!\)。所有比较都是精确的，且
+在输入位长上多项式：权重分母之积的位长至多其总编码长度，而阶乘
+分母对固定的 \(k\) 是常数规模。变量列表是显式的，故前缀步数与
+候选取法的数目也是多项式的。

@@ -10,44 +10,42 @@
   reduction/.style={-{Latex[length=2.1mm]},thick,draw=linkblue!80!black},
   implication/.style={-{Latex[length=2.1mm]},thick,dashed,draw=black!70}
 ]
-\node[heading] at (0,0) {The reduction};
-\node[heading] at (7.4,0) {Soundness on a NO input};
+\node[heading] at (0,0) {归约};
+\node[heading] at (7.4,0) {NO 输入上的可靠性};
 
 \node[box] (parity) at (0,-1.0)
-  {$\mathrm{3SAT}$\\$\longrightarrow$ weighted parity gap instance};
+  {$\mathrm{3SAT}$\\$\longrightarrow$ 带权奇偶间隙实例};
 \node[box] (matrix) at (0,-2.8)
-  {Latent matrix test\\
-   stable nonlinear map: Lemma~\ref{lem:latent}};
+  {潜在矩阵测试\\
+   稳定非线性映射：Lemma~\ref{lem:latent}};
 \node[box] (ugc) at (0,-6.2)
-  {Unweighted simple bipartite\\Unique Games\\
+  {无权简单二部\\唯一游戏\\
    Theorem~\ref{thm:ugc}};
 \draw[reduction] (parity) -- (matrix);
 \draw[reduction] (matrix) -- node[midway,fill=white,inner sep=4pt,
     text width=5.0cm,align=center]
-  {Rounding and subdivision;\\parallel repetition} (ugc);
+  {取整与细分；\\并行重复} (ugc);
 
 \node[branch] (assumption) at (5.65,-1.0)
-  {Assume test acceptance\\at least $0.99$};
+  {假设测试接受率\\至少 $0.99$};
 \node[branch] (no) at (9.15,-1.0)
-  {NO parity\\instance};
+  {NO 奇偶\\实例};
 \node[branch] (decoding) at (5.65,-3.3)
-  {Decoded advice strategies\\agreement at least $\gamma>0$\\
+  {解码后的建议策略\\一致概率至少 $\gamma>0$\\
    Proposition~\ref{prop:matrix-decoding}};
 \node[branch] (clean) at (9.15,-3.3)
-  {Every pair of\\strategies:\\agreement at most\\$\exp(-c k^{1/3})$\\
+  {每一对策略：\\一致概率至多\\$\exp(-c k^{1/3})$\\
    Lemma~\ref{lem:clean}};
 \node[box] (contradiction) at (7.4,-6.2)
-  {Contradiction for sufficiently large $k$:\\
+  {对足够大的 $k$ 得到矛盾：\\
    $\exp(-c k^{1/3})<\gamma$};
 \draw[implication] (assumption) -- (decoding);
 \draw[implication] (no) -- (clean);
 \draw[implication] (decoding) -- (contradiction);
 \draw[implication] (clean) -- (contradiction);
 \end{tikzpicture}
-\caption{The solid arrows describe the reduction; the dashed arrows describe
-its soundness argument. The decoding lower bound follows from high test
-acceptance, while the clean-coordinate upper bound follows from the NO
-parity gap and applies to every advice strategy. The constants
-$c,\gamma>0$ are fixed before the tuple length $k$ grows.}
+\caption{实线箭头描述归约；虚线箭头描述其可靠性论证。解码下界来自
+高测试接受率，而干净坐标上界来自 NO 奇偶间隙，并适用于每个建议
+策略。常数 $c,\gamma>0$ 在元组长度 $k$ 增长之前固定。}
 \label{fig:overview}
 \end{figure}

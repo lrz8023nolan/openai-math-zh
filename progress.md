@@ -30,8 +30,9 @@
 
 | # | 手稿 | 所属成果族 | 状态 | 源码 / PDF |
 |---|---|---|---|---|
+| 102-1 | The Unique Games Theorem（唯一游戏定理） | 102 唯一游戏猜想 | ✅ 完成（59 页） | [latex-zh/unique-games-zh/](preprints-zh/latex-zh/unique-games-zh/) ｜ [102-unique-games-theorem-zh.pdf](preprints-zh/pdf/102-unique-games-theorem-zh.pdf) |
 | 102-2 | A Direct Proof of Optimal Max-Cut Hardness（最优 Max-Cut 难度的直接证明） | 102 唯一游戏猜想 | ✅ 完成（37 页） | [latex-zh/maxcut-direct-zh/](preprints-zh/latex-zh/maxcut-direct-zh/) ｜ [102-maxcut-direct-zh.pdf](preprints-zh/pdf/102-maxcut-direct-zh.pdf) |
-| — | 其余 9 篇精选 | — | ⏳ 待译 | 逐篇推进，流程同上 |
+| — | 其余 8 篇精选 | — | ⏳ 待译 | 逐篇推进，流程同上 |
 
 ## 上游同步
 
