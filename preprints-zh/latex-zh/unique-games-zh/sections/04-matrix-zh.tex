@@ -1,0 +1,651 @@
+\section{矩阵抽取与傅里叶解码}
+\label{sec:matrix}
+
+我们把矩阵测试的高接受率转化为两个策略在稀疏投影问题 $U,O$ 上的
+一致性。每个策略只用其自身问题与有界数目的矩阵建议行。所得一致性
+概率为正，且与元组长度 $k$ 及奇偶实例无关。表函数只通过其折叠与
+共享恒等式以及接受界进入证明，故该证明适用于任何具备这些性质的
+族；每个顶点染色的恢复函数都是例子。精确假设在固定参数并定义建议
+实验之后陈述。
+
+\subsection{逆短码定理}
+
+结构性输入描述的是在均匀秩一扰动下经常保持取值的函数。这样的函数
+在「固定有界数目的行、列线性组合」所得的集合上与一个仿射求值
+一致。
+
+记 $\operatorname{Mat}_{\ell,m}=\Hom(\F_2^m,\F_2^\ell)$。
+\emph{行与列切片}是由方程
+\begin{equation}
+ \mathcal S=
+ \{M:d_i^\top M=s_i^\top\ (1\le i\le n_r),\quad
+          Mq_j=t_j\ (1\le j\le n_c)\}
+ \label{eq:shortcode-slice}
+\end{equation}
+规定的非空集，其中 $d_i\in\F_2^\ell$、$s_i\in\F_2^m$、
+$q_j\in\F_2^m$、$t_j\in\F_2^\ell$。计数 $n_r,n_c$ 不必是其方程组
+的秩。
+
+\begin{theorem}[二次短码的相等可靠性]
+\label{thm:shortcode}
+对每个 $\eta\in(0,1)$，存在只依赖 $\eta$ 的 $\alpha\in(0,1]$、
+整数 $r_{\rm s}\ge1$ 与整数 $\ell_0$，具有以下性质。对每个
+$\ell\ge\ell_0$ 有 $m_0=m_0(\eta,\ell)$，使得对每个 $m\ge m_0$ 与
+每个函数 $f:\operatorname{Mat}_{\ell,m}\to\F_2^\ell$，若
+\begin{equation}
+ \Pr_{M,a,l}\bigl[f(M)=f(M+a l^\top)\bigr]\ge\eta,
+ \label{eq:shortcode-acceptance}
+\end{equation}
+则存在如 Equation~\eqref{eq:shortcode-slice} 的切片 $\mathcal S$
+（$n_r,n_c\le r_{\rm s}$）与某个 $z\in\F_2^m$、$u\in\F_2^\ell$，使
+\begin{equation}
+ \Pr_{M\mid\mathcal S}[f(M)=Mz+u]\ge\alpha.
+ \label{eq:shortcode-conclusion}
+\end{equation}
+此处 $M$、$a\in\F_2^\ell$、$l\in\F_2^m$ 独立均匀，而
+$M\mid\mathcal S$ 在切片上均匀。对 $f$ 不施加折叠条件。
+\end{theorem}
+
+\begin{proof}
+我们从 Khot--Minzer--Safra 的 Grassmann 扩张定理
+\cite[Theorem~1.12 in the 2018 revision]{KMS23} 导出此推论，使用
+Barak--Kothari--Steurer 的矩阵图卡
+\cite[Definition~3.2 and Lemmas~3.3--3.7]{BKS18}。
+
+环境二元空间 $E$ 上的 Grassmann 图以 $\ell$ 维子空间为顶点；两个
+顶点相邻当其交的维数为 $\ell-1$。非空顶点集的\emph{保留率}是：
+集合中的均匀顶点有一个均匀邻居仍在集合中的概率。所引定理说：保留
+率至少固定 $\zeta>0$ 的集合在某个区间
+\[
+ \{L:A_0\subseteq L\subseteq B_0\},
+ \qquad \dim A_0+\operatorname{codim}_E B_0\le r
+\]
+中有正的相对密度。密度界与 $r$ 只依赖 $\zeta$。定理对所有足够大的
+$\ell$、进而所有足够大的 $\dim E$ 成立。
+
+相等接受是各非空纤维 $f^{-1}(y)$ 在矩阵步下保留率的加权平均（权重
+为均匀质量）。故某纤维 $S$ 的保留率至少 $\eta$。两个扰动因子之一
+为零的概率是
+\[
+ p_0=2^{-\ell}+2^{-m}-2^{-\ell-m}.
+\]
+把维数阈值选得使 $p_0\le\eta/2$。在两个因子都非零的条件下，$S$ 的
+保留率至少 $(\eta-p_0)/(1-p_0)\ge\eta/2$。
+
+对每个矩阵令
+\[
+ L_M=\{(x,M^\top x):x\in\F_2^\ell\}
+ \subseteq E:=\F_2^\ell\oplus\F_2^m.
+\]
+映射 $M\mapsto L_M$ 是到图卡 $\mathcal C$（到第一加项投影可逆的
+子空间）的双射。由于
+\[
+ \dim(L_M\cap L_N)=\ell-\rank(M-N),
+\]
+图卡内的邻居恰对应非零的秩一矩阵差。每个图卡顶点有
+$(2^\ell-1)(2^m-1)$ 个这样的邻居，而其完整 Grassmann 度为
+$(2^\ell-1)(2^{m+1}-2)$：先在顶点中选超平面，再在该超平面的商中选
+一维延拓（非顶点本身）。故恰有一半邻居在图卡内。在 $\F_2$ 上，
+每个非零秩一矩阵都有唯一分解 $a l^\top$（因子非零）。因此提升集
+$\widetilde S=\{L_M:M\in S\}$ 的 Grassmann 保留率至少 $\eta/4$。
+
+以 $\zeta=\eta/4$ 应用扩张定理，得某个区间上的密度 $\alpha$，其中
+$\dim A_0+\operatorname{codim}_E B_0\le r_{\rm s}$。该区间与
+$\mathcal C$ 的交只会提高 $\widetilde S$ 的相对密度（因
+$\widetilde S\subseteq\mathcal C$），且交非空。$A_0$ 的基
+$(d_i,s_i)$ 用方程 $d_i^\top M=s_i^\top$ 刻画
+$A_0\subseteq L_M$。对 $E$ 的标准点积，$B_0^\perp$ 的基 $(t_j,q_j)$
+用 $Mq_j=t_j$ 刻画 $L_M\subseteq B_0$。二者的联立解集即为所需
+形式的切片，两类方程各至多 $r_{\rm s}$ 个。在该切片的至少 $\alpha$
+比例上，$f$ 等于定义 $S$ 的那个值。取 $z=0$、$u$ 等于该值即得
+结论。
+
+常数 $\alpha,r_{\rm s}$ 的选取只用 $\eta$。由于
+$\dim E=\ell+m$，固定 $\ell$ 后剩余的维数阈值被吸收进
+$m_0(\eta,\ell)$。未用任何折叠条件。纤维论证是
+\cite[Lemma~2.3]{BKS18} 的相等推论；该文的编号引用均指其 arXiv
+版本 1。
+\end{proof}
+
+Theorem~\ref{thm:shortcode} 中的常数与维数阈值可以有效地选取，
+当 $\eta$ 有理时 $\alpha$ 亦有理。这由 \cite[Theorem~2.13 and
+Section~2.4]{KMS23} 的定量界与 \cite[Lemmas~2.7--2.8]{KMS23} 的
+比较估计得到；定理编号同样指 2018 修订版。
+
+现在固定下文所需参数。从 Lemma~\ref{lem:latent} 选 $p_*>0$ 与相应
+的 $r_*$。令
+\begin{equation}
+ \eta=2^{-r_*}/16,
+ \qquad
+ 2^{-(\ell-r_{\rm s})}<\alpha/8,
+ \qquad
+ 2^{-\ell}<\eta/4,
+ \label{eq:matrix-parameters}
+\end{equation}
+其中 $\alpha,r_{\rm s}$ 先由 Theorem~\ref{thm:shortcode} 给出，
+然后选足够大的 $\ell$ 满足该定理、潜在引理以及所示不等式。在此
+$\ell$ 值处取潜在数据 $(\mathcal V,K,C,\mu)$，并固定线性分裂
+$\mathcal V=K\oplus W$。所有这些对象都在 $k$ 增长之前固定。
+特别地，$\ell>r_{\rm s}$。我们把表写成 $P=(M,T)$，其中
+$M:L_U\to K$、$T:L_U\to W$。
+
+\subsection{建议实验与解码陈述}
+
+我们先指定两个策略的局部输入，其答案一致性将与外层博弈间隙矛盾。
+该实验对每个正整数 $k$ 与每个 $0<\beta<1$ 定义。设 $\mathcal Q_k$
+由所有方程问题 $U\in\mathcal E^k$ 以及由它们经
+Section~\ref{sec:game} 的坐标投影得到的容许投影问题 $O$ 组成。
+问题 $U,O$ 与投影 $\bar\pi:L_U\to L_O$ 的律见 Section~\ref{sec:game}：
+在每个块中独立地，方程以概率 $1-\beta$ 被保留，均匀选取的变量位置
+以概率 $\beta$ 被保留。
+
+\begin{definition}[投影建议实验]
+\label{def:projected-advice}
+采样 $U,O,\pi$，再采样独立的均匀映射 $A:K\to\F_2^{r_{\rm s}}$ 与
+独立均匀映射
+\[
+ T_O:L_O\to W,\qquad M_O:L_O\to K.
+\]
+令 $S_O=AM_O$，并把以下输入发给两个证明者：
+\begin{equation}
+ \begin{aligned}
+  &\text{$U$ 证明者：}&& (U,A,T_O\bar\pi,S_O\bar\pi),\\
+  &\text{$O$ 证明者：}&& (O,A,T_O,S_O).
+ \end{aligned}
+ \label{eq:projected-advice}
+\end{equation}
+所给建议之外的映射 $M_O$ 被隐藏。每个证明者返回一个实际答案，即
+其齐次答案空间中首比特为 1 的向量。当其答案 $a_U,a_O$ 满足
+$\bar\pi a_U=a_O$ 时成功。
+\end{definition}
+
+$U$ 消息包含映射 $(T_U,S_U)=(T_O\bar\pi,S_O\bar\pi)$，由在 $O$ 上
+采样的映射补零得到。我们将先在另一种律下找到有用的建议：$U$ 上的
+无限制均匀表 $(M,T)$，取 $S_U=AM$。随后在把投影选择平均之后，把
+完整的补零表 $(M_O\bar\pi,T_O\bar\pi)$ 与该无限制表比较。这一比较
+是从抽取论证通向实验的桥梁。
+
+\begin{proposition}[矩阵解码]
+\label{prop:matrix-decoding}
+按 Equation~\eqref{eq:matrix-parameters} 指定的顺序选取潜在与短码
+参数，并在 $k$ 之前固定 $\mathcal V=K\oplus W$。存在只依赖这些
+固定参数的常数 $\gamma>0$ 与整数 $k_0\ge8$，具有以下性质。
+
+对每个立方数 $k\ge k_0$ 与每个奇偶实例，设对每个 $Q\in\mathcal Q_k$
+给定了函数
+\[
+ F_Q:\Hom(L_Q,\mathcal V)\longrightarrow K.
+\]
+假设对每个这样的 $Q$、每个 $P\in\Hom(L_Q,\mathcal V)$ 与每个
+$c\in K$ 满足折叠，并对每个容许投影 $\bar\pi:L_U\to L_O$ 与每个
+$P'\in\Hom(L_O,\mathcal V)$ 满足共享：
+\begin{equation}
+ \begin{aligned}
+ F_Q(P+c e_0^\top)&=F_Q(P)+c,\\
+ F_U(P'\bar\pi)&=F_O(P').
+ \end{aligned}
+ \label{eq:matrix-family-identities}
+\end{equation}
+若该族以至少 $0.99$ 的概率通过 Equation~\eqref{eq:matrix-test} 的
+表测试，则取 $\beta=k^{-2/3}$ 的投影建议实验具有局部策略，其完整
+答案一致的概率至少 $\gamma$。
+\end{proposition}
+
+$\mathcal G$ 顶点的每个染色都给出这样的族：其恢复函数由
+Equations~\eqref{eq:table-folding} 与~\eqref{eq:key-sharing} 满足
+Equation~\eqref{eq:matrix-family-identities}。抽象表述记录的是：
+解码论证不使用顶点构造的任何其他性质。在定义两个应答规则时该族
+已固定，并可以内置于规则之中。
+
+接下来两个小节对任意正整数 $k$ 与满足
+Equation~\eqref{eq:matrix-family-identities} 的固定族成立。它们
+使用 $U$ 上的无限制均匀表，尚未限制 $\beta$。在把该律与投影实验
+比较时才特化 $k$ 与 $\beta$。
+
+\subsection{比较两种矩阵扰动}
+
+均匀矩阵扰动具有 \cite[Lemma~2.10 in the 2018 revision]{KMS23}
+计算的按秩索引的傅里叶谱。我们把它与潜在 gadget 提供的噪声比较。
+
+\begin{lemma}[谱比较]
+\label{lem:matrix-spectral}
+若表族以至少 $0.99$ 的概率通过 Equation~\eqref{eq:matrix-test}，则
+\begin{equation}
+ \E_{U,T}\Pr_{M,a,l}
+   [F_U(M,T)=F_U(M+a l^\top,T)]
+ \ge 0.9\,2^{-r_*},
+ \label{eq:surrogate-acceptance}
+\end{equation}
+其中 $a$ 在 $K$ 中均匀，其余矩阵与向量样本在各自空间中均匀。因此
+至少 $10\eta$ 的对 $(U,T)$ 的内层概率至少 $4\eta$。
+\end{lemma}
+
+\begin{proof}
+对 $\sigma\in K^*$ 定义符号函数
+$f_{U,\sigma}(P)=(-1)^{\sigma(F_U(P))}$。矩阵域上的频率是泛函元组
+$g=(g_i)_{i=0}^{m-1}\in\mathcal V^*$；其在 $P$ 处的特征为
+$(-1)^{\sum_i g_i(Pe_i)}$。所有傅里叶系数用均匀概率测度。平移
+$a l^\top$ 把该特征乘以 $(-1)^{\sum_i l_i g_i(a)}$。对均匀 $l$ 取
+平均得特征值
+\[
+ \Lambda_g=\Pr_{a\sim\mu}[g_i(a)=0\text{ 对每个 }i].
+\]
+它在 $[0,1]$ 中。由 Lemma~\ref{lem:latent}，只要
+\[
+ \dim\Span\{g_i|_K:0\le i<m\}\ge r_*
+\]
+它就至多为 $7/8$。事实上 $g_i$ 的张成是 $\mathcal V^*$ 的子空间，
+引理适用于它。
+
+用一个均匀输出特征展开相等，再用傅里叶正交性，把测试接受率表示为
+\[
+ \E_{U,\sigma}\sum_g
+      \abs{\widehat f_{U,\sigma}(g)}^2\Lambda_g.
+\]
+Parseval 给出每个符号函数的总质量平方为 1。若 $B$ 是限制秩至少
+$r_*$ 上的平均质量平方，则 $0.99\le1-B/8$，故 $B\le0.08$。特别
+地，至少 $0.9$ 的平均质量落在低于 $r_*$ 的秩上。
+
+当 $a$ 改为在 $K$ 中均匀时，$g$ 处的特征值为
+$2^{-\dim\Span\{g_i|_K\}}$。上述质量因此给出
+Equation~\eqref{eq:surrogate-acceptance} 的下界。该扰动固定
+$T$，故其中的表达式恰是固定 $(U,T)$ 处普通短码相等测试的平均。
+其下界为 $14.4\eta$。设 $q$ 为内层接受至少 $4\eta$ 的概率，则该
+平均至多 $4\eta+q$。于是 $q\ge10.4\eta\ge10\eta$。
+\end{proof}
+
+\subsection{获得许多有用的行纤维}
+
+逆定理在每个合格 $(U,T)$ 纤维上给出一个结构化切片。$U$ 证明者
+关于 $K$ 值矩阵的信息是对 $(A,AM)$。我们需要：这些被观察的行以正
+概率决定一个有用的切片。我们还要识别该切片提供的合法答案短集。
+下面的擦除论证证明概率界，折叠随后使答案集非空。
+
+对这一抽取步骤，照旧采样 $U$，并取独立均匀映射 $T:L_U\to W$、
+$A:K\to\F_2^{r_{\rm s}}$、$M:L_U\to K$。对固定的 $U,T,A$ 与映射
+$S_0:L_U\to\F_2^{r_{\rm s}}$，集合 $\{M:AM=S_0\}$ 是其\emph{行
+纤维}。称行建议 $(U,T,A,S_0)$ 为\emph{好的}，若存在至多 $r_{\rm s}$
+个列规定与某个目标 $Mz+u$，使列规定与 $AM=S_0$ 的联立解集非空，
+且在该集合的均匀测度下 $F_U(M,T)=Mz+u$ 以至少 $\alpha/2$ 的概率
+成立。
+
+这是行纤维上的解析条件。目标向量 $z$ 起初不必是实际答案。固定的
+列值允许 $z$ 在其列方向张成的模下变化，$u$ 相应变化。因此切片
+自然提供可能目标向量的一个陪集。其合法部分将是 $U$ 证明者采样的
+答案集。
+
+\begin{lemma}[好行建议及其短答案集]
+\label{lem:good-row-advice}
+对所有足够大的 $k$，矩阵测试接受率至少 $0.99$ 的表族满足
+\begin{equation}
+ \Pr_{U,T,A,M}[(U,T,A,AM)\text{ 是好的}]
+ \ge g_0,
+ \qquad
+ g_0=10\eta^2\,2^{-\ell r_{\rm s}}>0.
+ \label{eq:good-advice-mass}
+\end{equation}
+该下界与所需的 $k$ 之大与奇偶实例及表族无关。
+
+对每个正整数 $k$ 与每个满足
+Equation~\eqref{eq:matrix-family-identities} 的族，可以确定性地为
+每个好行建议选取至多 $r_{\rm s}$ 个列规定 $Mq_j=t_j$
+（$q_j\in L_U$、$t_j\in K$）与目标 $Mz+u$（$z\in L_U$、$u\in K$、
+$e_0^\top z=1$），满足好的定义。记 $Z=\Span\{q_j\}$，所选见证
+决定答案集
+\begin{equation}
+ \mathcal A=(z+Z)\cap\{v\in L_U:e_0^\top v=1\},
+ \qquad 1\le |\mathcal A|\le 2^{r_{\rm s}}.
+ \label{eq:row-answer-set}
+\end{equation}
+见证与 $\mathcal A$ 只依赖 $(U,T,A,S_0)$ 与固定的表族。切片及其
+目标保持好的定义中的一致性保证。
+\end{lemma}
+
+\begin{proof}
+固定替代接受率至少 $4\eta$ 的 $(U,T)$，记 $f(M)=F_U(M,T)$。令
+$B$ 为矩阵域中所有好行纤维（对一切可能的 $A,S_0$）的并。设其均匀
+测度小于 $\eta$。在 $B$ 的表项上修改 $f$，把每一项换成 $K$ 的独立
+均匀元素。每个矩阵只被替换一次，即使多条好行纤维在该处重叠。短码
+步的两个端点都是均匀矩阵。因此每次这样的修改使接受率至多改变
+$2\Pr[B]$，修改后的函数接受率至少 $2\eta$。
+
+我们证明：可以选取随机替换，使其作为与每个目标 $Mz+u$ 匹配的
+贡献，在每个行与列的联立切片中少于 $\alpha/4$ 的规模。令
+$r=r_{\rm s}$。至多 $r$ 个行规定与 $r$ 个列规定的非空切片，其
+齐次空间为
+\[
+ \Hom\bigl(\F_2^m/\Span\{q_j\},\ \bigcap_i\ker d_i^\top\bigr).
+\]
+其规模 $n_{\mathcal S}$ 至少为 $2^{(\ell-r)(m-r)}$。用零方程补齐
+规定列表后，「切片–目标」描述的个数至多 $2^{(2r+1)(\ell+m)}$。
+
+对固定的描述，只统计随机化表项处的匹配，对其他表项赋以确定的零
+贡献。它们是 $[0,1]$ 中的独立变量，总均值至多
+$2^{-\ell}n_{\mathcal S}<\alpha n_{\mathcal S}/8$。Hoeffding 不等
+式 \cite[Theorem~2, equation~(2.6)]{Hoeffding1963} 把出现至少
+$\alpha n_{\mathcal S}/4$ 个这种匹配的概率界定在
+$\exp(-\alpha^2 n_{\mathcal S}/32)$ 以内。对所有描述的并界因此
+至多
+\[
+ \exp\left((2r+1)(\ell+m)\log2
+       -\frac{\alpha^2}{32}2^{(\ell-r)(m-r)}\right),
+\]
+当 $m=1+2k$ 增大时趋于零。固定具有所述性质的替换。
+
+考虑任何容许类型的切片。若其行纤维是好的，则该纤维的每个表项都
+属于 $B$，其修改后的一致性小于 $\alpha/4$。若行纤维不好，则原
+切片上与每个目标的一致性小于 $\alpha/2$。未修改的匹配是原匹配的
+子集，而随机化匹配再加少于 $\alpha/4$。修改后的一致性于是小于
+$3\alpha/4$。用零补齐较短的行系统表明：这两种情形覆盖
+Theorem~\ref{thm:shortcode} 中的每个切片。该定理随即与修改后
+函数至少 $2\eta$ 的接受率矛盾。其适用性不要求修改保持折叠。
+
+因此 $\Pr[B]\ge\eta$。对每个 $M\in B$，至少有一个矩阵 $A$ 使某个
+好行纤维含 $M$。均匀选取的 $A$ 命中该特定矩阵的概率为
+$2^{-\ell r_{\rm s}}$。故在这个固定的 $(U,T)$ 处，好数据的概率
+至少 $\eta2^{-\ell r_{\rm s}}$。Lemma~\ref{lem:matrix-spectral}
+提供至少 $10\eta$ 个这样的对 $(U,T)$，证明了
+Equation~\eqref{eq:good-advice-mass}。所有计数与集中界只依赖固定
+参数与 $m$，如所需。
+
+其余断言不使用高测试接受率或 $k$ 之大。固定任意正整数 $k$、满足
+Equation~\eqref{eq:matrix-family-identities} 的族与任意好行建议。
+固定一个见证，把其列规定写成 $Mq_j=t_j$，令 $Z=\Span\{q_j\}$。
+切片非空使规定的值相容：它们确定线性映射 $t:Z\to K$，在整个切片
+上 $t(w)=Mw$。把 $z$ 换成 $z+w$、$u$ 换成 $u+t(w)$（$w\in Z$）
+因此保持目标。只需证明陪集 $z+Z$ 含首比特为 1 的向量。
+
+否则 $z$ 与 $Z$ 中每个向量首比特都为零。令 $H=\ker A$。对每个
+$h\in H$，平移 $M\mapsto M+h e_0^\top$ 保持行纤维、列规定与目标。
+由折叠它把 $F_U(M,T)$ 平移 $h$。该作用自由，且其每条 $H$-轨道中
+至多一个矩阵满足目标等式。一致性至多
+\[
+ |H|^{-1}=2^{-\ell+\rank A}
+ \le2^{-(\ell-r_{\rm s})}<\alpha/8,
+\]
+与好性矛盾。选 $w\in Z$ 使 $z+w$ 首比特为 1，并对 $z,u$ 作相应
+改变。它们保持原一致性比例。用有限可能性上的固定顺序选一个见证
+与这样的代表。该选择只用行建议与固定表族。其向量 $z$ 落在
+$\mathcal A$ 中，故集合非空；由 $\dim Z\le r_{\rm s}$，其规模
+至多 $2^{r_{\rm s}}$。
+\end{proof}
+
+\subsection{转移所选切片}
+
+与稀疏投影问题的比较遵循 Khot--Safra 的光滑外层博弈方法
+~\cite[Section~3 and Lemma~3.1]{KS13}，共享线性建议如
+Khot--Minzer--Safra~\cite[Sections~3.3--3.4]{KMS17}。
+Lemma~\ref{lem:good-row-advice} 给出正概率的行建议：在 $U$ 上的
+无限制采样下决定一个切片与一个短的合法答案集。在实际实验中，映射
+在 $O$ 上采样并补零到 $U$。我们把完整的补零表（含仿射截距）与
+无限制表比较（投影选择被平均掉），随后把所选切片转移到 $O$。
+
+从现在起取大于 1 的立方数 $k$，并在 Definition~\ref{def:projected-advice}
+中令 $\beta=k^{-2/3}$。
+
+取 $\beta=k^{-2/3}$ 有两个目的：$k\beta^2\to0$ 使补零表律在
+Lemma~\ref{lem:projected-tv} 中逼近无限制律，而 $k\beta\to\infty$
+使单例坐标的期望数目发散。一旦建议空间固定，每个单例都有一个一致
+为正的概率：每条可见建议行在其变量比特上的系数为零。
+Lemma~\ref{lem:clean} 用这些坐标界定一致性。
+
+\begin{lemma}[补零矩阵渐近均匀]
+\label{lem:projected-tv}
+在每个 $U$ 的条件下，分布
+\[
+ (M,T)=(M_O\bar\pi,T_O\bar\pi)
+\]
+与 $\Hom(L_U,K)\times\Hom(L_U,W)$ 上的无限制均匀分布的全变差距离
+为 $o(1)$（$k$ 沿立方数趋于无穷）。该界对 $U$ 与奇偶实例一致。
+投影选择在此比较中被平均掉。
+\end{lemma}
+
+\begin{proof}
+把两个分量合成一张 $\mathcal V$ 值表，令 $n=|\mathcal V|$。在未
+投影的方程块上，两个斜率是 $\mathcal V$ 中独立的均匀元素。在单例
+块上，补零后的斜率对是
+\[
+ (a,0),\qquad (0,a),\qquad (a,a),
+ \qquad a\text{ 在 }\mathcal V\text{ 中均匀}
+\]
+的等权混合。称这两个对律为 $P_0$ 与 $Q_0$。似然比 $dQ_0/dP_0$ 在
+$(0,0)$ 处为 $n$，在三条所示直线上的其余 $3(n-1)$ 个点处为
+$n/3$，其他处为零。于是
+\[
+ \chi^2(Q_0\Vert P_0)
+ :=\E_{P_0}\left[\left(\frac{dQ_0}{dP_0}-1\right)^2\right]
+ =\frac{n-1}{3}.
+\]
+因此单块混合 $(1-\beta)P_0+\beta Q_0$ 相对 $P_0$ 的卡方散度为
+$\beta^2(n-1)/3$。各块独立采样（即使其问题 ID 重合）。把似然比
+相乘给出散度
+\begin{equation}
+ \left(1+\frac{n-1}{3}\beta^2\right)^k-1=o(1),
+ \label{eq:projected-chi-square}
+\end{equation}
+因为 $n$ 固定而 $k\beta^2=k^{-1/3}$ 趋于零。全变差至多该表达式
+平方根的一半。
+
+对方程 $e$ 投影到第三比特的情形，补零截距获得项 $b_e a$（$a$ 为
+该单例的斜率）。原截距独立且在 $\mathcal V$ 中均匀。加上这些项
+之和后，即使在所有投影选择与斜率都已给出之后，它仍均匀独立。前面
+的斜率估计因此证明了整张表的断言。斜率律与
+Equation~\eqref{eq:projected-chi-square} 的界都不依赖方程 ID 或其
+右端。
+\end{proof}
+
+暂时固定好的 $U$-建议及其来自 Lemma~\ref{lem:good-row-advice} 的
+所选见证与答案集 $\mathcal A$。对容许投影令 $z'=\bar\pi z$ 与
+$Z'=\bar\pi Z$。由于 $\bar\pi$ 保持首坐标，
+\begin{equation}
+ \bar\pi\mathcal A
+ =(z'+Z')\cap\{v\in L_O:e_0^\top v=1\}.
+ \label{eq:projected-answer-set}
+\end{equation}
+事实上，右端陪集中的每个向量在 $z+Z$ 中有原像，且原像有相同的
+首坐标。我们将证明 $O$ 证明者的私有傅里叶样本到达这个投影后的
+答案集。
+
+见证切片并不自动在投影下存活。例如列条件 $Mq=t$ 变成
+$M_O\bar\pi q=t$；若 $\bar\pi q=0$ 而 $t\ne0$ 则不相容。更一般
+地，投影后的列方向可能出现新的依赖。下一个论证使用完整表律的
+比较，找出正概率的样本：其中所选切片保持非空并保住足够的一致性。
+
+为这一分析，记 $D=(U,O,\pi,A,T_O,S_O)$ 为同时决定两个证明者消息
+与投影的联合数据。这些数据在约束 $AM_O=S_O$ 之外不指定 $M_O$。
+
+\begin{lemma}[所选见证的转移]
+\label{lem:projected-witness}
+设矩阵测试接受率至少 $0.99$。对所有足够大的立方数 $k$，
+Definition~\ref{def:projected-advice} 中概率至少为
+\begin{equation}
+ \gamma_1=\frac{\alpha g_0}{8}\,2^{-\ell r_{\rm s}}>0
+ \label{eq:projected-witness-mass}
+\end{equation}
+的联合数据 $D$ 具有如下性质：补零后的 $U$-建议是好的，带所选
+答案集 $\mathcal A$ 及其见证。记 $z'=\bar\pi z$，该见证转移到
+非空切片
+\[
+ AM_O=S_O,\qquad M_O\bar\pi q_j=t_j,
+\]
+且在其上
+\begin{equation}
+ \Pr\bigl[F_O(M_O,T_O)=M_Oz'+u\mid
+           AM_O=S_O,\ M_O\bar\pi q_j=t_j\text{ 对所有 }j\bigr]
+ \ge\alpha/4.
+ \label{eq:transferred-witness}
+\end{equation}
+此式中的概率取遍指定切片上的均匀矩阵。
+\end{lemma}
+
+\begin{proof}
+先用 $U,A,M,T$ 的无限制采样，令 $S_0=AM$。设 $\mathcal J$ 为事件
+「$(U,T,A,S_0)$ 是好的且 $M$ 满足其所选列规定」，$\mathcal M$
+为与所选目标相等（在坏数据之外声明该事件为假）。在好行纤维内，
+非空列切片施加至多 $\ell r_{\rm s}$ 个额外的标量线性方程。故
+Lemma~\ref{lem:good-row-advice} 给出
+\[
+ \Pr[\mathcal J]\ge g_0\,2^{-\ell r_{\rm s}},
+ \qquad
+ \Pr[\mathcal J\cap\mathcal M]\ge(\alpha/2)\Pr[\mathcal J].
+\]
+从而
+\begin{equation}
+ \Pr[\mathcal J\cap\mathcal M]
+       -(\alpha/4)\Pr[\mathcal J]
+ \ge\frac{\alpha g_0}{4}\,2^{-\ell r_{\rm s}}.
+ \label{eq:witness-positive-difference}
+\end{equation}
+
+该表达式中的两个事件只依赖 $(U,A,M,T)$。把独立的 $A$ 加入
+Lemma~\ref{lem:projected-tv} 不改变其变差界。因此可以用补零实验
+中的值比较两个事件概率。若全变差距离为 $v_k=o(1)$，
+Equation~\eqref{eq:witness-positive-difference} 中的差至多改变
+$(1+\alpha/4)v_k$。对所有足够大的 $k$，补零后的差至少 $\gamma_1$。
+
+现在对 $D$ 条件化。剩余的 $M_O$ 在行纤维 $AM_O=S_O$ 上均匀。
+补零后的 $U$-建议（从而其所选见证与答案集）固定。在好数据上，令
+$p_D$ 为投影后列切片的条件概率；当 $p_D>0$ 时，令 $q_D$ 为其
+条件相等比例。在坏数据上置 $p_D=0$，当 $p_D=0$ 时置 $q_D=0$。
+共享给出 $F_U(M_O\bar\pi,T_O\bar\pi)=F_O(M_O,T_O)$，故补零后的差
+恰为
+\[
+ \E_D\bigl[p_D(q_D-\alpha/4)\bigr]\ge\gamma_1.
+\]
+被积项在「好性、$p_D>0$、$q_D\ge\alpha/4$」组成的事件之外非正，
+且处处至多 1。因此该事件概率至少 $\gamma_1$，且恰具有所述性质。
+律比较只用于仅依赖 $(U,A,M,T)$ 的事件；此处对 $D$ 的条件化只是
+指出它们的正差在投影实验中的位置。
+\end{proof}
+
+\subsection{解码行建议}
+
+从傅里叶质量抽取外层策略的方法遵循 H\aa stad
+~\cite[Section~1.1]{Hastad01} 与 Khot--Safra 的傅里叶列表方法
+~\cite[Section~1.1]{KS13}。此处投影后的证明者在自己的行纤维上采样
+傅里叶质量平方。转移来的切片将表明：该私有样本以正概率到达投影后
+的答案集 $\bar\pi\mathcal A$。
+
+现在由各自的消息定义两个策略。联合数据与转移来的见证只用于分析
+其一致性；$O$ 证明者不使用 $U$ 证明者的见证或答案集。
+
+$U$ 证明者用其可见的行建议执行 Lemma~\ref{lem:good-row-advice}
+中的确定性选择。当建议是好的时，它从 $\mathcal A$ 中均匀采样
+$a_U$。这是至多 $2^{r_{\rm s}}$ 个实际答案的非空集。在其他输入上
+返回任意实际答案。
+
+$O$ 证明者从自己的行纤维出发。给定 $(O,A,T_O,S_O)$，令 $H=\ker A$，
+并按固定规则选满足 $AM_0=S_O$ 的代表 $M_0$。这样的代表在实验的
+每个输入上都存在。把行纤维写成 $M_0+X$，其中 $X=\Hom(L_O,H)$。
+采样均匀的 $\sigma\in K^*$，并作符号函数
+\[
+ f_\sigma(N)=(-1)^{\sigma(F_O(M_0+N,T_O))},\qquad N\in X.
+\]
+以概率 $|\widehat f_\sigma(\Phi)|^2$ 采样傅里叶频率
+$\Phi\in X^*$。把 $X^*=H^*\otimes L_O$ 等同，纯张量上的配对定义为
+\[
+ \langle\varphi\otimes v,N\rangle=\varphi(Nv).
+\]
+对 $h\in H$，收缩把 $\Phi$ 送到向量 $\Phi(h)\in L_O$。
+若 $\sigma|_H\ne0$，按固定规则选使 $\sigma(h)=1$ 的 $h\in H$ 并
+返回 $\Phi(h)$。若限制平凡，返回任意实际答案。
+
+该规则在正质量频率处总返回实际答案。事实上
+Equation~\eqref{eq:matrix-family-identities} 的折叠恒等式给出
+\[
+ f_\sigma(N+h e_0^\top)=-f_\sigma(N)
+ \qquad\text{当 }\sigma(h)=1.
+\]
+在傅里叶系数中换变量可知其非零要求
+$(-1)^{\langle\Phi,h e_0^\top\rangle}=-1$，等价于
+$e_0^\top\Phi(h)=1$。
+
+Figure~\ref{fig:advice} 概括两个解码器的信息与私有选择。转移来的
+切片只用于分析其一致概率。
+\input{figures/advice}
+\FloatBarrier
+
+\begin{lemma}[转移切片给出一致]
+\label{lem:fourier-coset-decoding}
+固定满足 Lemma~\ref{lem:projected-witness} 的联合数据。在这些数据
+的条件下，刚定义的两个规则使用独立随机性，在 $\bar\pi$ 之下一
+致的概率至少
+\begin{equation}
+ 2^{-\ell r_{\rm s}}(\alpha/8)^2\,2^{-r_{\rm s}}.
+ \label{eq:conditional-decoding}
+\end{equation}
+\end{lemma}
+
+\begin{proof}
+令 $Z'=\bar\pi Z$，故 $\dim Z'\le r_{\rm s}$。行纤维中投影后的列
+规定把限制 $N|_{Z'}$ 固定为线性映射 $b:Z'\to H$。所得仿射切片
+非空；取其中一个 $N_*$。对每个 $\sigma\in K^*$ 定义
+\[
+ C_\sigma=\E\bigl[f_\sigma(N)(-1)^{\sigma(Nz')}
+                       \mid N|_{Z'}=b\bigr].
+\]
+Equation~\eqref{eq:transferred-witness} 的特征展开给出
+\[
+ \E_\sigma\bigl[(-1)^{\sigma(M_0z'+u)}C_\sigma\bigr]
+ \ge\alpha/4,
+ \qquad\text{故}\qquad
+ \E_\sigma|C_\sigma|\ge\alpha/4.
+\]
+恰有 $2^{-\dim H}$ 比例的特征在 $H$ 上限制平凡。由
+$\dim H\ge\ell-r_{\rm s}$ 与 $|C_\sigma|\le1$，
+Equation~\eqref{eq:matrix-parameters} 蕴含
+\begin{equation}
+ \E_\sigma\bigl[\mathbf 1_{\{\sigma|_H\ne0\}}|C_\sigma|\bigr]
+ \ge\alpha/8.
+ \label{eq:nontrivial-correlation}
+\end{equation}
+
+在 $Z'$ 上为零的矩阵在 $X^*$ 中的零化子是 $H^*\otimes Z'$。令
+$\theta_\sigma=(\sigma|_H)\otimes z'$，在仿射切片上的傅里叶展开
+给出
+\[
+ C_\sigma
+ =\sum_{\Phi\in\theta_\sigma+H^*\otimes Z'}
+       \widehat f_\sigma(\Phi)
+       (-1)^{\langle\Phi+\theta_\sigma,N_*\rangle}.
+\]
+该和有 $2^{\dim H\dim Z'}\le2^{\ell r_{\rm s}}$ 项。
+Cauchy--Schwarz（先对每个和、再对 $\sigma$ 的平均）由
+Equation~\eqref{eq:nontrivial-correlation} 给出
+\begin{align*}
+ &\E_\sigma\left[
+   \mathbf 1_{\{\sigma|_H\ne0\}}
+   \sum_{\Phi\in\theta_\sigma+H^*\otimes Z'}
+             |\widehat f_\sigma(\Phi)|^2\right]\\
+ &\hspace{15mm}\ge
+ 2^{-\ell r_{\rm s}}
+ \E_\sigma\bigl[\mathbf 1_{\{\sigma|_H\ne0\}}C_\sigma^2\bigr]
+ \ge 2^{-\ell r_{\rm s}}(\alpha/8)^2.
+\end{align*}
+这就是 $O$ 解码器采到非平凡限制与所示陪集中频率的概率下界。
+
+每个这样的频率形如 $\Phi=(\sigma|_H)\otimes z'+\Psi$
+（$\Psi\in H^*\otimes Z'$）。对解码器选取的 $h$，
+\[
+ \Phi(h)=z'+\Psi(h)\in z'+Z'.
+\]
+如已证，正质量频率给出首比特 1。Equation~\eqref{eq:projected-answer-set}
+因此把返回向量置于 $\bar\pi\mathcal A$。独立地，$U$ 解码器从
+$\mathcal A$ 均匀采样，以至少 $1/|\mathcal A|\ge2^{-r_{\rm s}}$
+的概率选中原像。各界相乘即证
+Equation~\eqref{eq:conditional-decoding}。
+\end{proof}
+
+\begin{proof}[Proposition~\ref{prop:matrix-decoding} 的证明]
+使用上述两个解码器。Lemma~\ref{lem:projected-witness} 提供概率
+至少 $\gamma_1$ 的联合数据集，Lemma~\ref{lem:fourier-coset-decoding}
+在该集上给出所述条件一致性。于是可取
+\[
+ \gamma=\gamma_1\,2^{-\ell r_{\rm s}}(\alpha/8)^2\,2^{-r_{\rm s}}>0.
+\]
+对 $k$ 之大的需要只来自 Theorem~\ref{thm:shortcode}、
+Lemma~\ref{lem:good-row-advice} 的集中界与 Lemma~\ref{lem:projected-tv}
+的全变差估计。它们对奇偶实例与表族一致。见证选取与傅里叶采样不必
+高效：它们在可靠性论证的有限博弈中定义策略。最后，对证明者独立
+随机带的取平均也给出一致概率不低于此的确定性策略。
+\end{proof}
