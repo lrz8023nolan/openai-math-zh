@@ -1,0 +1,230 @@
+\section{干净坐标与可靠性间隙}
+\label{sec:clean}
+
+Proposition~\ref{prop:matrix-decoding} 把矩阵测试的高接受率转化为
+两个携带相关线性建议的局部策略之间的一致。现在我们在 NO 奇偶实例
+上界定该建议实验的值。消失建议的使用是 \cite[Sections~3.3--3.4]{KMS17}
+光滑外层博弈框架的一部分。我们针对本文的以出现为指标的问题给出
+完整的局部重构论证。关键在于找出两类建议斜率都为零的单例坐标。
+在这些坐标之外的数据固定后，其问题对具有普通的独立「方程对变量」
+律。于是每一方都可以从自己剩余的问题与固定数据重构其原始建议输入。
+这就定义了普通并行重复的策略，其值界定原一致性。
+
+\subsection{经典投影博弈重复}
+
+我们使用 Dinur 与 Steurer 并行重复定理的如下形式。此处的值是普通
+经典值：每个证明者只用自身问题作答。投影约束把一侧的每个答案映到
+其在另一侧的所需答案。
+
+\begin{theorem}[投影博弈重复]
+\label{thm:repetition}
+设 $G$ 为有限二部投影博弈，其约束出现上有任意概率分布。问题集与
+答案字母表可以是任意有限集，并允许并行的约束出现。博弈
+$G^{\otimes n}$ 采样 $n$ 个独立出现，给每个证明者发送其问题元组，
+当所有 $n$ 个投影约束都成立时接受。对每个整数 $n\ge1$ 与每个
+$0<g<1$，
+\begin{equation}
+ \val(G)\le 1-g
+ \quad\Longrightarrow\quad
+ \val(G^{\otimes n})\le (1-g^2/16)^n.
+ \label{eq:projection-repetition}
+\end{equation}
+该界与问题集及字母表规模无关。
+\end{theorem}
+
+这是 \cite{DS14} 的 Corollary~1.2。其 Section~2.1 容许非负边权与
+平行边，Section~2.2 定义了此处使用的独立乘积。因此该定理适用于
+我们构造中任何有限的带权问题分布。必要时交换两个证明者以匹配投影
+方向。私有随机化与独立于问题的共享随机性不会增大经典值：在问题
+到来之前用该随机性采样完整的确定性答案表，再对其成功概率取平均。
+
+\subsection{干净坐标上消失的建议}
+
+设 $\mathcal E$ 为 Section~\ref{sec:game} 的奇偶实例（每条方程出现
+有三个互异变量 ID）。回忆其普通「方程对变量」博弈
+$G_{\mathcal E}$：第一个证明者收到方程并以满足三元组作答；第二个
+收到从该方程均匀选取的变量并以比特作答。在 NO 实例上，
+Equation~\eqref{eq:base-game-gap} 给出
+$\val(G_{\mathcal E})\le14/15$。
+
+回忆 Section~\ref{sec:matrix} 的建议实验：取大于 1 的立方数 $k$，
+并令 $\beta=k^{-2/3}$。有序元组 $U$ 由 $k$ 个独立的方程样本组成。
+在每个块中独立地：以概率 $\beta$ 保留均匀选取的变量位置，否则保留
+整条方程。这产生 $O$ 与 Equation~\eqref{eq:outer-projection} 的
+答案投影 $\bar\pi:L_U\to L_O$。独立均匀地选
+\[
+ A:K\to\F_2^{r_{\rm s}},\qquad
+ T_O:L_O\to W,\qquad M_O:L_O\to K
+\]
+并令 $S_O=AM_O$。两个输入分别是
+\begin{equation}
+ (U,A,T_O\bar\pi,S_O\bar\pi)
+ \quad\text{与}\quad
+ (O,A,T_O,S_O).
+ \label{eq:clean-advice-inputs}
+\end{equation}
+$S_O$ 之外的矩阵 $M_O$ 不属于任一输入。每个证明者必须返回实际
+答案，等价地其各自答案空间中首坐标为 1 的向量。
+
+\begin{lemma}[干净坐标界]
+\label{lem:clean}
+若 $\OPT(\mathcal E)\le 4/5$，则建议实验中的每对局部随机化策略
+满足
+\begin{equation}
+ \Pr\bigl[\bar\pi(a_U)=a_O\bigr]
+ \le \left(1-\frac{\beta\,2^{-\dim W-r_{\rm s}}}{3600}\right)^k
+ \le
+ \exp\!\left(
+ -\frac{2^{-\dim W-r_{\rm s}}}{3600}\,k^{1/3}
+ \right).
+ \label{eq:clean-agreement-bound}
+\end{equation}
+特别地，在建议空间固定时，该上界沿立方数随 $k\to\infty$ 对奇偶
+实例一致地趋于零。
+\end{lemma}
+
+\begin{proof}
+固定建议实验中任意一对局部随机化策略。先对 $A$ 条件化，把两个可见
+建议映射合并为
+\[
+ D_O=(T_O,S_O):L_O\longrightarrow E_A,
+ \qquad E_A=W\oplus\im A.
+\]
+在问题与投影选择的条件下，$D_O$ 的截距 $c_O$ 与所有块斜率列都是
+$E_A$ 中独立的均匀元素。事实上，$T_O$ 与 $M_O$ 的列独立均匀，而
+把 $A$ 作用到均匀列上给出 $\im A$ 中的均匀元素。该系数律只依赖
+块是方程还是单例，不依赖任何方程 ID、变量 ID 或所选位置。特别地，
+$c_O$ 与所有块数据独立。
+
+称坐标 $i$ \emph{干净}，若它被投影为单例，且其唯一的建议斜率
+$d_i\in E_A$ 为零。在 $A$ 的条件下，干净示性独立，公共概率为
+\begin{equation}
+ p_A=\frac{\beta}{\abs{E_A}}
+     =\beta\,2^{-\dim W-\rank A}.
+ \label{eq:clean-probability}
+\end{equation}
+更精确地，对每条方程出现 $e$ 与位置 $j\in[3]$，
+\begin{equation}
+ \Pr[e_i=e,\ i\text{ 是位置 }j\text{ 处的干净单例}\mid A]
+ =\omega_e\,\frac{\beta}{3\abs{E_A}}.
+ \label{eq:clean-joint-law}
+\end{equation}
+于是在「干净」的条件下，一个坐标恰具有普通的「方程对变量」分布。
+
+设 $I\subseteq[k]$ 为干净集。为分析，令 $R$ 包含 $A$、$I$、原截距
+$c_O$，以及每个 $i\notin I$ 的如下数据：其方程出现、块是被保留还是
+被投影、后者情形下所选的位置、以及其建议斜率列。$R$ 不包含任何
+见证、解码器输出、一致事件或应答随机性。
+
+对每个正概率的取值 $R=r$，把 $r$ 中记录的干净集 $I$ 视为固定。
+当 $I$ 非空时，我们将在定义 $G_{\mathcal E}^{\otimes\abs{I}}$ 的
+两个策略时把 $r$ 用作常数数据。每个策略将由其自己的乘积博弈问题
+重构一份原始建议输入，应用相应的原始应答规则，并把答案保留在干净
+槽位上。
+
+在 $R=r$ 的条件下，对
+\[
+ (e_i,v_{e_i,j_i}),\qquad i\in I,
+\]
+是 $G_{\mathcal E}$ 的独立问题对。事实上，在 $A$ 的条件下，坐标
+数据独立，而 Equation~\eqref{eq:clean-joint-law} 表明以干净掩码为
+条件在每个干净坐标上保持普通律。外部坐标数据与独立截距不对这些
+对施加进一步条件。
+
+现在验证两个重构，包括跨块共享的仿射截距。右端为 $b_e$ 的方程的
+实际比特是 $x,y,b_e t_0+x+y$。把单例斜率 $d_i$ 拉回，在位置一、
+二、三分别产生两个斜率
+\begin{equation}
+ (d_i,0),\quad (0,d_i),\quad (d_i,d_i)
+ \label{eq:clean-padded-slopes}
+\end{equation}
+中的相应一个。$D_U=D_O\bar\pi$ 的截距为
+\begin{equation}
+ c_U=c_O+
+ \sum_{\substack{i\text{ 投影为单例}\\j_i=3}}
+ b_{e_i}d_i.
+ \label{eq:clean-intercept}
+\end{equation}
+对干净坐标，Equation~\eqref{eq:clean-padded-slopes} 中每个斜率都是
+零，其对 Equation~\eqref{eq:clean-intercept} 的贡献为零。该式中
+所有其余项都由 $r$ 决定。
+
+方程侧收到其对 $i\in I$ 的出现 $e_i$。连同 $r$，它们指定整个
+$U$。其每个干净块中的两个建议斜率为零，而 $r$ 决定所有其他斜率与
+完整截距。这些系数在不使用任何干净所选位置或变量问题的前提下
+重构两张补零建议映射。变量侧收到其对每个 $i\in I$ 的变量问题。
+连同 $r$，它们指定整个 $O$。其干净单例斜率为零，$r$ 提供所有其他
+斜率与原截距。这些系数在不使用任何干净方程的前提下重构其两张建议
+映射。不同块之间重复的 ID 不带来额外限制：问题是有放回独立采样的，
+答案使用 Section~\ref{sec:game} 指定的局部副本。
+
+这些重构定义了所述的乘积博弈策略：每侧把其原始应答规则作用于重构
+后的输入，并把答案按原顺序保留在槽位 $I$ 中。其方程答案是满足
+三元组，因为原答案合法。对干净问题与应答随机性的每组实现，建议
+实验中的完整一致蕴含每个干净槽位被接受。若 $I=\varnothing$，条件
+成功概率至多 1。否则，
+\[
+ \Pr[\bar\pi a_U=a_O\mid R=r]
+ \le \val(G_{\mathcal E}^{\otimes\abs{I}})
+ \le \left(1-\frac{1}{3600}\right)^{\abs{I}}.
+\]
+第一个不等式用刚构造的策略与条件乘积律。第二个用
+Theorem~\ref{thm:repetition} 与 Equation~\eqref{eq:base-game-gap}。
+原始应答规则只在其原始局部输入处求值；$r$ 索引辅助的乘积博弈策略。
+因此最终界对每个 $r$ 都成立，包括 $I=\varnothing$（此时右端按 1
+解释）。
+
+最后，在 $A$ 的条件下，$I$ 的大小服从
+$\operatorname{Binomial}(k,p_A)$。先在 $A$ 的条件下对 $R$ 取平均、
+再对 $A$ 取平均，得
+\begin{align*}
+ \Pr\bigl[\bar\pi(a_U)=a_O\bigr]
+ &\le \E_A\left(1-\frac{p_A}{3600}\right)^k\\
+ &\le\left(1-\frac{\beta\,2^{-\dim W-r_{\rm s}}}{3600}\right)^k\\
+ &\le \exp\!\left(
+ -\frac{k\beta\,2^{-\dim W-r_{\rm s}}}{3600}
+ \right),
+\end{align*}
+其中用了 $\rank A\le r_{\rm s}$。代入 $k\beta=k^{1/3}$ 证明
+Equation~\eqref{eq:clean-agreement-bound}。
+\end{proof}
+
+\subsection{矩阵博弈间隙}
+
+现在可以把每个建议策略的上界与从高接受率矩阵染色抽取出的策略
+比较。
+
+\begin{proposition}[可调完备性的固定间隙]
+\label{prop:matrix-gap}
+固定 $p_*>0$，并按 Equation~\eqref{eq:matrix-parameters} 的顺序选取
+潜在与短码数据。对每个足够大的立方数 $k$，由位置互异的带权奇偶
+实例 $\mathcal E$ 构造的矩阵博弈 $\mathcal G$ 满足
+\[
+ \begin{aligned}
+ \OPT(\mathcal E)\ge1-\xi
+ &\quad\Longrightarrow\quad
+ \val(\mathcal G)\ge1-k\xi-p_*/2,\\
+ \OPT(\mathcal E)\le4/5
+ &\quad\Longrightarrow\quad
+ \val(\mathcal G)\le99/100.
+ \end{aligned}
+\]
+$k$ 的下阈值只依赖固定的潜在与短码数据，不依赖 $\mathcal E$
+或 $\xi$。
+\end{proposition}
+
+\begin{proof}
+完备性即 Lemma~\ref{lem:outer-completeness}。对可靠性，固定
+$\mathcal G$ 的一个染色。其恢复表函数满足 Section~\ref{sec:game}
+的折叠与共享恒等式。Proposition~\ref{prop:matrix-decoding} 给出
+常数 $\gamma>0$，并且对每个足够大的立方数 $k$，只要那些函数的
+矩阵测试接受率至少 $0.99$，就给出一致概率至少 $\gamma$ 的局部
+建议策略。对所有足够大的立方数 $k$，
+Equation~\eqref{eq:clean-agreement-bound} 的上界小于 $\gamma$。
+于是只要 $\OPT(\mathcal E)\le4/5$，Lemma~\ref{lem:clean} 就与那些
+策略的存在矛盾。所有阈值对奇偶实例一致。
+\end{proof}
+
+顺序很重要：$p_*$ 可以在 gadget 参数固定之前取得任意小，而 $\xi$
+可以在 $k$ 固定之后取得任意小。因此同一个 NO 间隙与任何指定的小
+完备性误差相容。

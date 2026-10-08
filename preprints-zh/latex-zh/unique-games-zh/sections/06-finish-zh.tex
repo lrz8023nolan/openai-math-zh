@@ -1,0 +1,198 @@
+\section{完成归约}
+\label{sec:finish}
+
+矩阵博弈具有固定的可靠性间隙与任意小的完备性误差。现在得到
+Theorem~\ref{thm:ugc} 所需的形式：无权、简单二部博弈、任意指定的
+误差。把出现权重取整并对每个出现细分，将保持固定间隙。一次字母表
+无关的重复即完成证明。
+
+\subsection{去掉权重与重复边}
+
+我们对带权置换约束使用如下初等构造。在这一中间阶段，约束出现可以
+是自环，且多个出现可以连接相同的顶点。
+
+\begin{lemma}[取整与细分]
+\label{lem:unweighted-subdivision}
+设 $H$ 为有限置换约束博弈，$h\ge1$ 个正有理出现权重之和为 1。对
+每个正有理 $\tau$，令 $Q=\lceil h/\tau\rceil$。存在一个确定性构造
+得到无权简单二部博弈 $B$（$4Q$ 条边、同一字母表），使
+\begin{equation}
+ \left|\val(B)-\left(1-\frac{1-\val(H)}4\right)\right|
+ \le\frac{\tau}{4}.
+ \label{eq:rounded-subdivision-value}
+\end{equation}
+若 $H$ 的约束是某个有限二元向量空间上的平移，则 $B$ 的约束也是。
+对固定的 $\tau$，当 $H$ 以顶点、出现、置换表与二进制有理权重列出
+时，该构造的运行时间在其编码长度的多项式以内。
+\end{lemma}
+
+\begin{proof}
+把出现权重写成 $w_1,\ldots,w_h$。先取 $n_e=\lfloor Qw_e\rfloor$，
+再把小数部分最大的 $Q-\sum_e\lfloor Qw_e\rfloor$ 个表项各加一
+（平局按固定顺序处理）。则
+\[
+ n_e\ge0,\qquad \sum_e n_e=Q,\qquad
+ |w_e-n_e/Q|\le1/Q.
+\]
+权重差之和为零。因此对每个染色，其被满足出现集的权重变化至多
+\[
+ \frac12\sum_{e=1}^h|w_e-n_e/Q|
+ \le\frac{h}{2Q}\le\tau.
+\]
+把每个出现 $e$ 换成 $n_e$ 个副本（$n_e=0$ 时省略）。所得无权多重图
+$H'$ 有 $Q$ 个出现，且 $|\val(H')-\val(H)|\le\tau$。
+
+把 $H'$ 的每个出现 $e$ 定向为从 $u$ 到 $v$，把其约束写成
+$a_v=\rho_e(a_u)$。对\emph{每个出现}用三个新鲜内部顶点把它替换为
+路径
+\[
+ u\;--\;p_e\;--\;q_e\;--\;r_e\;--\;v.
+\]
+把所有原始顶点与所有 $q_e$ 放在左侧，所有 $p_e,r_e$ 放在右侧。
+沿从 $u$ 到 $v$ 的方向，前三条边上放恒等置换，最后一条上放
+$\rho_e$。当以左到右方向表达一条边时，必要时反转其置换。给全部
+$4Q$ 条边相等的权重。
+
+固定原始顶点处的标记。被满足的出现延拓为四条被满足的边。被违背的
+出现不能延拓为四条，但沿前三条边传播标记恰满足三条。由于内部顶点
+两两不同，这些延拓可以独立选取。对原始标记取最大值给出精确恒等式
+\begin{equation}
+ \val(B)=1-\frac{1-\val(H')}{4}.
+ \label{eq:bipartization-value}
+\end{equation}
+这证明 Equation~\eqref{eq:rounded-subdivision-value}。
+
+自环变成带三个不同新顶点的四元环。平行出现的内部不相交。于是每对
+左右顶点至多承载一条边，故 $B$ 是简单图。逆二元平移仍是平移，恒等
+即零平移；所述约束形式得以保持。
+
+最后，$Q\le h/\tau+1$ 对固定 $\tau$ 是多项式有界的。整数除法与
+有理余数的精确比较在多项式时间与位复杂度内算出诸 $n_e$。列出其
+$Q$ 个副本与 $3Q$ 个新顶点因而也是多项式的。
+\end{proof}
+
+\subsection{最终归约}
+
+\begin{proof}[Theorem~\ref{thm:ugc} 的证明]
+固定 $\eps,\delta\in(0,1/2)$。选正有理 $\eps_0\le\eps$ 与
+$\delta_0\le\delta$。在应用取整细分引理时将取 $\tau\le1/200$。对
+任何满足 NO 界 $\val(H)\le99/100$ 的矩阵博弈 $H$，所得博弈 $B$
+满足
+\begin{equation}
+ \val(B)\le1-\frac{1/100-\tau}{4}\le1-\frac1{800}.
+ \label{eq:post-subdivision-gap}
+\end{equation}
+该间隙不依赖字母表。因此我们可以用字母表无关的重复，在潜在构造
+固定字母表之前选定其指数。选整数 $t\ge1$ 使
+\begin{equation}
+ \left(1-\frac1{10240000}\right)^t\le\delta_0.
+ \label{eq:final-repetition-gap}
+\end{equation}
+例如 $t\ge\lceil10240000\log(1/\delta_0)\rceil$ 即可。由
+Theorem~\ref{thm:repetition}，该指数把每个值至多 $1-1/800$ 的投影
+博弈归约到值至多 $\delta_0$。
+
+选正有理参数
+\begin{equation}
+ p_*\le\frac{\eps_0}{t},\qquad
+ \tau\le\min\left\{\frac1{200},\frac{\eps_0}{t}\right\}.
+ \label{eq:final-errors}
+\end{equation}
+由 Lemma~\ref{lem:latent} 选潜在秩阈值 $r_*$，令 $\eta=2^{-r_*}/16$，
+并用 $\alpha$ 的某个正有理下界选相应的短码参数 $\alpha,r_{\rm s}$。
+然后按 Equation~\eqref{eq:matrix-parameters} 选足够大的 $\ell$，
+固定相应的潜在数据 $(\mathcal V,K,C,\mu)$ 与分裂
+$\mathcal V=K\oplus W$，其中 $K=\F_2^\ell$。
+
+有理预算一旦固定，这些选取就是有效的。对有理 $p_*$，
+Lemma~\ref{lem:latent} 的有效性断言经由一个会终止的确定性构造给出
+全部有限的潜在数据，包括可计算的有理噪声律。
+Theorem~\ref{thm:shortcode} 之后陈述的有效界给出 $\alpha$ 的有理
+选取与维数阈值，包括 $\ell$ 固定之后的 $m_0(\eta,\ell)$。
+
+接着选足够大的立方数 $k\ge8$ 满足 Proposition~\ref{prop:matrix-gap}。
+这样的立方数可以通过核查其证明中的估计找到。记 $m=1+2k$ 与
+$\beta=k^{-2/3}$；由于 $k$ 是立方数，$\beta$ 是有理的。要求
+$m\ge m_0(\eta,\ell)$ 且
+\[
+ \frac{\alpha^2}{32}\,2^{(\ell-r_{\rm s})(m-r_{\rm s})}
+ >(2r_{\rm s}+1)(\ell+m).
+\]
+后者是使 Lemma~\ref{lem:good-row-advice} 中并界小于 1 的充分有理
+条件。对 Lemma~\ref{lem:projected-witness} 中的见证转移，要求
+\[
+ \frac14\left[
+ \left(1+\frac{|\mathcal V|-1}{3}\beta^2\right)^k-1\right]
+ <\frac{\gamma_1^2}{(1+\alpha/4)^2},
+\]
+其中 $\gamma_1$ 来自 Equation~\eqref{eq:projected-witness-mass}。
+左端是全变差界的平方。为最终矛盾，要求
+\[
+ \left(1-\frac{\beta\,2^{-\dim W-r_{\rm s}}}{3600}\right)^k
+ <\gamma,
+\]
+$\gamma$ 来自 Proposition~\ref{prop:matrix-decoding}。所有这些条件
+都是有理的，且对足够大的立方数 $k$ 成立。枚举立方数直至成立即可
+找到合适的 $k$；搜索代价只依赖两个指定的误差，并在使用输入公式
+之前发生。
+
+最后，固定 $k$ 后，选正有理
+\begin{equation}
+ \xi<\min\left\{\frac1{100},\frac{\eps_0}{2kt}\right\}.
+ \label{eq:final-parity-error}
+\end{equation}
+每个选取只依赖两个指定的误差。特别地，$r_*$ 在 $\ell$ 之前固定，
+建议维数在 $k$ 之前固定，而 $k$ 在奇偶误差 $\xi$ 之前固定。
+
+给定 3SAT 公式，应用 Theorem~\ref{thm:parity} 与
+Lemma~\ref{lem:distinct-parity}，构造 Section~\ref{sec:game} 的
+矩阵博弈 $H$。Proposition~\ref{prop:matrix-gap} 给出
+\[
+ \begin{array}{ll}
+ \text{YES：}&\val(H)\ge1-d,
+       \quad d=k\xi+p_*/2\le\eps_0/t,\\[2pt]
+ \text{NO：}&\val(H)\le99/100.
+ \end{array}
+\]
+以 $\tau$ 应用 Lemma~\ref{lem:unweighted-subdivision}，得到无权
+简单二部博弈 $B$。它满足
+\[
+ \begin{array}{ll}
+ \text{YES：}&\val(B)\ge1-(d+\tau)/4,\\[2pt]
+ \text{NO：}&\val(B)\le1-1/800,
+ \end{array}
+\]
+其中 NO 界即 Equation~\eqref{eq:post-subdivision-gap}。最终输出为
+$G=B^{\otimes t}$。由 Equations~\eqref{eq:projection-repetition}
+与 \eqref{eq:final-repetition-gap}，其 NO 值至多 $\delta_0\le\delta$。
+在 YES 输入上，逐坐标使用 $B$ 的染色。并界给出
+\[
+ \val(G)\ge1-\frac{t(d+\tau)}4
+ \ge1-\eps_0/2\ge1-\eps.
+\]
+
+输出具有所断言的图与约束形式。其两个顶点集是 $B$ 两侧的 $t$ 重
+乘积。由于 $B$ 是简单图，一对乘积顶点在每个坐标处至多确定一条边，
+故至多一条乘积边。独立均匀的边采样在这些乘积边上均匀。由
+Section~\ref{sec:game}，$H$ 的约束是 $K$ 上的平移；取整与细分保持
+它们。偏移为 $c_1,\ldots,c_t$ 的平移之积是 $K^t=\F_2^{\ell t}$ 上
+的平移 $(c_1,\ldots,c_t)$。这就是定理中的字母表 $\F_2^s$，其中
+$s=\ell t\ge1$ 由指定误差固定。
+
+\paragraph{多项式编码。}
+设预处理后的奇偶实例有 $N_{\mathcal E}$ 个正方程出现。方程元组有
+$N_{\mathcal E}^k$ 个。每个元组的表数、噪声结果数与扰动向量数在
+上述参数选取之后固定，故列出的矩阵测试出现数 $h$ 是固定常数乘
+$N_{\mathcal E}^k$。省略零概率结果，重复出现分开保留。每个权重
+是 $k$ 个奇偶权重、一个固定有理噪声概率与固定均匀采样因子之积，
+具有多项式二进制长度。
+
+精确表键与折叠代表由固定维数中的线性代数计算（保留原变量与出现
+ID）。至多 $2h$ 个端点出现。即使对每对键都比较以识别相同顶点，也
+只需多项式时间；给所得的互异顶点连续编号。最大余数取整用
+$Q=\lceil h/\tau\rceil=O(h)$ 个副本；细分创建 $3Q$ 个新顶点与
+$4Q$ 条边。由于 $t$ 固定，最终乘积有 $(4Q)^t$ 条边与多项式多个
+顶点。固定字母表 $\F_2^{\ell t}$ 上的完整置换表规模为常数，端点
+指标有 $O(t\log(h+1))$ 比特。这些观察给出全程确定性多项式时间的
+显式构造，完成证明。
+\end{proof}
