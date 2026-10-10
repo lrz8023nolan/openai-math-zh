@@ -21,7 +21,7 @@
 | [contents-zh/CONTENTS-zh.md](contents-zh/CONTENTS-zh.md) | 372 个成果族的中文目录（编号与上游一一对应，含 Lean 形式化标记） |
 | [glossary.md](glossary.md) | 数学术语中英对照表（翻译基准） |
 | [overview-zh/](overview-zh/) | 上游 overview（研究总览）中文版 |
-| [preprints-zh/](preprints-zh/) | 精选成果族精译（论文式中英对照；[pdf/](preprints-zh/pdf/) 内含 A4 排版的 PDF 版） |
+| [preprints-zh/](preprints-zh/) | 精选手稿中文版——目录结构与上游 `preprints/` 一一对应：`<手稿 Slug>/build/` 内为 LaTeX 中文译稿，`<手稿 Slug>/paper-zh.pdf` 为编译 PDF；[summaries-zh/](preprints-zh/summaries-zh/) 为成果族摘要精译 |
 | [progress.md](progress.md) | 翻译进度与认领状态 |
 
 ## 与上游的对应关系

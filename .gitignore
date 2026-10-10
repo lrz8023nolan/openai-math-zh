@@ -12,6 +12,7 @@ tools/pdf_build/
 *.fls
 *.fdb_latexmk
 *.bbl
+*.toc
 *.blg
 
 # 系统文件
