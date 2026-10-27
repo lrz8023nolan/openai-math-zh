@@ -1,0 +1,353 @@
+\section{稀疏多项式方程公共零点的计数}\label{sec:setup}
+现在证明定理~\ref{thm:overview-sparse-polynomials}。
+输入是 $\mathbb F_2$ 上 $n$ 个布尔变量、$m_{\mathrm{test}}\le cn$
+个多项式方程 $P_i(x)=0$ 构成的方程组 $\mathcal P$，
+$k,c$ 固定。每个 $P_i$ 是至多 $(\log n)^c$ 个次数至多 $k$
+的单项的列表。目标是整数
+\begin{equation}\label{eq:common-zero-count}
+ N(\mathcal P)=\#\{x\in\{0,1\}^n:P_i(x)=0\text{ 对每个 }i\}.
+\end{equation}
+首先我们构造每方程一个因子的乘积，其在布尔立方上的取值
+记录公共零点指示子。困难在于使其总输入次数关于 $n$
+保持线性。随后为这些因子构造替代型，并用
+第~\ref{sec:counting} 节对乘积求和。
+第~\ref{sec:hashes} 节将所得算法用于任意给定的方程组，
+包括仍接受某公式不可满足赋值的方程组。
+
+\subsection{单个方程的整数多项式}\label{subsec:rational-lift}
+在布尔输入上，可把每个正幂 $x_v^j$ 替换为 $x_v$。
+把重复单项按模二合并。设 $\mathcal M_i$ 是由此得到的
+$P_i$ 的变量集列表，定义其整数提升为
+\[
+ L_i(\vec X)=\sum_{M\in\mathcal M_i}\prod_{v\in M}X_v .
+\]
+空单项为一，空和为零。$L_i(x)$ 统计取值为一的单项个数，
+故 $P_i(x)=0$ 恰在 $L_i(x)$ 为偶数时成立。
+写 $I_i=\bigcup_{M\in\mathcal M_i}M$。
+虽然 $L_i$ 可读取 $k(\log n)^c$ 个变量，
+其次数仍至多 $k$。
+
+令 $\ell=n+1$。由 $0\le N(\mathcal P)\le2^n<2^\ell$，
+只需得到其模 $2^\ell$ 的剩余。
+我们先用一个模二的幂的整数多项式表示偶性指示子。
+直接相乘 $m_{\mathrm{test}}$ 个这样的指示子只能得到二次
+次数界；下一条引理的形式将使我们能\emph{跨全部方程}
+控制次数。
+
+令 $h(Y)=Y(Y-1)$。它在每个整数 $Y$ 处取偶数值。
+把指示子写成 $h$ 的幂，就在乘积中为每个 $h$ 副本
+暴露出一个二的因子。
+
+\begin{lemma}\label{lem:rational-idempotent}
+对每个整数 $\ell\ge1$，可以构造多项式
+$e_0,\ldots,e_{\ell-1}\in\mathbb Z[Y]$（每个次数至多一），
+使
+\begin{equation}\label{eq:idempotent-expansion}
+ p_\ell(Y)=\sum_{j=0}^{\ell-1}e_j(Y)h(Y)^j,
+ \qquad
+ p_\ell(y)\equiv\mathds{1}_{\{2\mid y\}}\pmod{2^\ell}
+ \quad(y\in\mathbb Z).
+\end{equation}
+$e_j$ 的系数有 $\poly(\ell)$ 位，构造使用 $\poly(\ell)$
+次位运算与 $\poly(\ell)$ 比特空间。
+\end{lemma}
+\begin{proof}
+设 $F_\ell$ 为 Beigel 与 Tarui 的模放大多项式
+~\cite[Section~2.3]{BT94}。Chan 与 Williams
+把 $F_\ell$ 作用于子句违反指示子的和，
+确定性计数可满足赋值~\cite[Theorem~2.5 and proof of Theorem~1.6]{CW21}。
+我们需要偶奇偶性的指示子，故取其补：
+\begin{equation}\label{eq:binary-indicator}
+ p_\ell(Y)=1-F_\ell(Y)=(1-Y)^\ell
+       \sum_{j=0}^{\ell-1}\binom{\ell+j-1}{j}Y^j.
+\end{equation}
+该有限和是 $(1-Y)^\ell$ 模 $Y^\ell$ 的逆。
+事实上，$(1+Y+Y^2+\cdots)^\ell$ 中 $Y^j$ 的系数统计 $j$
+分入 $\ell$ 部分的弱组合，等于
+$\binom{\ell+j-1}{j}$。因此
+\[
+ p_\ell(Y)\equiv1\pmod{Y^\ell},
+ \qquad
+ p_\ell(Y)\equiv0\pmod{(1-Y)^\ell}.
+\]
+对偶数 $y$，第一个同余给出
+$p_\ell(y)\equiv1\pmod{2^\ell}$。
+对奇数 $y$，第二个给出 $p_\ell(y)\equiv0\pmod{2^\ell}$。
+
+多项式 $p_\ell$ 有整系数且次数小于 $2\ell$。
+用首一二项式 $h=Y^2-Y$ 逐次除之，把它唯一写成
+$\sum_{j<\ell}e_jh^j$，其中余式 $e_j$ 是次数小于二的
+整系数多项式。附录~\ref{app:arithmetic} 的
+引理~\ref{lem:rational-lift-height} 界住其系数，
+并证明该构造的 $\poly(\ell)$ 位运算界。
+\end{proof}
+
+\subsection{保持乘积次数线性}
+完整乘积 $\prod_{i=1}^{m_{\mathrm{test}}} p_\ell(L_i(\vec{X}))$
+的次数至多 $km_{\mathrm{test}}(2\ell-1)$。
+每个因子 $h(y)$ 在整数自变量处贡献一个二的因子，
+故含至少 $\ell$ 个这样的因子的项可被模 $2^\ell$ 丢弃。
+这使我们能\emph{跨全部方程}只保留 $h$ 的总幂次小于
+$\ell$ 的项。引入形式变量 $V$ 记录该幂次，对每个方程
+使用同一个 $V$。其指数记录在整数自变量处整除相应项的
+一个有保证的二的幂。它不是要被求和的附加布尔变量。
+这里我们选取第~\ref{subsec:product-interface} 节的
+系数代数：
+\[
+ \mathcal A_\ell=\mathbb Q[V]/(V^\ell).
+\]
+在该代数中每次乘法都丢弃 $s\ge\ell$ 的幂 $V^s$。
+乘积作成后，用线性映射
+\[
+ \mathcal S_\ell\!\left(\sum_{s=0}^{\ell-1}b_sV^s\right)
+ =\sum_{s=0}^{\ell-1}b_s
+\]
+把其保留系数相加。该映射不必保持乘积，
+因此只在因子相乘之后使用。
+对多项式系数 $b_s$ 我们沿用同一记号。
+
+\begin{lemma}\label{lem:total-order}
+设整数 $m_{\mathrm{test}}\ge0$、$\ell\ge1$。
+对整数 $y_1,\ldots,y_{m_{\mathrm{test}}}$，置
+\[
+ B_i(V)=\sum_{j=0}^{\ell-1}e_j(y_i)h(y_i)^jV^j.
+\]
+则
+\[
+ \mathcal S_\ell\!\Bigl(\prod_{i=1}^{m_{\mathrm{test}}} B_i(V)\bmod V^\ell\Bigr)
+ \equiv\prod_{i=1}^{m_{\mathrm{test}}}\mathds{1}_{\{2\mid y_i\}}\pmod{2^\ell}.
+\]
+对任何非负整数 $d_*$，若把 $y_i$ 换成总次数至多 $d_*$
+的 $\mathbb Q$ 上多项式，则每个保留的 $V^s$
+系数（从而其和）的总输入次数至多为
+$d_*(m_{\mathrm{test}}+2(\ell-1))$。
+\end{lemma}
+\begin{proof}
+截断之前，对 $V^s$ 系数有贡献的项形如
+\[
+ \prod_{i=1}^{m_{\mathrm{test}}} e_{j_i}(y_i)h(y_i)^{j_i},
+ \qquad \sum_{i=1}^{m_{\mathrm{test}}} j_i=s.
+\]
+在整数自变量处它被 $2^s$ 整除。因此丢弃每个
+$s\ge\ell$ 的系数后，系数和在模 $2^\ell$
+下不变。不截断时，该和是 $\prod_i p_\ell(y_i)$，
+由引理~\ref{lem:rational-idempotent} 有所需同余。
+
+对多项式自变量，每个保留项满足
+$\sum_i j_i\le\ell-1$。由 $\deg e_{j_i}\le1$
+与 $\deg h=2$，其次数至多
+\[
+ \sum_{i=1}^{m_{\mathrm{test}}} d_*(1+2j_i)
+ \le d_*(m_{\mathrm{test}}+2(\ell-1)).
+\]
+该界逐系数成立，对其和亦然。
+\end{proof}
+
+为说明截断为何使用跨全部方程的全序，取 $\ell=2$。则
+\[
+ p_2(Y)=1-3Y^2+2Y^3=(1-Y)+(2Y-1)h(Y).
+\]
+对两个方程，模 $V^2$ 相乘后再作 $\mathcal S_2$，
+保留的是
+\[
+ (1-y_1)(1-y_2)
+ +(2y_1-1)h(y_1)(1-y_2)
+ +(1-y_1)(2y_2-1)h(y_2).
+\]
+其次数至多四。被略去的项
+$(2y_1-1)(2y_2-1)h(y_1)h(y_2)$ 次数为六，
+但在整数输入处被四整除。
+
+\subsection{用给定的替代型计数}\label{subsec:count-polynomial}
+对方程 $i$，向第~\ref{sec:counting} 节提供因子
+\begin{equation}\label{eq:lifted-factor}
+ \mathcal B_i((X_v)_{v\in I_i},V)
+ =\sum_{j=0}^{\ell-1}e_j(L_i(\vec X))h(L_i(\vec X))^j V^j
+ \quad\text{（在 }\mathcal A_\ell[(X_v)_{v\in I_i}]\text{ 中）}.
+\end{equation}
+在一个因子内部，$X_v$ 的每次出现都使用同一替代型；
+不同因子可对 $X_v$ 使用不同的型。
+即使每个因子得到各自独立的输入，$L_i$
+在这些输入上的次数仍至多 $k$。
+引理~\ref{lem:total-order} 把乘积
+\emph{在 $\mathcal A_\ell$ 中}的输入次数界定为
+$d=k(m_{\mathrm{test}}+2(\ell-1))$。
+于是该乘积恰满足公共例程的次数假设
+\eqref{eq:general-product-degree}。
+添加 scope 为 $\{v\}$、取值为一的因子，
+保证所有声明变量都出现在构造中。
+
+设 $H(T)\in\mathcal A_\ell[T]$ 是这些因子的
+\eqref{eq:general-count-polynomial}。其在 $T=0$
+处的 $V$ 系数是整数，因为所有替换在零点都恢复其布尔
+输入。由同一条引理，对其取值求和给出
+\begin{equation}\label{eq:origin-residue}
+ \deg_T H\le d_H:=kR(m_{\mathrm{test}}+2(\ell-1)),\qquad
+ \mathcal S_\ell(H(0))\equiv N(\mathcal P)\pmod{2^\ell}.
+\end{equation}
+因此 $\mathcal S_\ell(H(0))$ 的最小非负剩余
+就是精确计数。插值在有理数上进行；
+该同余只在 $T=0$ 的布尔输入处需要。
+
+\subsection{求值因子的成本}\label{subsec:one-query-cost}
+\begin{proposition}\label{prop:count}
+给定 $n$ 个变量上的次数至多 $k$ 的多项式方程列表，
+以及对其因子满足定义~\ref{def:layout} 的 design。
+设 $S\ge1$ 界住单项列表与因子 scope 的总长，
+取任何满足 $2^\ell>2^n$ 的 $\ell$。
+用 \eqref{eq:origin-residue} 的 $d_H$ 与
+\eqref{eq:hasse-order} 的 $q,J$，
+$N(\mathcal P)$ 可确定性地在
+\[
+ \poly(n,m_{\mathrm{test}},\ell,D,Q,R,J,r,k,S)\,
+ C_q(2D+1)^{2\tau n}2^{2n/r}
+\]
+次位运算与 $\poly(n,m_{\mathrm{test}},\ell,D,Q,R,J,r,k,S)$
+比特工作空间内计算。
+\end{proposition}
+\begin{proof}
+对 $\mathcal A_\ell$ 中的系数应用
+命题~\ref{prop:general-count}。在求值点 $t$，
+例程使用 $\mathcal A_\ell[z]/(z^J)$，
+故存储的元素恰有 $J\ell$ 个有理系数。
+要在 \eqref{eq:jet-substitution} 的固定布尔代入
+$\vec X=\mathbf1_U$ 处求值因子 $i$，
+先把每个列出的单项通过相乘其至多 $k$ 个被代入输入求值，
+再把结果相加得 $L_i$。把该值用于
+\eqref{eq:lifted-factor}，逐次乘以 $h(L_i)$
+得到其幂。这在所列参数上花费多项式次有理运算，
+且从不枚举整个 scope $I_i$ 上的赋值。
+多项式 $e_j$ 由引理~\ref{lem:rational-idempotent}
+一次性算出。
+
+对位复杂度，各行有公分母 $d_{\mathrm{den}}=(R-1)!Q!$。
+每个被代入单项的分母整除 $\Delta=d_{\mathrm{den}}^k$，
+每个提升因子的分母整除 $\Gamma=\Delta^{2\ell-1}$，
+其乘积的分母整除 $\Omega=\Gamma^{m_{\mathrm{test}}}$。
+于是指数多个被加项可在同一个分母上累加。
+附录~\ref{app:arithmetic} 把这些和中的位长界定为
+\begin{equation}\label{eq:sum-bit-bound}
+ B_{\mathrm{sum}}=\poly(n,m_{\mathrm{test}},\ell,k,Q,\log(D+2),\log(S+2)).
+\end{equation}
+对每个 $0\le s<\ell$，我们从其 $QJ$ 个 Taylor 系数
+插值有理多项式 $[V^s]H(T)$。
+该附录验证此插值以及 \eqref{eq:origin-residue}
+的最终整数剩余的多项式位成本。
+$O(QJ\ell)$ 个存储系数、design 以及
+命题~\ref{prop:general-count} 中的依序枚举
+给出所述空间界。
+\end{proof}
+
+\subsection{构造替代型并完成证明}\label{subsec:sparse-queries}
+每个稀疏多项式读取的变量很少，但一个变量可能出现在许多
+方程中。我们先固定出现次数最多的少数变量的取值。
+在所得的每个分支上，即可构造
+命题~\ref{prop:count} 所需的 design。
+
+\begin{proof}[定理~\ref{thm:overview-sparse-polynomials} 的证明]
+设 $\mathcal P$ 为给定的多项式方程组。
+空方程列表给出 $2^n$ 个公共零点；常值方程 $1=0$
+给出零个。丢弃方程 $0=0$。为每个声明变量 $v$
+附加一个 scope 为 $\{v\}$、取值为一的中性因子，并写
+\[
+ M=\sum_{f\in\mathcal F}|I_f|
+\]
+表示「因子--变量」关联总数。
+输入界蕴含 $M=n(\log n)^{O_{k,c}(1)}$，
+且每个 scope 有 $(\log n)^{O_{k,c}(1)}$ 个变量。
+不过某个特定变量可能出现在许多 scope 中。
+
+令 $\lambda=\lceil\log_2 n\rceil$ 与
+\[
+ b_0=\left\lceil\frac Mn\right\rceil\lceil\sqrt\lambda\rceil.
+\]
+设 $S\subseteq[n]$ 为属于多于 $b_0$ 个 scope 的变量。
+对每个 $b\in\{0,1\}^S$，固定 $x|_S=b$
+并计数 $[n]\setminus S$ 上的补全；我们称这个受限问题为
+一个分支。由 $|S|\le M/b_0\le n/\sqrt\lambda$，
+分支至多 $2^{n/\sqrt\lambda}$ 个。
+每个分支有相同的自由变量数 $n'$，且
+\[
+ n'\ge n-\frac n{\sqrt\lambda}\ge\frac n2
+ \qquad(n\ge20).
+\]
+在 $\mathbb F_2$ 上把固定位代入每个 $P_i$，
+并在作整数提升前按模二合并重复单项。
+次数与单项数都不增加。常值方程可再次立即处理。
+各分支划分布尔立方，故其公共零点计数相加为
+$N(\mathcal P)$。
+
+为应用第~\ref{sec:construction} 节，
+从 scope 中移除固定变量，并把自由变量重标记为 $[n']$。
+记 $I'_f\subseteq[n']$ 为受限 scope，
+$M'=\sum_f|I'_f|$ 为其关联总数。
+设 $b$ 为自由变量的最大因子关联数，
+$w=\max_f|I'_f|$。则 $b\le b_0$，
+且 $b$ 与 $w$ 都被 $\log n'$ 的固定幂界定。
+剩余的中性因子保证 $M'\ge n'$。
+令
+\[
+ \lambda'=\lceil\log_2 n'\rceil,\qquad
+ \nu'=\lceil\log_2\lambda'\rceil,
+\]
+并选取满足 $b,w\le(\lambda')^\beta$ 的最小整数
+$\beta\ge1$。对固定的 $k,c$，对一切足够大的 $n$，
+$\beta$ 的可能取值被一个常数界定。
+我们把引理~\ref{lem:incidence-parameters} 应用于
+$[n']$ 上的受限 scope $(I'_f)$（关联计数 $M'$），取
+\[
+ r=\left\lfloor\frac{\sqrt{\lambda'}}{(\nu')^2}\right\rfloor,
+ \qquad Q=\left\lfloor\frac{\lambda'}{128\nu'}\right\rfloor,
+ \qquad R=(\beta+3)\lceil\sqrt{\lambda'}\rceil.
+\]
+若 $r<2$ 或 $Q\le R$，则先使用下文的穷举搜索退路，
+再作 $\tau$、$\epsilon$ 与奇偶插值区间 $\mathcal I$。
+否则置
+\[
+ \tau=\frac1{r\lambda'},\qquad
+ \epsilon=\frac1{br^2\lambda'},\qquad D=r^{2Q},
+\]
+并执行该引理其余的可行性检验。
+对一切足够大的 $n$，引理~\ref{lem:layout}
+提供所需的行与测量矩阵，满足
+\[
+ r=\Theta\!\left(\frac{\sqrt{\log n'}}{(\log\log n')^2}\right),
+ \qquad Q=\Theta\!\left(\frac{\log n'}{\log\log n'}\right),
+ \qquad R=O_{k,c}(\sqrt{\log n'}),
+ \qquad D\le(2n')^{1/128}.
+\]
+
+在每个分支上都可以使用原精度 $\ell=n+1$，
+因为即使不受限的计数也小于 $2^\ell$。
+由 $n'\ge n/2$，$\ell$ 与 $m_{\mathrm{test}}$
+都是 $O_c(n')$。于是 $d_H=O_{k,c}(n'R)$、
+$J=O_{k,c}(n'R/Q)+1$，而 \eqref{eq:three-costs}
+在维数 $n'$ 下的指数为
+\[
+ O_{k,c}\!\left(\frac{n'(\log\log n')^2}{\sqrt{\log n'}}\right)
+ =O_{k,c}\!\left(\frac{n(\log\log n)^2}{\sqrt{\log n}}\right).
+\]
+全部代入数据、系数阵列与插值方程组的表示总长为
+$n^{O_{k,c}(1)}$ 比特。把每分支的运行时间乘以至多
+$2^{n/\sqrt\lambda}$，所述指数界不变，
+故把分支答案相加给出所需的运行时间。
+
+为对每个输入规模实现该构造，算法用整数算术检验其数值
+假设。除上面的初步守卫外，还检验
+引理~\ref{lem:incidence-labels} 的
+$2(b+w)D^2\le M'$ 与 $2Qr^2\le n'$、
+$\mathcal I$ 的端点、$R\ge32$、$6R\le Q$，
+以及可精确检验的 \eqref{eq:incidence-tail}
+中的二项尾界。若任何检验失败，算法放弃分支计算，
+改为在全部 $2^n$ 个赋值上直接检验原方程。
+对固定的 $k,c$，刚证明的界与
+引理~\ref{lem:incidence-parameters} 表明失败只可能对
+有限多个 $n$ 发生。因此该退路被吸收进定理的常数中。
+
+为在所述空间界内合并分支计数，我们一次处理一个分支。
+初始化整数累加器 $Z=0$，把每个分支的答案加进去。
+在每个分支上，构造与
+命题~\ref{prop:count} 使用 $n^{O_{k,c}(1)}$
+比特空间。不交性保证全程 $0\le Z\le2^n$，
+最终值为 $N(\mathcal P)$，如所断言。
+\end{proof}

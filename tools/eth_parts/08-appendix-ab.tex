@@ -1,0 +1,587 @@
+\section{可满足赋值的分拆}\label{app:sparsify}
+
+固定 $k\ge2$ 与有理数 $0<\sigma\le1$。
+我们通过把公式反复分裂成两种情形来证明
+引理~\ref{lem:sparsify}。两个孩子使用同样的 $n$
+个变量，且父公式的每个可满足赋值恰满足一个孩子。
+我们沿用选取共享文字集的规则与~\cite[Section~6]{CIP}
+的插入记账。使两种情形互不相同的精细化在精确计数中是
+标准的~\cite[Appendix~A]{DHMTW}。
+
+在本附录中，子句是文字的集合，表示其析取。
+其\emph{宽度}是其所含文字数。
+我们删除重言子句、重复子句与包含其他子句的子句。
+于是剩余子句在包含关系下构成一个反链。
+我们保留全部 $n$ 个声明变量，且不传播单元子句。
+空子句给出计数零，空公式给出计数 $2^n$。
+
+\subsection{分支规则}
+
+固定整数 $M\ge2$。我们将在每个叶得到出现界
+$B=O_k(M^{k-1})$，然后选取 $M$ 使树至多
+$\poly_k(n,\sigma^{-1})2^{\sigma n}$ 个节点。
+置
+\[
+ \theta_j=M^j\qquad(0\le j<k).
+\]
+记 $F$ 为当前子句族，对每个文字集 $H$ 定义
+\[
+ \deg_c(H)=\#\{C\in F:|C|=c,\ H\subseteq C\}.
+\]
+只要宽度 $c$ 的子句的非空真子集 $H$ 满足
+\begin{equation}\label{eq:spar-violation}
+ \deg_c(H)\ge\theta_{c-|H|},
+\end{equation}
+我们就分支。算法选取最小的可能 $c$，再选取最大的可能
+$|H|$；其余并列确定性打破。
+于是，一个留下 $j=c-|H|$ 个其他文字的非空共享文字集
+$H$，必须在至少 $M^j$ 个子句中出现我们才在其上分支。
+
+设 $H\cup P_1,\ldots,H\cup P_z$ 为包含所选 $H$
+的全部宽度 $c$ 子句，$G$ 为其余子句。置 $j=c-|H|$。
+这里 $P_a$ 是从第 $a$ 个被选子句中移除 $H$
+后剩下的文字集，故每个 $P_a$ 宽度为 $j$ 且
+$z\ge\theta_j$。两个孩子是
+\begin{equation}\label{eq:spar-children}
+ F_A=G\wedge H,\qquad
+ F_B=G\wedge\bigwedge_{a=1}^zP_a
+          \wedge\bigwedge_{\ell\in H}\{\neg\ell\}.
+\end{equation}
+我们在每个孩子中删除被其新子句弄得冗余的子句，
+以恢复反链条件。集合 $P_a$ 可以互相重叠。
+两个孩子的可满足赋值互不相交：
+$F_A$ 要求 $H$ 的某个文字为真，
+而 $F_B$ 要求 $H$ 的每个文字为假。
+
+\begin{lemma}\label{lem:spar-branch}
+\eqref{eq:spar-children} 中的两个孩子划分其父公式的
+可满足赋值。每个新子句的宽度小于 $c$。
+$A$ 孩插入一个新子句，$B$ 孩插入至少 $\theta_j$
+个宽度 $j$ 的新子句。所有新插入的子句都在即时归一化中
+存活。任一孩子中被删除的每个旧子句都包含一个新插入的
+真子集。
+\end{lemma}
+\begin{proof}
+每个赋值恰满足条件「$H$ 的某个文字为真」与
+「$H$ 的每个文字为假」之一。
+在前一情形，全部被选子句被满足，剩下 $G\wedge H$。
+在后一情形，每个被选子句化归为 $P_a$，
+而单元子句 $\{\neg\ell\}$ 强制该情形。
+因此两个孩子划分父公式的可满足赋值。
+
+旧反链不含被 $H$ 或任何 $P_a$ 包含的子句：
+那样的子句将是 $H\cup P_a$ 的真子集。
+于是 $H$ 与各互异的等宽子句 $P_a$ 都是新的。
+任何 $P_a$ 不含 $H$ 的变量，因为其父子句非重言。
+因此，单元子句 $\{\neg\ell\}$（$\ell\in H$）
+都不是任何 $P_a$ 的子集。
+已经存在的单元子句 $\{\neg\ell\}$ 被保留，
+不计为新插入。其余新单元子句与子句 $P_a$ 全部存活。
+每个被选旧子句包含孩子 $A$ 的新插入子句 $H$，
+或孩子 $B$ 的新插入子集 $P_a$。
+按归一化规则，每个其他被删子句都包含一个新插入的
+真子集。
+\end{proof}
+
+\subsection{统计插入}
+为界定树的大小，我们统计沿一条路径引入的每个子句
+（包括后来被删除的子句）。输入中已有的子句不计入。
+由引理~\ref{lem:spar-branch}，每步插入一个子句，
+因此界定插入总数也就界定路径长度。
+
+在此记账中，子句在分支引入它时被标记。
+我们先界定仍存在且含给定文字集的被标记子句数。
+最小宽度优先级控制分支之前存在的子句；
+最大 $|H|$ 优先级控制该分支引入的子句。
+
+\begin{lemma}\label{lem:spar-marked-degree}
+在每个节点，对 $1\le i<j<k$ 与每个大小 $i$
+的文字集 $S$，仍存在的、含 $S$ 的宽度 $j$
+被标记子句少于 $2\theta_{j-i}$ 个。
+\end{lemma}
+\begin{proof}
+初始没有被标记子句。只需考虑插入宽度 $j$
+子句的一个分支。其所选宽度 $c$ 大于 $j$。
+插入之前，含 $S$ 的当前宽度 $j$ 子句少于
+$\theta_{j-i}$ 个：否则最小宽度优先级会选取至多 $j$
+的宽度。
+
+选孩子 $A$ 只插入一个子句。
+设孩子 $B$ 插入宽度 $j$ 的子句 $P_a$。
+若没有 $P_a$ 含 $S$，则含 $S$ 的新宽度 $j$
+子句数为零。否则 $S$ 落在某个花瓣内，
+因此与 $H$ 不交。此时，$P_a$ 含 $S$
+当且仅当被选子句 $H\cup P_a$ 含 $H\cup S$。
+由 $0<i<j$，$H\cup S$ 大于 $H$，
+且是某个被选宽度 $c$ 子句的真子集。
+最大共享集的优先级因此给出
+\[
+ \#\{a:S\subseteq P_a\}
+ =\deg_c(H\cup S)<\theta_{c-|H\cup S|}
+ =\theta_{j-i}.
+\]
+其他新子句 $\{\neg\ell\}$ 的宽度为一。
+于是宽度 $j$ 的新旧子句合起来满足所述界。
+删除不能增大它。
+\end{proof}
+
+\begin{lemma}\label{lem:spar-insertion-bound}
+沿任何路径或路径前缀，宽度 $j$ 插入的总数 $T_j$
+满足 $T_j\le4(3M)^{j-1}n$（$1\le j<k$）。
+\end{lemma}
+\begin{proof}
+$n=0$ 的情形是显然的，设 $n\ge1$。
+对当前路径前缀，设 $L_j$ 为仍存在的被标记宽度 $j$
+子句数，$D_j$ 为其子句已被删除的宽度 $j$
+插入数。则 $T_j=L_j+D_j$。
+单元子句从不被删除，故 $T_1\le2n\le4n$。
+对 $j\ge2$，把引理~\ref{lem:spar-marked-degree}
+对 $2n$ 个单文字求和，得 $L_j\le4n\theta_{j-1}$。
+
+每当一个宽度 $j$ 的被标记子句被删除，
+就把该删除指派给它所含的一个新引入的真子集；
+引理~\ref{lem:spar-branch} 保证这样的子集存在。
+若新子句的宽度 $i<j$，引理~\ref{lem:spar-marked-degree}
+表明在分支之前它被含于少于 $2\theta_{j-i}$
+个宽度 $j$ 的被标记子句。于是宽度 $i$
+子句的一次插入至多收到这么多次删除。
+对新子句的各宽度 $i$ 求和得
+$D_j\le2\sum_{i=1}^{j-1}\theta_{j-i}T_i$。因此
+\begin{equation}\label{eq:spar-insertions}
+ T_j=L_j+D_j\le4n\theta_{j-1}
+       +2\sum_{i=1}^{j-1}\theta_{j-i}T_i.
+\end{equation}
+第一项统计仍存在的子句；和式统计已被删除的。
+除以 $nM^{j-1}$ 并归纳，得
+\[
+ \frac{T_j}{nM^{j-1}}
+ \le4+2\sum_{i=1}^{j-1}4\cdot3^{i-1}
+ =4\cdot3^{j-1},
+\]
+如所需。
+\end{proof}
+
+\subsection{树的大小}
+现在把引理~\ref{lem:spar-insertion-bound}
+转化为树节点数的界。它同时控制路径长度与路径在
+\eqref{eq:spar-children} 中选 $B$ 孩的次数。
+把这两个界分别写作 $Cn$ 与 $\Gamma n/M$，其中
+\[
+ C=4\sum_{j=0}^{k-2}(3M)^j,\qquad
+ \Gamma=4\sum_{j=0}^{k-2}3^j=2(3^{k-1}-1).
+\]
+引理~\ref{lem:spar-insertion-bound} 给出至多 $Cn$
+的深度。一次选 $|P_a|=j$ 的 $B$ 孩插入至少 $M^j$
+个宽度 $j$ 的子句，故一条路径至多含
+$4\cdot3^{j-1}n/M$ 次这样的选取。
+总计，一条路径至多 $\Gamma n/M$ 次选 $B$。
+
+少选 $B$ 的路径有短的描述。
+由于分支规则是确定性的，节点由其深度与路径选 $B$
+的位置确定；其余位置都选 $A$。
+对 $M\ge\Gamma$，这把节点数界定为
+\[
+ (Cn+1)\sum_{a\le\lfloor\Gamma n/M\rfloor}\binom{Cn}{a}
+ \le (Cn+1)^2
+       2^{(\Gamma n/M)\log_2(4CM)}.
+\]
+这里 $\Gamma n/M\le n\le Cn/4$。
+对正整数 $a$，用 $\binom{Cn}{a}\le(4Cn/a)^a$；
+该上界在 $a\le Cn/4$ 上递增。
+被加项至多 $Cn+1$ 个。$\Gamma n/M<1$
+的情形是显然的。
+
+我们选取 $M$ 使该界中的指数至多 $\sigma n$。
+按递增次序检验二的幂 $M\ge\Gamma$。
+对每个选取，计算 $C$ 与 $h=\lceil\log_2(4CM)\rceil$，
+当
+\[
+ \Gamma h\le\sigma M
+\]
+时停止。所有比较都是精确的。
+由 $C=O_k(M^{k-2})$ 且 $\Gamma$ 只依赖 $k$，
+第一个成功的选取满足
+\[
+ M=O_k\bigl(\sigma^{-1}\log(2/\sigma)\bigr).
+\]
+树因此至多 $(Cn+1)^2\,2^{\sigma n}$ 个节点。
+
+在叶处，\eqref{eq:spar-violation}
+对子句的每个非空真子集都不成立。
+当 $c\ge2$ 时，固定文字属于少于 $\theta_{c-1}$
+个宽度 $c$ 的子句，且至多属于一个单元子句。
+故每个变量至多出现
+\[
+ B=2\sum_{j=0}^{k-1}M^j
+   \le4M^{k-1}
+   =O_k\Bigl(\bigl[\sigma^{-1}\log(2/\sigma)\bigr]^{k-1}\Bigr).
+\]
+于是每个叶都有每变量出现次数的所需界。
+反复的两情形划分也表明每个原可满足赋值恰出现在一个叶，
+故叶计数之和给出原计数。
+
+为在节点处实现分支规则，我们对其当前公式计算
+$\deg_c(H)$。对每个宽度 $c$ 子句，枚举其非空真子集
+$H$，并把以 $(c,H)$ 为下标的计数器加一。
+非空归一化子句至多 $O_k(n^k)$ 个可能，
+每个至多 $2^k$ 个子集。子句计数器使用
+$O_k(\log(n+2))$ 比特，阈值使用 $O_k(\log M)$
+比特。因此，计算计数、选分支并归一化其孩子在每个节点
+使用 $\poly_k(n,\log M)$ 次位运算与比特工作空间。
+$M$ 的界给出 $\log M=O_k(\log(2/\sigma))$。
+
+取引理~\ref{lem:sparsify} 中的 $L_\sigma$，
+参数搜索检验 $O_k(L_\sigma)$ 个二的幂。
+其整数操作数有 $O_k(L_\sigma)$ 位，
+故构造数值参数使用 $\poly_k(L_\sigma)$
+次位运算与比特工作空间。
+
+\section{精确算术与空间}\label{app:arithmetic}
+第~\ref{sec:construction} 节界住了代入行
+$\vec{P}_{f,v}(T)$ 的有理系数。我们通过界定提升因子、
+用于计算 $H$ 的 Taylor 多项式的和、以及最终插值，
+来完成命题~\ref{prop:count} 的位成本与空间估计。
+要点是每个和使用固定的分母。其分子随被加项个数增长，
+故其位长只随该数的对数增长。
+对有限多个未定元上的任何多项式
+$G=\sum_\alpha c_\alpha \vec{X}^{\alpha}$，
+写 $\|G\|_1=\sum_\alpha|c_\alpha|$
+表示其系数范数。
+
+\subsection{提升指示子的整系数}
+\label{subsec:rational-lift-height}
+我们先界定引理~\ref{lem:rational-idempotent}
+给出的奇偶多项式的系数。它们出现在
+\eqref{eq:lifted-factor} 的每个方程因子 $\mathcal B_i$
+中，故其大小进入求值这些因子的位成本界。
+对整数 $\ell\ge1$，回忆 $h(Y)=Y(Y-1)$ 与
+引理~\ref{lem:rational-idempotent} 的多项式：
+\[
+ p_\ell(Y)=(1-Y)^\ell\sum_{j=0}^{\ell-1}
+                    \binom{\ell+j-1}{j}Y^j
+          =\sum_{j=0}^{\ell-1}e_j(Y)h(Y)^j,
+ \qquad \deg e_j\le1.
+\]
+该引理证明奇偶同余，并用对 $h$ 的逐次首一除法构造
+$e_j$。这里我们界定此构造中出现的整数。
+
+\begin{lemma}\label{lem:rational-lift-height}
+写 $e_j(Y)=a_j+b_jY$（$0\le j<\ell$）。
+则 $a_j,b_j\in\mathbb Z$ 且
+\[
+ |a_j|,|b_j|\le2^{C\ell^2}\qquad(0\le j<\ell)
+\]
+（$C$ 为绝对常数）。用对 $h$ 的逐次除法构造这些多项式
+使用 $\poly(\ell)$ 次位运算与比特工作空间。
+\end{lemma}
+\begin{proof}
+系数范数不等式 $\|fg\|_1\le\|f\|_1\|g\|_1$
+连同二项恒等式
+\[
+ \sum_{j=0}^{\ell-1}\binom{\ell+j-1}{j}
+ =\binom{2\ell-1}{\ell-1}
+\]
+给出
+\[
+ \|p_\ell\|_1\le2^\ell\binom{2\ell-1}{\ell-1}\le2^{3\ell}.
+\]
+对 $h=Y^2-Y$ 的首一除法保持整系数。
+每次首项消元使当前商与余式的系数范数之和至多增大三倍。
+全部逐次除法共 $O(\ell^2)$ 次消元。
+因此每个中间系数的绝对值至多 $2^{O(\ell^2)}$，
+这证明对 $a_j,b_j$ 的所述界。其带符号二进制编码
+从而使用 $O(\ell^2)$ 位。每个系数向量有 $O(\ell)$
+个分量。逐次除法对 $O(\ell^2)$ 位的整数执行
+$O(\ell^2)$ 次整数算术运算，
+给出所述 $\poly(\ell)$ 位运算与空间界。
+\end{proof}
+
+\subsection{布尔赋值上求和的位复杂度}
+\label{subsec:rational-streaming-height}
+现在界定 \eqref{eq:full-taylor-sum} 中计算
+$\mathcal H_t(z)=H(t+z)\bmod z^J$ 的每个中间值。
+从代入行 $\vec{P}_{f,v}(T)$ 出发，
+我们界定被代入的因子、它们对每组布尔变量的和、
+以及命题~\ref{prop:count} 中 Taylor 数据的累加器
+$T_t$。
+固定 $n$ 个布尔变量上的多项式方程组 $\mathcal P$，
+其 $m_{\mathrm{test}}$ 个方程次数至多 $k$，
+精度 $\ell$ 满足 $2^\ell>2^n$，
+并给定其方程因子的替代 design。
+设行 $\vec{P}_{f,v}$、划分 $S_{t,g}$ 与矩阵 $C_{t,g}$
+满足定义~\ref{def:layout}，参数为 $Q,R,r,D,\tau$。
+回忆 $H$ 的次数界与每个节点保留的 Taylor
+系数个数：
+\[
+ d_H=kR\bigl(m_{\mathrm{test}}+2(\ell-1)\bigr),\qquad
+ J=\left\lfloor\frac{d_H}{Q}\right\rfloor+1.
+\]
+Taylor 变量 $z$ 与共享截断标记 $V$
+的所有多项式都按其模 $(z^J,V^\ell)$
+的唯一代表存储。移除这些次数范围之外的项
+不会增大系数范数。
+
+代入行有公分母
+\[
+ d_{\mathrm{den}}=(R-1)!Q!.
+\]
+我们使用整数 $B_P\ge1$，使每行
+$d_{\mathrm{den}}\vec{P}_{f,v}(T)$
+的每个整系数的绝对值至多 $2^{B_P}$。
+定义~\ref{def:layout} 给出
+$B_P=O(Q\log Q+\log D)$。
+在固定节点 $t\in[Q]$ 与固定修正集 $U\subseteq[n]$
+处，因子 $f$ 在变量 $v$ 的输入是
+\[
+ \theta_{f,v}(z;x)=\langle \vec{P}_{f,v}(t), x\rangle+
+       \bigl\langle \vec{P}_{f,v}(t+z)-\vec{P}_{f,v}(t),\mathbf1_U\bigr\rangle,
+ \qquad x\in\{0,1\}^n.
+\]
+设 $L_i(z;x)$ 为方程 $i$ 的列出单项在这些代入后的和。
+每个 $d_{\mathrm{den}}\theta_{i,v}(z;x)$
+是系数范数至多
+\[
+ B_0=d_{\mathrm{den}}+3n(R+1)2^{B_P}(Q+1)^R
+\]
+的整系数多项式。事实上，$\theta_{i,v}$
+的三次行求值在清除分母后各贡献至多
+$n(R+1)2^{B_P}(Q+1)^R$。
+该界对组和中的代表同样成立。
+
+置 $\Delta=d_{\mathrm{den}}^k$。
+对次数 $u\le k$ 的单项，把其代入值乘以 $\Delta$
+给出范数至多 $d_{\mathrm{den}}^{k-u}B_0^u\le B_0^k$
+的整系数多项式（含常值单项）。
+由 $S$ 界住列表总长，
+\[
+ B=\max\{\Delta,SB_0^k\}
+ \quad\text{满足}\quad \|\Delta L_i(z;x)\|_1\le B .
+\]
+于是 $\log d_{\mathrm{den}}=O(Q\log(Q+2))$、
+$\log B_0=O(Q\log(Q+2)+\log(nD+2))$，
+且 $\log B=O(k\log B_0+\log(S+2))$。
+
+方程 $i$ 的被代入因子是
+\[
+ \mathcal B_i(z,V;x)=\sum_{j=0}^{\ell-1}
+       e_j\bigl(L_i(z;x)\bigr)h\bigl(L_i(z;x)\bigr)^jV^j
+       \pmod{(z^J,V^\ell)}.
+\]
+由 $e_j$ 是整数的且次数至多一，其代入的分母整除
+$\Delta$；$h(L_i)^j$ 的分母整除 $\Delta^{2j}$。
+于是，令
+\[
+ \Gamma=\Delta^{2\ell-1},
+\]
+$\Gamma\mathcal B_i(z,V;x)$ 的每个系数都是整数。
+为界定所得整数分子，置
+\[
+ E_\ell=\max\{1,\|e_0\|_1,\ldots,\|e_{\ell-1}\|_1\},\qquad
+ B_1=\ell E_\ell(B+\Delta+2)^{2\ell-1}.
+\]
+对 $A_i=\Delta L_i$，两个被代入因子有整数分子
+$\Delta e_j(L_i)$ 与 $A_i(A_i-\Delta)$，
+范数分别至多 $E_\ell(B+\Delta)$ 与 $B(B+\Delta)$。
+把每项垫到分母 $\Gamma$ 后得
+\[
+ \|\Gamma\mathcal B_i\|_1\le B_1,\qquad B_1\ge\Gamma,
+ \qquad
+ \log B_1=O\!\left(\ell^2+
+       \ell\log(B+\Delta+2)+\log(\ell+1)\right).
+\]
+
+接下来把这些估计应用于实际的组和。
+写 $S_g=S_{t,g}$、$C_g=C_{t,g}$，
+设 $c_g$ 为 $C_g$ 的行数。于是
+$c=\sum_g c_g\le2\tau n$，
+且布尔测量 $C_gx_g$ 的每个分量落在
+$[-D,D]\cap\mathbb Z$ 中。
+设 $m_{\mathrm{test},g}$ 为在 $t$ 被指派到组 $g$
+的方程因子数，故
+$\sum_g m_{\mathrm{test},g}=m_{\mathrm{test}}$。
+其乘积 $A_{g,U}(x;z)$
+（\eqref{eq:group-polynomial}）
+表示在 $\mathbb Q[z,V]/(z^J,V^\ell)$ 中。
+其分母整除 $\Gamma^{m_{\mathrm{test},g}}$，
+在该分母上的分子范数至多
+$B_1^{m_{\mathrm{test},g}}$。
+中性常数一因子不影响该界。
+
+对满足 $|E|<J$ 的对 $U\subseteq E\subseteq[n]$
+与可达测量元组 $\vec y=(y_1,\ldots,y_r)$，
+选取满足 $C_h\bar x_h=y_h$ 的布尔代表
+$\bar x_h$。\eqref{eq:group-sum} 中的组和为
+\[
+ \Sigma_g(\vec y)=
+ \sum_{\substack{x_g\in\{0,1\}^{S_g}\\ C_gx_g=y_g\\
+                  (x_g)_v=1\ (v\in E\cap S_g)}}
+ A_{g,U}\!\Bigl(x_g+\sum_{h\ne g}\bar x_h;z\Bigr).
+\]
+这里各组上的向量补零延拓。
+该和至多 $2^{|S_g|}$ 项，全在同一分母上，故
+\[
+ \left\|\Gamma^{m_{\mathrm{test},g}}\Sigma_g(\vec y)\right\|_1
+ \le 2^{|S_g|}B_1^{m_{\mathrm{test},g}}.
+\]
+对 $1\le g\le r$，定义部分乘积
+$\Pi_g(\vec y)=\prod_{h=1}^g\Sigma_h(\vec y)$
+（每次乘法后截断）。
+其分母整除
+\[
+ \Gamma^{\sum_{h\le g}m_{\mathrm{test},h}}.
+\]
+因此每个完整贡献 $\Pi_r(\vec y)$
+可放到固定分母
+\[
+ \Omega=\Gamma^{m_{\mathrm{test}}}
+\]
+上，且满足
+\[
+ \|\Omega\Pi_r(\vec y)\|_1
+ \le2^nB_1^{m_{\mathrm{test}}}.
+\]
+
+设 $T_t(z,V)$ 为把全部对与测量元组上的这些完整贡献
+带符号 $(-1)^{|E|-|U|}$ 相加的累加器。
+由 \eqref{eq:full-taylor-sum}，其最终值是取值于
+$\mathcal A_\ell$ 的 Taylor 多项式
+$\mathcal H_t(z)$。
+一个节点处的带符号更新数 $M_*$ 界定为
+\[
+ M_*\le
+ \biggl(\sum_{s=0}^{\min(J-1,n)}2^s\binom ns\biggr)(2D+1)^c
+ \le3^n(2D+1)^c.
+\]
+因此 $T_t$ 的每个中间值（不只是最终值）满足
+\[
+ \|\Omega T_t\|_1
+ \le M_*\,2^nB_1^{m_{\mathrm{test}}}.
+\]
+整系数多项式 $\Omega T_t$ 的每个系数有
+\[
+ O\!\left(\log(M_*+1)+n+m_{\mathrm{test}}\log B_1\right)
+\]
+位。该估计同样以上述固定分母界定全部组和与部分乘积的
+整数分子。分母满足
+\[
+ \log\Omega
+ =k m_{\mathrm{test}}(2\ell-1)\log d_{\mathrm{den}}
+ =O\!\left(k(m_{\mathrm{test}}\ell+1)Q\log(Q+2)\right).
+\]
+
+每个贡献至多相乘 $m_{\mathrm{test}}$
+个提升方程因子。继续处理对或测量元组只是添加新贡献，
+并不把它们乘入之前的贡献。
+这正是指数多个迭代只给位估计贡献 $\log(M_*+1)$
+的原因。每个存储的多项式至多
+$J\ell\le(d_H+1)\ell$ 个系数。
+枚举保留其当前下标与布尔代表、一个组和、一个部分乘积、
+以及累加器 $T_t$，而不存储全体赋值或全体测量元组的表。
+这些估计给出 \eqref{eq:sum-bit-bound}
+与每次有理运算的多项式位成本。
+$QJ\ell$ 个 Taylor 系数与工作状态容于
+$\poly(n,m_{\mathrm{test}},\ell,D,Q,R,J,r,k,S)$
+比特。
+
+\subsection{插值与整数答案}
+\label{subsec:rational-readout}
+对 $0\le s<\ell$，设 $H_s(T)=[V^s]H(T)\in\mathbb Q[T]$。
+第~\ref{subsec:rational-streaming-height} 节界定
+对 $t\in[Q]$、$0\le j<J$ 计算出的数据
+$[z^jV^s]\mathcal H_t(z)=[z^j]H_s(t+z)$。
+固定 $s$。我们对这一坐标插值，
+对全部 $\ell$ 个坐标使用同一有理 Hermite 矩阵。
+置 $M_H=QJ>d_H$。在单项基
+$1,T,\ldots,T^{M_H-1}$ 下，Hermite 插值矩阵是整数矩阵
+\[
+ \mathsf V_{(t,j),u}=
+ \begin{cases}\binom uj t^{u-j},&u\ge j,\\0,&u<j,\end{cases}
+ \qquad t\in[Q],\quad 0\le j<J,\quad 0\le u<M_H.
+\]
+由第~\ref{sec:counting} 节的 Hermite
+插值命题，它非奇异。其分量有 $O(M_H\log(Q+2))$
+位。设 $\mathbf y$ 为按 $(t,j)$ 排序的计算出的系数
+$[z^jV^s]\mathcal H_t(z)$ 的向量，
+$\mathbf h$ 为 $H_s$ 的单项系数向量（补零到长
+$M_H$）。则 $\mathsf V\mathbf h=\mathbf y$。
+向量 $\mathbf b=\Omega\mathbf y$ 是整数的；
+记 $B_{\mathrm{data}}$ 为其分量位长的界。
+第~\ref{subsec:rational-streaming-height} 节的界给出
+\[
+ B_{\mathrm{data}}
+ \le\poly(n,m_{\mathrm{test}},\ell,k,Q,\log(D+2),\log(S+2)).
+\]
+
+只需常系数 $h_0=H_s(0)$。设 $\mathsf V^{(0)}$
+由 $\mathsf V$ 把其 $u=0$ 列换成 $\mathbf b$
+而得，并置
+\[
+ N_H=\det\mathsf V^{(0)},\qquad D_H=\det\mathsf V\ne0.
+\]
+对 $\mathsf V(\Omega\mathbf h)=\mathbf b$
+用 Cramer 法则给出
+\begin{equation}\label{eq:exact-readout}
+ H_s(0)=h_0=\frac{N_H}{\Omega D_H}.
+\end{equation}
+我们用免分数高斯消元
+~\cite[Sections~I--II and~IV--V]{Bareiss68}
+计算这两个行列式。
+对 $M_H\times M_H$ 整数矩阵，该算法使用
+$O(M_H^3)$ 次整数算术运算；主元选取使其也能处理奇异
+矩阵。保留的消元分量是输入矩阵的带符号子式。
+每次更新对这些分量作乘积与差，随后作精确整数除法。
+因此，$\mathsf V$ 与 $\mathsf V^{(0)}$
+的子式的界也界定用于计算 $D_H$ 与 $N_H$
+的中间整数。
+$(\mathsf V\mid\mathbf b)$ 的每个子式的绝对值至多
+\[
+ 2^{O\left(M_H\left(B_{\mathrm{data}}+
+                M_H\log(Q+2)+\log(M_H+1)\right)\right)}.
+\]
+事实上，其行列式是至多 $M_H!$ 个、每个至多 $M_H$
+个分量的乘积之和。
+因此免分数消元中的中间整数在带符号二进制记法下有
+\[
+ O\!\left(M_H\bigl(B_{\mathrm{data}}+
+                   M_H\log(Q+2)+\log(M_H+1)\bigr)\right)
+\]
+位。计算 $N_H,D_H$
+于是使用 $\poly(M_H,B_{\mathrm{data}})$
+次位运算与比特工作空间。
+
+在 $T=0$ 处每个 $H_s(0)$ 由构造是整数，
+故 \eqref{eq:exact-readout} 中的除法对每个 $s$
+都是精确的。算出这 $\ell$ 个整数后，
+置 $u=\sum_{s=0}^{\ell-1}H_s(0)$。
+由 \eqref{eq:origin-residue}，最小非负剩余
+\[
+ u-2^\ell\left\lfloor\frac{u}{2^\ell}\right\rfloor=N(\mathcal P)
+\]
+就是精确计数。对相继的坐标复用同一工作区，
+全部 $\ell$ 次插值、求和与取余使用
+$\poly(M_H,B_{\mathrm{data}},\log(\Omega+1),\ell)$
+次位运算与多项式比特工作空间。
+
+\subsection{技术概览的算术}
+\label{subsec:overview-arithmetic}
+我们还为第~\ref{sec:technical-overview} 节的
+受限出现次数算法论证位复杂度与空间界。
+引理~\ref{lem:row-coefficients}
+把替代系数的位长界定为 $n$ 的多项式。
+求解第~\ref{subsec:preview-separation} 节的
+多项式规模有理线性方程组，给出位长同样为多项式的
+测量系数 $\vec\lambda_{e,v,h}$。
+设 $\delta$ 为全部这些系数与全部替代系数
+（跨所有求值点）的分母之积。
+它们只有多项式个，故 $\delta$
+的位长也是多项式的。每个子句乘积至多用 $M\le3n$
+个线性输入；因此受限和中全部系数可用公分母
+$\delta^{3n}$ 累加。位长为多项式的输入系数的
+多项式个乘积，以及指数多个这样的项在该公分母上的和，
+仍有多项式位长。因此上述精确 Hermite 插值对这些
+Taylor 数据也有多项式位成本。最后，枚举可依序执行，
+只保留构造、当前下标、系数阵列、运行中的和、
+以及插值所需的多项式个 Taylor 系数。
+这给出多项式空间与仅多项式的位运算开销。
+
+\raggedbottom

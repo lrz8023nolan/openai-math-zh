@@ -1,0 +1,767 @@
+\section{构造低次替代型}\label{sec:construction}
+计数例程对每对 $(f,v)$（因子 $f$ 读取变量 $v$）需要一个替代型。
+对第~\ref{sec:setup} 节的应用，$f$ 是一个多项式方程，
+其 scope 是其各单项变量集的并。本节只使用这些 scope。
+我们构造定义~\ref{def:layout} 中的行 $\vec{P}_{f,v}(T)$
+与测量矩阵 $C_{t,g}$，连同划分 $S_{t,g}$ 与因子指派
+$\sigma_f$。主要困难在于保持 $\deg \vec{P}_{f,v}\le R$
+且 $R$ 远小于 $Q$。$H$ 的次数界随 $R$ 线性增长，
+因此小的 $R/Q$ 减少每点所需的 Taylor 系数个数。
+在 $T=0,1,\ldots,Q$ 处独立选行再插值，一般给出次数 $Q$。
+我们改为把它们在所有这些点上的取值一起构造出来。
+
+构造先在辅助坐标的完整阵列上给出多项式行。
+随后把每个「因子--变量」对放入该阵列的一个副本中。
+多个位置可以含同一布尔变量 $x_v$；其取值总相等，
+在计数和中不会成为独立变量。
+
+\subsection{辅助坐标}\label{subsec:incidence-layout}
+我们先指定更大的坐标集 $\mathcal B$——辅助行
+$\vec{P}_u(T)$ 将作用其上——以及把实际的 $(f,v)$
+放入其副本所需的关联界。
+设 $(I_f)_{f\in\mathcal F}$ 为因子 scope，$I_f\subseteq[n]$，
+写
+\begin{equation}\label{eq:factor-incidences}
+ \begin{gathered}
+ \mathcal A=\{(f,v):f\in\mathcal F,\ v\in I_f\},\qquad M=|\mathcal A|,\\
+ |I_f|\le w\quad(f\in\mathcal F),\qquad
+ \#\{f:v\in I_f\}\le b\quad(v\in[n]).
+ \end{gathered}
+\end{equation}
+于是 $w$ 界住一个因子 scope 中的变量数，$b$
+界住含一个变量的因子数。scope 界 $w$ 不必界定因子多项式
+的次数。scope 为空的因子是常数，不需要辅助位置；
+在每个点把这样的因子指派到组一。
+如有必要，对每个 $v\in[n]$ 附加一个 scope 为 $\{v\}$
+的互异常数一因子。这既不改变乘积也不改变计数，
+且使最大关联至多增加一。以 $b$ 记此次添加后的界，我们设
+\[
+ n\ge1,\qquad b,w\ge1,\qquad n\le M\le bn.
+\]
+本节始终设 $r\ge2$、$1\le R<Q$ 为整数，$0<\tau\le1/2$。
+
+在每个点 $t\in[Q]$，变量 $x_v$ 将属于一个组，
+而含 $v$ 的因子可能被指派到另一个组。我们将选取
+\[
+ a_v\in[r]^Q\quad(v\in[n]),\qquad
+ d_f\in[r]^Q\quad(f\in\mathcal F),
+\]
+其中 $a_v(t)$ 指定含 $x_v$ 的组，$d_f(t)$ 指定指派给因子
+$f$ 的组。位置 $(f,v)$ 将有标号 $(a_v,d_f)$。
+特别地，所有含 $x_v$ 的位置都有同一个第一序列 $a_v$。
+
+在选取 $a_v$ 与 $d_f$ 之前，先取全部可能标号的完整集合：
+\begin{equation}\label{eq:auxiliary-labels}
+ \mathcal B=([r]^Q)^2,\qquad u=(a_u,d_u),\qquad D=|\mathcal B|=r^{2Q}.
+\end{equation}
+辅助向量 $\zeta\in\mathbb Q^{\mathcal B}$
+为每个对 $u$ 有一个有理坐标 $\zeta_u$。
+标号 $u$ 在 $\zeta$ 变动时保持固定。
+对 $t\in[Q]$ 与 $g\in[r]$，定义
+\begin{equation}\label{eq:auxiliary-groups}
+ S^{\mathcal B}_{t,g}=\{u\in\mathcal B:a_u(t)=g\}.
+\end{equation}
+对固定的 $t$，这些集合把 $\mathcal B$ 划分为 $r$ 个大小
+$D/r$ 的集合。
+
+对每个 $u\in\mathcal B$，我们寻求次数至多 $R-1$、
+满足 $\vec{P}_u(0)=\delta_u$ 的多项式行
+$\vec{P}_u(T)\in\mathbb Q[T]^{1\times\mathcal B}$。
+在 $T=t$，取值 $\langle \vec{P}_u(t), \zeta\rangle$
+应由
+\[
+ \zeta|_{S^{\mathcal B}_{t,d_u(t)}}
+ \quad\text{与}\quad C^{\mathcal B}\zeta
+\]
+确定，其中 $C^{\mathcal B}$ 是一个与 $u,t$ 无关的整数矩阵，
+分量在 $\{0,1,-1\}$ 中且行数很少。
+稍后使用 $u_{f,v}=(a_v,d_f)$ 将使因子 $f$
+的每个输入都用组 $d_f(t)$。$a_v,d_f$ 的选取与放入副本
+分别推迟到第~\ref{subsec:choosing-labels}
+与~\ref{subsec:embedding} 节。
+
+\subsection{矩阵 $M_0$ 与 $C^{\mathcal B}$}
+为构造行 $\vec{P}_u(T)$，我们寻求固定 $\ker C^{\mathcal B}$
+并满足
+\begin{equation}\label{eq:matrix-support-target}
+ M_0[u,y]\ne0\quad\Longrightarrow\quad
+ \bigl|\{s\in[Q]:a_y(s)\ne d_u(s)\}\bigr|\le R-1.
+\end{equation}
+的矩阵 $M_0\in\mathbb Q^{\mathcal B\times\mathcal B}$。
+恒等式
+\begin{equation}\label{eq:coordinate-decomposition}
+ \zeta_u=((I-M_0)\zeta)_u+
+          \sum_{y\in\mathcal B}M_0[u,y]\zeta_y
+\end{equation}
+解释了这两个要求。若 $M_0$ 固定 $\ker C^{\mathcal B}$，
+则第一项由 $C^{\mathcal B}\zeta$ 确定；我们将使它与 $T$
+无关。在和式中，把每个非零 $M_0[u,y]$ 乘以一个在零点为一、
+在每个满足 $a_y(t)\ne d_u(t)$ 的 $t$ 处为零的多项式。
+界 \eqref{eq:matrix-support-target} 容许次数至多 $R-1$。
+于是在 $T=t$，和式将只用坐标 $y\in S^{\mathcal B}_{t,d_u(t)}$。
+
+对 $s\in[Q]$，设 $\vartheta_s:\mathcal B\to\mathcal B$
+交换 $a_u(s)$ 与 $d_u(s)$，其余分量不变。
+用
+\[
+ (\Pi_s\zeta)_u=\zeta_{\vartheta_s(u)}.
+\]
+定义其置换矩阵 $\Pi_s$。
+被交换的对 $\vartheta_s(u)$ 属于 $\mathcal B$，
+因为该集合含 $[r]^Q$ 中序列的每一对。
+矩阵 $\Pi_s$ 两两交换且满足 $\Pi_s^2=I$。其乘积
+\[
+ V_0=\prod_{s=1}^Q\Pi_s
+\]
+交换完整序列 $a_u$ 与 $d_u$。于是
+$V_0[u,y]\ne0$ 蕴含 $a_y(s)=d_u(s)$ 对每个 $s$；
+它以零错配满足 \eqref{eq:matrix-support-target}。
+我们将修改 $V_0$，使所得矩阵同时固定一列短的整数测量的核。
+
+定义
+\begin{equation}\label{eq:swap-weight}
+ W_0=\frac12\sum_{s=1}^Q(I-\Pi_s).
+\end{equation}
+在 $\Pi_s$ 的公共特征向量 $\psi$ 上，设 $j$ 为满足
+$\Pi_s\psi=-\psi$ 的下标 $s$ 的个数。则
+\[
+ W_0\psi=j\psi,\qquad V_0\psi=(-1)^j\psi,
+ \qquad V_0p(W_0)\psi=(-1)^jp(j)\psi
+\]
+对每个多项式 $p$ 成立。因此只要 $p(j)=(-1)^j$，
+$V_0p(W_0)$ 就固定 $\psi$。
+我们将构造一个显式公共特征基，其中具有给定 $j$
+的向量比例恰为 $\Pr[W=j]$
+（$W\sim\operatorname{Bin}(Q,(r-1)/(2r))$）。
+
+对区间
+$\mathcal I=\{A_0,\ldots,A_0+R-1\}\subseteq\{0,\ldots,Q\}$，
+可以用次数至多 $R-1$ 的多项式强制等式
+$f_{\mathcal I}(j)=(-1)^j$ 对 $j\in\mathcal I$ 成立。
+我们使用显式插值公式
+\begin{equation}\label{eq:swap-matrix-definition}
+ f_{\mathcal I}(z)=(-1)^{A_0}\sum_{j=0}^{R-1}(-2)^j
+                         \binom{z-A_0}{j},
+ \qquad M_0=V_0f_{\mathcal I}(W_0),
+\end{equation}
+其中
+\[
+ \binom{z-A_0}{j}=\frac1{j!}\prod_{a=0}^{j-1}(z-A_0-a)
+\]
+且空乘积为一。对 $0\le q<R$，二项式定理给出
+$f_{\mathcal I}(A_0+q)=(-1)^{A_0}(1-2)^q=(-1)^{A_0+q}$。
+
+\begin{lemma}\label{lem:swaps-matrix}
+对如上的 $\mathcal B$、$\mathcal I$ 与 $M_0$，
+存在矩阵 $C^{\mathcal B}\in\{0,1,-1\}^{[c_{\mathcal B}]\times\mathcal B}$，
+使
+\[
+ c_{\mathcal B}\le D\Pr[W\notin\mathcal I],\qquad
+ W\sim\operatorname{Bin}\!\left(Q,\frac{r-1}{2r}\right),
+\]
+且对每个 $\xi\in\ker C^{\mathcal B}$ 有
+$M_0\xi=\xi$。
+\end{lemma}
+\begin{proof}
+对 $(\alpha,\delta)\in[r]^2$，设 $e_{\alpha\delta}$ 为该
+有序对的指示函数。交换其两个分量有正交特征基
+\[
+ e_{\alpha\alpha}\quad(\alpha\in[r]),\qquad
+ e_{\alpha\delta}+e_{\delta\alpha},\quad
+ e_{\alpha\delta}-e_{\delta\alpha}\quad(1\le\alpha<\delta\le r).
+\]
+前两类特征值为 $+1$，第三类为 $-1$。
+特征值 $+1$ 的向量有 $r(r+1)/2$ 个，$-1$ 的有
+$r(r-1)/2$ 个。
+
+对每个 $s\in[Q]$，选取这些函数之一
+$\psi_s:[r]^2\to\{0,1,-1\}$，并定义
+\[
+ \psi(u)=\prod_{s=1}^Q\psi_s(a_u(s),d_u(s))
+ \qquad(u\in\mathcal B).
+\]
+$D=r^{2Q}$ 种选取给出非零正交向量：其内积分解为各
+$\psi_s$ 内积的乘积。它们构成 $\mathbb Q^{\mathcal B}$
+的一组分量在 $\{0,1,-1\}$ 中的基。
+若恰有 $j$ 个所选 $\psi_s$ 的特征值为 $-1$，则
+$W_0\psi=j\psi$、$V_0\psi=(-1)^j\psi$。
+故只要 $j\in\mathcal I$，$M_0$ 就固定 $\psi$。
+
+为使 $\ker C^{\mathcal B}$ 成为被 $M_0$ 固定的空间，
+取 $C^{\mathcal B}$ 的行为 $j\notin\mathcal I$
+的那些基向量的转置。每个位置上有比例 $(r-1)/(2r)$
+的选取特征值为 $-1$，且各位置独立。
+因此作为行保留的 $D$ 个基向量的比例是
+$\Pr[W\notin\mathcal I]$，证得行数界。
+若 $C^{\mathcal B}\xi=\vec{0}$，则 $\xi$
+与每个保留的基向量正交，故是 $j\in\mathcal I$
+的那些基向量的线性组合，而它们全部被 $M_0$ 固定。
+\end{proof}
+
+对界 $\epsilon>0$，条件
+\begin{equation}\label{eq:incidence-tail}
+ \Pr\!\left[\operatorname{Bin}\!\left(Q,\frac{r-1}{2r}\right)
+                         \notin\mathcal I\right]\le\epsilon
+\end{equation}
+给出 $c_{\mathcal B}\le\epsilon D$。
+放置因子输入后，我们将取 $\epsilon=\tau/(rb)$。
+接下来证明 $M_0$ 的另一个要求。
+
+\begin{lemma}\label{lem:swaps-support}
+对所有 $u,y\in\mathcal B$，若 $M_0[u,y]\ne0$，则
+\[
+ \bigl|\{s\in[Q]:a_y(s)\ne d_u(s)\}\bigr|\le R-1.
+\]
+\end{lemma}
+\begin{proof}
+在两两交换的矩阵 $\Pi_s$ 中展开 $f_{\mathcal I}(W_0)$。
+由 $\deg f_{\mathcal I}\le R-1$ 与 $\Pi_s^2=I$，
+每个所得单项是某个满足 $|J|\le R-1$ 的
+$J\subseteq[Q]$ 对应的 $\prod_{s\in J}\Pi_s$
+的标量倍。乘以 $V_0$ 给出
+\[
+ V_0\prod_{s\in J}\Pi_s=\prod_{s\notin J}\Pi_s.
+\]
+该置换矩阵的 $(u,y)$ 分量非零要求
+$a_y(s)=d_u(s)$ 对每个 $s\notin J$。
+其余位置至多 $R-1$ 个。若不一致的位置多于 $R-1$ 个，
+则每个被加项的 $(u,y)$ 分量为零，
+故 $M_0[u,y]=0$。
+\end{proof}
+
+\subsection{多项式行}
+现在用 $M_0$ 构造第~\ref{subsec:incidence-layout} 节
+所求的辅助行 $\vec{P}_u(T)$。
+引理~\ref{lem:swaps-matrix} 使 $(I-M_0)\zeta$
+成为 $C^{\mathcal B}\zeta$ 的函数。
+引理~\ref{lem:swaps-support} 界住非零项
+$M_0[u,y]\zeta_y$ 使用 $S^{\mathcal B}_{t,d_u(t)}$
+之外坐标的点数。现在把该项乘以在这些点为零、在零点为
+一的多项式。
+
+对 $M_0[u,y]\ne0$，定义
+\begin{equation}\label{eq:coefficient-correction}
+ E_{u,y}=\{s\in[Q]:a_y(s)\ne d_u(s)\},\qquad
+ \varphi_{u,y}(T)=\prod_{s\in E_{u,y}}\left(1-\frac Ts\right).
+\end{equation}
+空乘积为一。则 $\deg\varphi_{u,y}\le R-1$、
+$\varphi_{u,y}(0)=1$，且只要 $a_y(t)\ne d_u(t)$ 就有
+$\varphi_{u,y}(t)=0$。定义
+\begin{equation}\label{eq:swaps-row}
+ \vec{P}_u(T)=\delta_u(I-M_0)+
+ \sum_{\substack{y\in\mathcal B\\M_0[u,y]\ne0}}
+ M_0[u,y]\varphi_{u,y}(T)\delta_y.
+\end{equation}
+该行作为 $\zeta$ 的线性型作用，其系数是单个参数 $T$
+的多项式。
+
+\begin{lemma}\label{lem:swaps-forms}
+\eqref{eq:swaps-row} 中的行次数至多 $R-1$，
+且对每个 $u\in\mathcal B$ 满足 $\vec{P}_u(0)=\delta_u$。
+对 $t\in[Q]$ 与 $g\in[r]$，设 $C^{\mathcal B}_{t,g}$
+为 $C^{\mathcal B}$ 限制到列 $S^{\mathcal B}_{t,g}$。
+对每个满足 $g\ne d_u(t)$ 的 $u,t,g$ 与每个
+$\xi\in\mathbb Q^{S^{\mathcal B}_{t,g}}$，其补零延拓
+$\widetilde\xi$ 满足
+\[
+ C^{\mathcal B}_{t,g}\xi=\vec{0}
+ \quad\Longrightarrow\quad \langle \vec{P}_u(t), \widetilde\xi\rangle=0.
+\]
+更一般地，$\langle \vec{P}_u(t), \zeta\rangle$
+由 $\zeta|_{S^{\mathcal B}_{t,d_u(t)}}$ 与
+$C^{\mathcal B}\zeta$ 确定。
+\end{lemma}
+\begin{proof}
+次数界来自 $\varphi_{u,y}$ 的次数界。在零点，
+\[
+ \vec{P}_u(0)=\delta_u(I-M_0)+\delta_uM_0=\delta_u.
+\]
+把 \eqref{eq:swaps-row} 作用于 $\zeta$ 给出
+\begin{equation}\label{eq:swaps-form-decomposition}
+ \langle \vec{P}_u(T), \zeta\rangle=((I-M_0)\zeta)_u+
+ \sum_{\substack{y\in\mathcal B\\M_0[u,y]\ne0}}
+ M_0[u,y]\varphi_{u,y}(T)\zeta_y.
+\end{equation}
+在 $T=t$，所有满足 $a_y(t)\ne d_u(t)$ 的被加项为零。
+若 $\widetilde\xi$ 支撑在 $S^{\mathcal B}_{t,g}$
+（$g\ne d_u(t)$）上，则每个剩余被加项在 $\widetilde\xi$
+上为零。假设 $C^{\mathcal B}_{t,g}\xi=\vec{0}$
+也给出 $C^{\mathcal B}\widetilde\xi=\vec{0}$，
+故由引理~\ref{lem:swaps-matrix} 有
+$(I-M_0)\widetilde\xi=\vec{0}$。
+这就证明了该蕴含。
+
+对最后的断言，在 $C^{\mathcal B}$ 下测量相同的两个向量
+相差其核的一个元素。于是 $(I-M_0)\zeta$
+由 $C^{\mathcal B}\zeta$ 确定。
+\eqref{eq:swaps-form-decomposition} 中在 $T=t$
+的其余项只用 $\zeta|_{S^{\mathcal B}_{t,d_u(t)}}$。
+\end{proof}
+
+固定 $t$ 并记 $\zeta_g=\zeta|_{S^{\mathcal B}_{t,g}}$。
+$C^{\mathcal B}$ 的限制满足
+\begin{equation}\label{eq:auxiliary-measurements}
+ C^{\mathcal B}\zeta=\sum_{g=1}^r C^{\mathcal B}_{t,g}\zeta_g.
+\end{equation}
+因此固定每个向量 $C^{\mathcal B}_{t,g}\zeta_g$
+既固定 $C^{\mathcal B}\zeta$，又对 $r$ 个辅助坐标组
+施加各自的条件。当全部 $C^{\mathcal B}_{t,g}\zeta_g$
+固定时，$\langle \vec{P}_u(t), \zeta\rangle$
+由 $\zeta|_{S^{\mathcal B}_{t,d_u(t)}}$ 确定。
+把 $(f,v)$ 放到标号 $(a_v,d_f)$ 的坐标处，
+我们将在实际布尔变量上得到相应的分离。
+
+\begin{remark}
+我们演示 \eqref{eq:swaps-row} 如何把指派组之外的依赖
+限制到一个线性测量。取 $Q=R=2$（在运行时间界所用
+$R<Q$ 体制之外）与 $r=2$。
+用 $\{0,1\}$ 作组下标，取 $\mathcal I=\{0,1\}$，
+故 $f_{\mathcal I}(z)=1-2z$。
+从标号 $(00,11)$ 出发，两次交换生成四个坐标：
+\[
+ \zeta_0=\zeta_{(00,11)},\quad \zeta_1=\zeta_{(10,01)},\quad
+ \zeta_2=\zeta_{(01,10)},\quad \zeta_{12}=\zeta_{(11,00)}.
+\]
+两次交换都保持这四个坐标，故可把计算限制在其上。
+在此限制上，$M_0=\Pi_1+\Pi_2-\Pi_1\Pi_2$
+固定
+\[
+ c(\zeta)=\zeta_0-\zeta_1-\zeta_2+\zeta_{12}
+\]
+的核。以 $u=(00,11)$ 为下标的行给出
+\[
+ \langle \vec{P}_u(T), \zeta\rangle=\zeta_0-\frac T2\zeta_1-T\zeta_2.
+\]
+它在零点等于 $\zeta_0$，而
+\[
+ \langle \vec{P}_u(1), \zeta\rangle=c(\zeta)+\frac12\zeta_1-\zeta_{12},\qquad
+ \langle \vec{P}_u(2), \zeta\rangle=c(\zeta)-\zeta_2-\zeta_{12}.
+\]
+在 $t=1$，$\zeta_1,\zeta_{12}$ 的标号满足
+$a_y(1)=1=d_u(1)$。在 $t=2$，$\zeta_2,\zeta_{12}$
+的标号满足 $a_y(2)=1=d_u(2)$。
+因此固定 $c(\zeta)$ 后，$\langle \vec{P}_u(t), \zeta\rangle$
+只依赖其指派组中的坐标。
+这里 $c(\zeta)$ 在四坐标限制上扮演 $C^{\mathcal B}\zeta$
+的角色。完整构造必须对每个 $u\in\mathcal B$
+以至多 $\epsilon D$ 个测量行给出该性质。
+\end{remark}
+
+\subsection{选取变量组与因子组}\label{subsec:choosing-labels}
+现在从第~\ref{subsec:incidence-layout} 节选取族
+$(a_v)_{v\in[n]}$ 与 $(d_f)_{f\in\mathcal F}$，并置
+\[
+ u_{f,v}=(a_v,d_f)\qquad((f,v)\in\mathcal A).
+\]
+这些选取有两个要求。第一，若某标号出现 $c_u$ 次，
+其关联在辅助阵列副本中需要 $c_u$ 个不同位置。
+因此所需副本数为
+\[
+ c_u=\#\{(f,v)\in\mathcal A:u_{f,v}=u\},\qquad
+ h=\max_{u\in\mathcal B}c_u.
+\]
+第二，实际变量组 $\{v:a_v(t)=g\}$ 必须小。
+只界定 $h$ 界住的是一组内的关联个数，
+而非其布尔变量个数。下面的引理同时控制两个量。
+
+\begin{lemma}\label{lem:incidence-labels}
+设 $(I_f)_{f\in\mathcal F}$ 满足
+\eqref{eq:factor-incidences}，$n\le M\le bn$，
+并对整数 $r\ge2$、$Q\ge1$ 置 $D=r^{2Q}$。设
+\begin{equation}\label{eq:incidence-balance-hypotheses}
+ 2(b+w)D^2\le M,\qquad 2Qr^2\le n.
+\end{equation}
+可以确定性选取 $a_v,d_f\in[r]^Q$
+（对 scope 为空的因子取 $d_f(t)=1$），使
+\[
+ \begin{aligned}
+ \max_{u\in\mathcal B}\#\{(f,v)\in\mathcal A:(a_v,d_f)=u\}
+ &\le\frac{2M}{D},\\
+ \#\{v\in[n]:a_v(t)=g\}&\le\frac{2n}{r}
+ \qquad(t\in[Q],\ g\in[r]).
+ \end{aligned}
+\]
+构造花费 $\poly(n,M,|\mathcal F|,D,Q,r,b,w)$ 次位运算。
+\end{lemma}
+\begin{proof}
+我们先估计随机标号的效果，然后再确定性固定其取值。
+在此估计中，所有 $a_v$ 与所有 $I_f$ 非空的 $d_f$
+独立均匀取自 $[r]^Q$。对空的 $I_f$，恒置 $d_f$ 为一。
+每个关联标号 $u_{f,v}=(a_v,d_f)$ 均匀分布于 $\mathcal B$。
+置 $n_{t,g}=\#\{v:a_v(t)=g\}$，考虑
+\[
+ \Phi=\sum_{u\in\mathcal B}(c_u-M/D)^2,
+ \qquad
+ \Xi=\sum_{t=1}^Q\sum_{g=1}^r(n_{t,g}-n/r)^2.
+\]
+其作为指示子和的展开为
+\[
+ \begin{aligned}
+ \Phi&=\sum_{(f,v),(f',v')\in\mathcal A}
+       \mathds{1}_{\{(a_v,d_f)=(a_{v'},d_{f'})\}}-\frac{M^2}{D},\\
+ \Xi&=\sum_{t=1}^Q\sum_{v,v'\in[n]}
+       \mathds{1}_{\{a_v(t)=a_{v'}(t)\}}-\frac{Qn^2}{r}.
+ \end{aligned}
+\]
+两个关联标号除非共享因子或变量，否则独立。
+对每个 $(f,v)$，至多有 $b+w$ 个关联共享 $f$ 或 $v$
+（含 $(f,v)$ 自身）。独立对的相等概率为 $1/D$；
+其余对的概率至多为一。故
+\[
+ \mathbb E\Phi\le M(b+w).
+\]
+对每个 $t$ 与 $v\ne v'$，$a_v(t),a_{v'}(t)$
+独立均匀取自 $[r]$。第二个展开因此给出
+\[
+ \mathbb E\Xi=Qn(1-1/r)\le Qn.
+\]
+
+为确定性获得标号，我们逐个固定 $a_v$ 与非空 $I_f$
+的 $d_f$。每步选取一个不增加
+\[
+ \frac{\Phi}{M(b+w)}+\frac{\Xi}{Qn}
+\]
+的条件期望的取值。这样的选取存在，因为当前期望是下一个
+$a_v$ 或 $d_f$ 各可能取值上的平均。
+最终值至多为一的两倍。由于两个被加项都非负，
+\[
+ c_u\le\frac MD+\sqrt{2M(b+w)},\qquad
+ n_{t,g}\le\frac nr+\sqrt{2Qn}.
+\]
+\eqref{eq:incidence-balance-hypotheses} 的两个不等式
+使两个根号项分别至多 $M/D$ 与 $n/r$。
+
+下面的枚举在 $\poly(n,M,|\mathcal F|,D,Q,r,b,w)$
+次位运算内计算条件期望。
+置 $K=r^Q$，则 $D=K^2$。$\Phi$ 展开中的每个指示子至多
+依赖四个独立选取 $a_v,d_f,a_{v'},d_{f'}$；
+重复的下标只贡献一个选取。$\Xi$ 中的每个指示子至多依赖
+$a_v,a_{v'}$。在任何部分固定之后，对一个指示子中剩余
+选取枚举至多 $K^4=D^2$ 个赋值。其条件概率的分母整除
+$K^4$。对 $M^2+Qn^2$ 个指示子求和即算出两个期望。
+计入归一化 $M(b+w)$ 与 $Qn$，这些计算中的全部有理值的
+分子与分母都有
+\[
+ O\!\left(\log(2D)+\log(2M)+\log(2n)+\log(2Q)+\log(2+b+w)\right)
+\]
+位。需要固定的选取至多 $n+|\mathcal F|$ 个，
+每个有 $K$ 个候选值。由 $K^4=D^2$，
+整个构造花费 $\poly(n,M,|\mathcal F|,D,Q,r,b,w)$
+次位运算。
+\end{proof}
+
+\subsection{把变量副本放入辅助阵列}\label{subsec:embedding}
+现在把辅助行 $\vec{P}_u(T)$ 与矩阵 $C^{\mathcal B}$
+转移到定义~\ref{def:layout} 所要求的、原变量上的行
+$\vec{P}_{f,v}(T)$ 与矩阵 $C_{t,g}$。
+设 \eqref{eq:incidence-balance-hypotheses} 成立并应用
+引理~\ref{lem:incidence-labels}。
+以 $h=\max_u c_u$，用 $[h]\times\mathcal B$
+为辅助坐标的 $h$ 份副本编下标。
+对每个 $(f,v)\in\mathcal A$，指派 $c(f,v)\in[h]$
+使所有对 $(c(f,v),u_{f,v})$ 互异。
+这是可能的，因为没有标号出现超过 $h$ 次，且
+\[
+ hD\le2M\le2bn.
+\]
+定义线性映射
+$\iota:\mathbb Q^n\longrightarrow\mathbb Q^{[h]\times\mathcal B}$：
+\[
+ (\iota x)_{c,u}=
+ \begin{cases}
+ x_v,&(c,u)=(c(f,v),u_{f,v})\text{ 对某个 }(f,v)\in\mathcal A,\\
+ 0,&\text{否则}.
+ \end{cases}
+\]
+被占据的位置互异，故该定义无歧义。
+不同位置可以含同一个 $x_v$，未用的位置固定为零。
+对 $c\in[h]$，定义投影
+\[
+ \pi_c:\mathbb Q^{[h]\times\mathcal B}\longrightarrow\mathbb Q^{\mathcal B},
+ \qquad (\pi_c\eta)_u=\eta_{c,u}.
+\]
+现在置
+\begin{equation}\label{eq:actual-rows}
+ \begin{gathered}
+ \vec{P}_{f,v}(T)=\vec{P}_{u_{f,v}}(T)\pi_{c(f,v)}\iota,\\
+ S_{t,g}=\{v\in[n]:a_v(t)=g\},\qquad \sigma_f(t)=d_f(t).
+ \end{gathered}
+\end{equation}
+行 $\vec{P}_{f,v}(T)$ 作用在实际变量 $x\in\mathbb Q^n$
+上。在 $T=0$，它提取位置 $(c(f,v),u_{f,v})$
+处的值，即 $x_v$。于是 $\vec{P}_{f,v}(0)=\delta_v$，
+次数至多 $R-1$。引理~\ref{lem:incidence-labels}
+给出 $|S_{t,g}|\le2n/r$。
+
+用
+\begin{equation}\label{eq:actual-measurements}
+ \widetilde C=\operatorname{diag}
+   \bigl(\underbrace{C^{\mathcal B},\ldots,C^{\mathcal B}}_{h\text{ 份副本}}\bigr),
+ \qquad \widehat C=\widetilde C\iota,
+ \qquad C_{t,g}=\widehat C|_{S_{t,g}}.
+\end{equation}
+定义测量矩阵。
+该限制保留 $S_{t,g}$ 中的列与全部行（含零行）。
+于是 $\widehat Cx$ 在每个副本的坐标从 $x$ 填充后
+记录其辅助测量。
+矩阵 $C_{t,g}$ 是整数的。其分量不必属于 $\{0,1,-1\}$，
+因为含同一 $x_v$ 的多个位置上的系数被相加。
+$\widetilde C$ 的每行至多 $D$ 个非零分量，
+全为一或 $-1$。乘以 $\iota$ 在公共列中添加分量并丢弃
+未用位置，故不会增加其绝对值之和。
+因此 $C_{t,g}$ 的每行绝对行和至多 $D$，
+其在布尔赋值上的值落在 $[-D,D]\cap\mathbb Z$ 中。
+
+若 \eqref{eq:incidence-tail} 成立，则每个 $C_{t,g}$
+有 $c_{t,g}=hc_{\mathcal B}$ 行。故
+\begin{equation}\label{eq:incidence-measurement-count}
+ \sum_{g=1}^r c_{t,g}=rh c_{\mathcal B}
+ \le rh\epsilon D\le2r\epsilon M\le2r\epsilon bn.
+\end{equation}
+取 $\epsilon=\tau/(rb)$ 使其至多 $2\tau n$。
+
+为验证分离性，固定 $t\in[Q]$、$g\in[r]$ 与满足
+$g\ne\sigma_f(t)$ 的 $(f,v)\in\mathcal A$。
+设 $\xi\in\mathbb Q^{S_{t,g}}$ 满足
+$C_{t,g}\xi=\vec{0}$，补零延拓为
+$\widetilde\xi\in\mathbb Q^n$。
+\eqref{eq:actual-measurements} 给出
+$\widetilde C\iota\widetilde\xi=\vec{0}$。
+于是对每个 $c\in[h]$，
+\[
+ C^{\mathcal B}\pi_c\iota\widetilde\xi=\vec{0}.
+\]
+$\pi_c\iota\widetilde\xi$ 的每个非零坐标含一个满足
+$a_{v'}(t)=g$ 的变量 $v'$。其辅助标号的第一序列为
+$a_{v'}$，故该向量支撑在 $S^{\mathcal B}_{t,g}$ 上。
+在副本 $c(f,v)$ 中以 $d_{u_{f,v}}(t)=d_f(t)=\sigma_f(t)$
+应用引理~\ref{lem:swaps-forms}，给出
+\[
+ \langle \vec{P}_{f,v}(t), \widetilde\xi\rangle
+ =\langle \vec{P}_{u_{f,v}}(t), \pi_{c(f,v)}\iota\widetilde\xi\rangle=0.
+\]
+这正是定义~\ref{def:layout} 中的核条件。
+因子 $f$ 的全部输入使用同一指派组 $d_f(t)$，
+而计数和仍恰遍历 $n$ 个布尔位。
+
+\subsection{系数界与完成的构造}
+\eqref{eq:actual-rows} 中的代入行
+$\vec{P}_{f,v}(T)\in\mathbb Q[T]^{1\times n}$
+的分量是带理系数的多项式。现在界定存储这些系数所需的
+位数；这些界将在第~\ref{subsec:one-query-cost} 节
+控制精确算术。我们先对 \eqref{eq:swaps-row} 定义的
+辅助行 $\vec{P}_u(T)$ 给出公分母与系数界。
+由 \eqref{eq:actual-rows} 从 $\vec{P}_u(T)$
+转到 $\vec{P}_{f,v}(T)$ 只在公共列中添加系数或丢弃
+未用列，故同一分母与绝对值之和的界仍然适用。
+
+\begin{lemma}\label{lem:row-coefficients}
+设 $d_{\mathrm{den}}=(R-1)!Q!$。则对每个 $u\in\mathcal B$
+有 $d_{\mathrm{den}}\vec{P}_u(T)\in\mathbb Z[T]^{1\times D}$。
+行 $d_{\mathrm{den}}\vec{P}_u(T)$ 中全部系数的绝对值之
+和至多 $2^{O(Q\log Q)}$。对 $d_{\mathrm{den}}\vec{P}_{f,v}(T)$
+同样成立。矩阵 $M_0,C^{\mathcal B}$ 与行 $\vec{P}_u(T)$
+可在 $\poly(D,Q,r)$ 次位运算内构造。
+\end{lemma}
+\begin{proof}
+对 $0\le j<R$，$f_{\mathcal I}(W_0)$ 的相应被加项为
+\[
+ (-1)^{A_0}(-2)^j\binom{W_0-A_0I}{j}
+ =\frac{(-1)^{A_0+j}}{j!}
+   \prod_{a=0}^{j-1}\bigl(2W_0-2(A_0+a)I\bigr).
+\]
+由 $2W_0=QI-\sum_s\Pi_s$，右端每个矩阵因子都是整数的。
+且 $j!$ 整除 $(R-1)!$。
+因此乘以置换矩阵 $V_0$ 表明 $(R-1)!M_0$ 是整数的。
+$\varphi_{u,y}$ 的系数的分母整除
+$\prod_{s\in E_{u,y}}s$，而后者整除 $Q!$。
+\eqref{eq:swaps-row} 证明所述公分母。
+
+对系数估计，用矩阵范数
+$\|A\|_\infty=\max_i\sum_j|A[i,j]|$
+与多项式范数 $\|\sum_j a_jT^j\|_1=\sum_j|a_j|$。
+由 $\|W_0\|_\infty\le Q$ 与上式各因子满足
+$0\le A_0+a\le Q$，每个 $2W_0-2(A_0+a)I$
+的范数至多 $4Q$。于是
+\[
+ \|M_0\|_\infty\le R(4Q)^{R-1},\qquad
+ \|\varphi_{u,y}\|_1
+ \le\prod_{s\in E_{u,y}}(1+1/s)\le2^Q.
+\]
+行 $d_{\mathrm{den}}\vec{P}_u$ 中全部系数的绝对值之
+和因此至多
+\[
+ d_{\mathrm{den}}\bigl(1+(1+2^Q)R(4Q)^{R-1}\bigr).
+\]
+由 $R<Q$，其对数为 $O(Q\log Q)$。
+对 $u=u_{f,v}$，把 $d_{\mathrm{den}}\vec{P}_u(T)$
+乘以 $\pi_{c(f,v)}\iota$ 在公共列中添加系数并丢弃未用列。
+由 \eqref{eq:actual-rows}，所得行是
+$d_{\mathrm{den}}\vec{P}_{f,v}(T)$，故满足同一界。
+
+枚举引理~\ref{lem:swaps-matrix} 的特征基、求值
+$f_{\mathcal I}(W_0)$、并作成多项式 $\varphi_{u,y}$
+需要 $\poly(D,Q,r)$ 次算术运算。使用上述公分母，
+这些矩阵与多项式计算中存储的系数的分子与分母都有
+$O(Q\log Q)$ 位。因此构造花费 $\poly(D,Q,r)$
+次位运算。
+\end{proof}
+
+构造有三个定量要求。
+\eqref{eq:incidence-balance-hypotheses} 的两个不等式
+界定辅助副本数与每组实际变量数。
+取 $\epsilon=\tau/(rb)$ 的尾界经由
+\eqref{eq:incidence-measurement-count} 给出总测量界。
+我们汇总结果供计数算法使用。
+
+\begin{lemma}\label{lem:layout}
+设整数 $n,b,w\ge1$，$(I_f)_{f\in\mathcal F}$
+为 $[n]$ 的规模至多 $w$ 的子集，
+每个 $v\in[n]$ 至多属于 $b$ 个集合。
+置 $M=\sum_f|I_f|$ 并设 $n\le M\le bn$。
+设 $r\ge2$、$1\le R<Q$ 为整数，$0<\tau\le1/2$，
+$D=r^{2Q}$。设
+\[
+ 2(b+w)D^2\le M,\qquad 2Qr^2\le n,
+\]
+且区间
+$\mathcal I=\{A_0,\ldots,A_0+R-1\}\subseteq\{0,\ldots,Q\}$
+满足
+\[
+ \Pr[W\notin\mathcal I]\le\frac{\tau}{rb},\qquad
+ W\sim\operatorname{Bin}\!\left(Q,\frac{r-1}{2r}\right).
+\]
+则可以在 $\poly(n,M,|\mathcal F|,D,Q,r,b,w)$ 次位运算内
+确定性构造定义~\ref{def:layout} 中的全部数据。
+\end{lemma}
+\begin{proof}
+引理~\ref{lem:swaps-matrix} 构造满足
+$c_{\mathcal B}\le\tau D/(rb)$ 的 $C^{\mathcal B}$。
+引理~\ref{lem:swaps-support} 与~\ref{lem:swaps-forms}
+给出辅助多项式行。
+引理~\ref{lem:incidence-labels} 选取变量组与因子组，
+满足 $hD\le2M$ 与 $|S_{t,g}|\le2n/r$。
+\eqref{eq:actual-rows} 与 \eqref{eq:actual-measurements}
+中的映射随后给出满足 $\vec{P}_{f,v}(0)=\delta_v$、
+次数至多 $R-1\le R$ 与所需核蕴含的行。
+$C_{t,g}$ 的每行绝对行和至多 $D$，且
+\eqref{eq:incidence-measurement-count} 对每个 $t\in[Q]$
+给出 $\sum_{g=1}^r c_{t,g}\le2\tau n$。
+引理~\ref{lem:row-coefficients} 提供公分母与系数界。
+合起来，各构造花费 $\poly(n,M,|\mathcal F|,D,Q,r,b,w)$
+次位运算，所得阵列占用
+$\poly(n,M,|\mathcal F|,D,Q,r,b,w)$ 比特。
+\end{proof}
+
+\subsection{选取参数}\label{subsec:incidence-parameters}
+在应用中，最大 scope $w$ 与含一个变量的因子最大数 $b$
+都将被 $\log n$ 的固定幂界定。现在在该体制下选取满足
+引理~\ref{lem:layout} 的参数。
+计数成本的指数取决于三个量
+\[
+ \frac RQ\log\frac{2Q}{R},\qquad
+ \tau\log(2D+1),\qquad \frac1r.
+\]
+它们分别对应恢复 Taylor 系数、枚举测量取值、
+与在一组内枚举赋值。下面的选取同时界定三者。
+
+\begin{lemma}\label{lem:incidence-parameters}
+固定整数 $\beta\ge1$。设 $n\ge20$，
+$\lambda=\lceil\log_2 n\rceil$、
+$\nu=\lceil\log_2\lambda\rceil$，
+并设 $b,w\le\lambda^\beta$、$n\le M\le bn$。
+对所有足够大的 $n$，参数
+\begin{equation}\label{eq:parameter-QR}
+ r=\left\lfloor\frac{\sqrt\lambda}{\nu^2}\right\rfloor,
+ \qquad Q=\left\lfloor\frac{\lambda}{128\nu}\right\rfloor,
+ \qquad R=(\beta+3)\lceil\sqrt\lambda\rceil,
+\end{equation}
+\[
+ \tau=\frac1{r\lambda},\qquad
+ \epsilon=\frac1{br^2\lambda},\qquad D=r^{2Q},
+\]
+连同证明中指定的区间，满足引理~\ref{lem:layout}
+的全部数值假设。它们还满足
+\[
+ R\ge32,\qquad 6R\le Q,\qquad D\le2^{\lambda/128},
+\]
+以及
+\begin{equation}\label{eq:balanced-cost}
+ \frac RQ\log\frac{2Q}{R}+\tau\log(2D+1)+\frac1r
+ =O_\beta\!\left(\frac{\nu^2}{\sqrt\lambda}\right).
+\end{equation}
+给定数值 $n,M,b,w$，这些参数与数值假设可以在
+$\poly_\beta(\log n)$ 次位运算内精确计算并检验。
+对固定的 $\beta$，只有有限多个 $n$ 通不过这些检验。
+\end{lemma}
+\begin{proof}
+对足够大的 $n$，参数的阶为
+\[
+ r=\Theta(\sqrt\lambda/\nu^2),\qquad
+ Q=\Theta(\lambda/\nu),\qquad R=\Theta_\beta(\sqrt\lambda).
+\]
+特别地，最终有 $r\ge2$、$R\ge32$ 与 $6R\le Q$。
+由 $\log_2 r\le\nu/2$，
+\[
+ \log_2 D=2Q\log_2 r
+ \le2\frac{\lambda}{128\nu}\frac\nu2=\frac{\lambda}{128}.
+\]
+对足够大的 $n$，两个平衡不等式随之成立：
+\[
+ 2(b+w)D^2\le4\lambda^\beta2^{\lambda/64}\le n\le M,
+ \qquad 2Qr^2\le n.
+\]
+对第二个：$Q,r$ 被 $\lambda$ 的固定幂界定，
+而 $n>2^{\lambda-1}$。第一个由同样的比较得出。
+
+令
+\[
+ \mu=\frac{Q(r-1)}{2r},\qquad
+ A_0=\left\lfloor\mu-\frac{R-1}{2}\right\rfloor,
+ \qquad \mathcal I=\{A_0,\ldots,A_0+R-1\}.
+\]
+这里 $Q/4\le\mu\le Q/2$。由 $R\le Q/6$，区间落在
+$\{0,\ldots,Q\}$ 内。其中心与 $\mu$ 相差小于一，
+而 $R\ge32$ 保证它包含与 $\mu$ 距离在 $R/4$ 内的每个
+整数。对 $W\sim\operatorname{Bin}(Q,(r-1)/(2r))$，
+Hoeffding 不等式给出
+\[
+ \Pr[W\notin\mathcal I]
+ \le2e^{-R^2/(8Q)}
+ \le2e^{-16(\beta+3)^2\nu}
+ \le2^{-(\beta+2)\nu}
+ \le\lambda^{-(\beta+2)}
+ \le\frac1{br^2\lambda}.
+\]
+最后一个不等式用 $b\le\lambda^\beta$ 与 $r^2\le\lambda$。
+这证明了取 $\epsilon=\tau/(rb)$ 的
+\eqref{eq:incidence-tail}。且一旦 $r\ge2$ 就有
+$0<\tau\le1/2$。
+
+最后，
+\[
+ \frac RQ=O_\beta(\nu/\sqrt\lambda),\qquad
+ \log(2Q/R)=O(\nu),\qquad
+ \tau\log(2D+1)=O(1/r).
+\]
+连同 $1/r=O(\nu^2/\sqrt\lambda)$，这些证明
+\eqref{eq:balanced-cost}。
+
+最后我们证明 \eqref{eq:parameter-QR}
+中的参数可以在所述位界内精确构造。
+算法找出 $\lambda=\lceil\log_2 n\rceil$
+（即使 $n\le2^\lambda$ 的最小整数），
+再以同样方式找出 $\nu=\lceil\log_2\lambda\rceil$。
+它把 $r$ 取为满足 $r^2\nu^4\le\lambda$ 的最大整数，
+用整数除法计算 $Q$，用整数平方根搜索找
+$\lceil\sqrt\lambda\rceil$ 得 $R$。
+若 $r<2$ 或 $Q\le R$，算法在此阶段报告失败。
+否则它用整数或有理算术构造 $\tau,\epsilon,D$
+与 $\mathcal I$ 的端点。然后检验
+$\mathcal I\subseteq\{0,\ldots,Q\}$、两个平衡不等式、
+$R\ge32$ 与 $6R\le Q$。
+\eqref{eq:incidence-tail} 中的尾概率分母为 $(2r)^Q$，
+故其所需界也可用整数算术检验。
+这些计算花费 $\poly_\beta(\log n)$ 次位运算。
+前述估计表明所有检验对足够大的 $n$ 都通过。
+\end{proof}

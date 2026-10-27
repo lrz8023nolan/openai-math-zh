@@ -1,0 +1,650 @@
+\subsection{三项成本与运行时间}
+\label{subsec:preview-parameters}
+先按下不表：第~\ref{subsec:preview-auxiliary} 节将构造替代型，
+使其在零点恢复原变量、次数至多 $R$，并在每个 $t\in[Q]$
+处容许 $(r,\tau,D)$-design。对足够大的 $n$，构造耗时多项式，
+并达到以下参数界：
+\begin{equation}\label{eq:overview-parameter-bounds}
+ \begin{aligned}
+ r&=\Theta\!\left(\frac{\sqrt{\log n}}{(\log\log n)^2}\right),
+ &Q&=\Theta\!\left(\frac{\log n}{\log\log n}\right),\\
+ R&=\Theta(\sqrt{\log n}),
+ &\tau&=\Theta\!\left(\frac1{r\log n}\right),\qquad
+ D=r^{2Q}\le(2n)^{1/128}.
+ \end{aligned}
+\end{equation}
+我们先说明这些界如何给出快速计数算法；
+下一小节将论证它们可以同时达成。
+
+回忆 $q=J-1=\lfloor3nR/Q\rfloor$。对每个求值点 $t$，
+第~\ref{subsec:preview-interpolation} 节对每一对
+$U\subseteq E$（$|E|\le q$）计算一个受限和。
+大小为 $j$ 的 $E$ 有 $\binom nj$ 种取法，随后 $U$ 有 $2^j$
+种取法。每个受限和枚举测量元组与各组内部的赋值。
+因此，不计多项式因子，三项成本相乘给出
+\begin{equation}\label{eq:overview-three-costs}
+ \underbrace{\sum_{j=0}^{\min(q,n)}2^j\binom nj}_{\text{Taylor 数据}}
+ \ \cdot\
+ \underbrace{(2D+1)^{2\tau n}}_{\text{测量}}
+ \ \cdot\
+ \underbrace{2^{2n/r}}_{\text{单组}}.
+\end{equation}
+为界定第一项成本，注意对足够大的 $n$ 有 $1\le q\le n/2$
+（因 $R/Q\to0$）。用 $\binom nj\le(en/j)^j$ 以及
+$(2en/j)^j$ 在 $1\le j\le n$ 上递增的事实，得
+\[
+ \sum_{j=0}^q2^j\binom nj
+ \le(q+1)\left(\frac{2en}{q}\right)^q.
+\]
+由于 $q=\Theta(nR/Q)$，该项成本的对数为
+$O(n(R/Q)\log(2Q/R))$。对 \eqref{eq:overview-three-costs}
+中三项成本取对数，即得
+\[
+ O\!\left(n\left[
+       \frac RQ\log\frac{2Q}{R}
+       +\tau\log(2D+1)+\frac1r\right]\right).
+\]
+在 \eqref{eq:overview-parameter-bounds} 下每一项都很小：
+\[
+ \begin{aligned}
+ \frac RQ\log\frac{2Q}{R}
+   &=O\!\left(\frac{\log\log n}{\sqrt{\log n}}
+                      \cdot\log\log n\right),\\
+ \tau\log(2D+1)&=O\!\left(\frac1{r\log n}\cdot\log n\right)
+                  =O(1/r),\\
+ \frac1r&=O\!\left(\frac{(\log\log n)^2}{\sqrt{\log n}}\right).
+ \end{aligned}
+\]
+于是受限出现次数的实例可在
+\begin{equation}\label{eq:overview-bounded-time}
+ n^{O(1)}2^{O(n(\log\log n)^2/\sqrt{\log n})}
+\end{equation}
+次位运算与多项式空间内完成计数。有限多个较小的输入用穷举
+处理。
+
+点数 $Q$、组数 $r$ 与截断阶 $J=O(1+nR/Q)$ 都是 $n$ 的多项式。
+因此对点与组的循环、次数小于 $J$ 的多项式上的算术、以及最终
+插值，只在上述三个枚举的每次迭代中增加多项式个运算。
+
+位复杂度与空间界见附录~\ref{subsec:overview-arithmetic}。
+
+\subsection{构造低次替代线性型}
+\label{subsec:preview-auxiliary}
+考虑子句中 $X_v$ 的一次出现。在 $T=0$ 处其替换必须等于
+$X_v$。在每个 $t=1,\ldots,Q$ 处，该子句必须能只用
+其指派组与少数共享测量来求值同一替换。
+在每个点选取不同的线性型再插值，一般要付出次数 $Q$ 的代价。
+为使 Taylor 恢复廉价，我们需要次数 $R$ 远小于 $Q$。
+
+假设替代中的某一项只在 $t=2$ 处使用子句指派组之外的变量。
+把该项乘以 $1-T/2$：在零点不变，在 $t=2$ 处消失。
+在其他每个求值点，子句都能从自己的组读到该变量。
+同样的技巧适用于多个这样的点：每点一个因子，每点付出
+一次次数。因此，挑战是把每个输入写成这样的和：共享测量
+确定其中一部分，其余各项只在少数几个点用到指派组之外的
+变量。我们先在记录组选取的辅助坐标上构造这样的分解，
+再代入公式的变量。
+
+\medskip\noindent
+\textbf{第 1 步：建立辅助坐标。}\par\nobreak
+\smallskip\noindent
+在每个求值点，出现 $(e,v)$ 有两个组选取：变量 $v$
+所在的组，以及子句 $e$ 被指派的组。跨越 $Q$ 个点，
+这些选取构成 $Q$ 个对的序列。因此我们使用坐标集
+\[
+ \mathcal B=([r]\times[r])^Q,\qquad D=|\mathcal B|=r^{2Q}.
+\]
+把下标写作
+\[
+ u=\bigl((a_u(1),d_u(1)),\ldots,(a_u(Q),d_u(Q))\bigr).
+\]
+我们将为每个这样的下标构造一行替代，因此无论以后对公式
+作出何种组选取，它都可用。
+
+设 $\vec\zeta=(\zeta_w)_{w\in\mathcal B}$ 是原变量的形式
+占位符，将在第 4 步代入。
+在点 $t$，坐标 $\zeta_w$ 属于组 $a_w(t)$，而 $\zeta_u$
+的替代被指派到组 $d_u(t)$。于是该替代可自由使用的坐标是
+\[
+ \mathcal S_{t,d_u(t)},\qquad
+ \mathcal S_{t,g}:=\{w\in\mathcal B:a_w(t)=g\}.
+\]
+特别地，$\zeta_w$ 属于指派组当且仅当 $a_w(t)=d_u(t)$。
+集合 $\mathcal S_{t,g}$ 划分 $\mathcal B$，每组含 $D/r$
+个坐标。
+
+我们的辅助目标是构造系数行 $\vec P_u(T)\in\mathbb Q[T]^D$
+与一个矩阵
+\[
+ C\in\{0,1,-1\}^{c\times D},\qquad c\le\frac{D\tau}{3r},
+\]
+使得
+\[
+ \langle\vec P_u(0),\vec\zeta\rangle=\zeta_u,
+ \qquad \deg\vec P_u\le R-1,
+\]
+且在每个 $t\in[Q]$ 处，替代线性型
+$\langle\vec P_u(t),\vec\zeta\rangle$ 是可用数据
+\begin{equation}\label{eq:overview-auxiliary-requirement}
+ \vec\zeta|_{\mathcal S_{t,d_u(t)}}\quad\text{与}\quad C\vec\zeta
+\end{equation}
+的线性组合。同一批测量 $C\vec\zeta$ 服务于每一行与每个
+求值点。这正是第~\ref{subsec:preview-separation} 节 design
+中依赖条件的辅助版本。
+
+\medskip\noindent
+\textbf{第 2 步：构造常数矩阵。}\par\nobreak
+\smallskip\noindent
+从恒等式
+\[
+ \zeta_u=((I_D-M_0)\vec\zeta)_u+
+                   \sum_{w\in\mathcal B}M_0[u,w]\zeta_w.
+\]
+出发。我们希望第一项由 $C\vec\zeta$ 确定。
+在和式中，每个非零系数应当只在少数几个点连接不相容的组，
+使得低次多项式可以去除这些依赖。定义这些点为
+\[
+ E_{u,w}=\{t\in[Q]:a_w(t)\ne d_u(t)\}.
+\]
+对 $M_0\in\mathbb Q^{D\times D}$ 的两个要求是
+\begin{equation}\label{eq:outline-matrix-conditions}
+ \begin{gathered}
+ M_0\vec\xi=\vec\xi\quad\text{对每个 }\vec\xi\in\ker C,\\
+ M_0[u,w]\ne0\quad\Longrightarrow\quad |E_{u,w}|\le R-1.
+ \end{gathered}
+\end{equation}
+第一条说 $I_D-M_0$ 在 $\ker C$ 上为零。等价地，其每行都在
+$C$ 的行空间中，故 $(I_D-M_0)\vec\zeta$ 是测量 $C\vec\zeta$
+的线性函数。第二条将为第 3 步所用多项式的次数提供界。
+
+\smallskip\noindent
+\emph{通过保持 $f$ 低次来限制支撑。}
+设 $\Pi_s$ 为交换每个下标中第 $s$ 对的两个分量、其余对
+不变的置换矩阵。这些矩阵两两交换，且满足 $\Pi_s^2=I_D$。
+令
+\[
+ V_0=\prod_{s=1}^Q\Pi_s,\qquad
+ W_0=\frac12\sum_{s=1}^Q(I_D-\Pi_s),\qquad
+ M_0=V_0f(W_0),
+\]
+其中我们将选取次数至多 $R-1$ 的多项式 $f$。
+完全交换 $V_0$ 已经尊重每个组：其在行 $u$ 的非零元位于满足
+\[
+ (a_w(s),d_w(s))=(d_u(s),a_u(s))\quad\text{对每个 }s
+\]
+的列 $w$。特别地，$E_{u,w}$ 为空。
+
+乘以 $f(W_0)$ 可以撤销一些交换，但 $f$ 的次数限制了个数。
+展开 $f(W_0)$ 给出至多 $R-1$ 个交换的乘积。
+由 $\Pi_s^2=I_D$，重复的交换相消。
+因此乘以 $V_0$ 给出
+\begin{equation}\label{eq:overview-partial-swaps}
+ M_0=\sum_{\substack{S\subseteq[Q]\\|S|\le R-1}}
+             \gamma_S\prod_{s\notin S}\Pi_s
+ \qquad\text{（对某些 }\gamma_S\in\mathbb Q\text{）}.
+\end{equation}
+以 $S$ 为下标的被加项交换 $S$ 之外的每一对。其非零元满足
+$a_w(s)=d_u(s)$ 对每个 $s\notin S$，故 $E_{u,w}\subseteq S$。
+只要 $|E_{u,w}|>R-1$，每个被加项都为零，其和亦然。
+这证明了对任何次数至多 $R-1$ 的多项式 $f$，
+\eqref{eq:outline-matrix-conditions} 的第二个条件成立。
+
+\smallskip\noindent
+\emph{选取 $f$ 使其固定大多数基方向。}
+现在选取 $f$，使 $M_0$ 固定大多数基方向。
+先考虑一个位置，其坐标以 $[r]\times[r]$ 为下标。
+设 $\vec e_{ab}$ 为在 $(a,b)$ 取一、其余取零的向量。
+交换该对有正交特征基
+\[
+ \begin{array}{ll}
+ \vec e_{aa}\quad(a\in[r]),\quad
+ \vec e_{ab}+\vec e_{ba}\quad(a<b),
+     &\text{特征值 }+1,\\[2pt]
+ \vec e_{ab}-\vec e_{ba}\quad(a<b),
+     &\text{特征值 }-1.
+ \end{array}
+\]
+特征值 $+1$ 的向量有 $r(r+1)/2$ 个，特征值 $-1$ 的有
+$r(r-1)/2$ 个。所有分量都在 $\{0,1,-1\}$ 中。
+
+对每个位置 $s\in[Q]$，选取这样一个向量 $\vec\psi_s$，
+并按分量定义 $\vec\psi\in\mathbb Q^{\mathcal B}$：
+\[
+ \psi_u=\prod_{s=1}^Q\psi_s(a_u(s),d_u(s)).
+\]
+这 $D=(r^2)^Q$ 种选取构成正交基：内积分解为 $Q$ 个位置上
+内积的乘积。交换 $\Pi_s$ 以 $\vec\psi_s$ 的特征值作用在
+$\vec\psi$ 上。若恰有 $j$ 个选取的特征值为 $-1$，则
+\[
+ W_0\vec\psi=j\vec\psi,\qquad
+ V_0\vec\psi=(-1)^j\vec\psi,\qquad
+ M_0\vec\psi=(-1)^jf(j)\vec\psi.
+\]
+因此，置 $f(j)=(-1)^j$ 即可使 $M_0$ 固定这些向量。
+
+对均匀选取的基向量，数 $j$ 的分布为
+\[
+ W\sim\operatorname{Bin}(Q,p),\qquad p=\frac{r-1}{2r},
+\]
+因为在每个位置，$r^2$ 个选取中有比例 $p$ 的特征值为 $-1$。
+因此大多数基向量的 $j$ 接近 $Qp$。
+取靠近 $Qp$ 的 $R$ 个相邻整数的区间 $\mathcal I$，
+对 $j\in\mathcal I$ 插值 $f(j)=(-1)^j$。
+这给出 $\deg f\le R-1$，并使 $M_0$ 固定每个 $j\in\mathcal I$
+的基向量。第 5 步给出端点并检验该区间落在 $\{0,\ldots,Q\}$
+内。
+
+\smallskip\noindent
+\emph{测量例外方向。}
+用剩余基向量的转置作为 $C$ 的行。其分量在 $\{0,1,-1\}$
+中，且由正交性，$\ker C$ 由上述被固定的基向量张成。
+这证明了 \eqref{eq:outline-matrix-conditions} 的第一个条件。
+
+现在可以看出如何选取 $R$。$W$ 的标准差是
+$\sqrt{Qp(1-p)}=\Theta(\sqrt Q)$。取 $R$ 远大于 $\sqrt Q$
+使大多数基向量落入区间，只需测量一小部分。
+我们仍可取 $R$ 远小于 $Q$，使 Taylor 恢复每点只需
+$1+\lfloor 3nR/Q\rfloor=o(n)$ 个系数。
+对第 5 步的选取，二项尾界给出
+\[
+ c=D\Pr[W\notin\mathcal I]
+      \le 2D\exp\!\left(-\frac{R^2}{8Q}\right)
+      \le\frac{D\tau}{3r},
+\]
+正如所需。于是低次数给出受限支撑，而插值使修正
+$I_D-M_0$ 只依赖这少数测量。
+
+\medskip\noindent
+\textbf{第 3 步：定义辅助替代行。}\par\nobreak
+\smallskip\noindent
+现在把第 2 步的 $\zeta_u$ 分解转化为其替代。
+保持由测量确定的项不变。对每个 $M_0[u,w]\ne0$，
+把另一项中的系数乘以
+\[
+ \varphi_{u,w}(T)=\prod_{s\in E_{u,w}}(1-T/s).
+\]
+该多项式在零点等于一，并在 $\zeta_w$ 落在指派组之外的
+每个点为零。用恒等式定义系数行 $\vec P_u(T)$：
+\begin{equation}\label{eq:outline-auxiliary-row}
+ \langle\vec P_u(T),\vec\zeta\rangle
+ =((I_D-M_0)\vec\zeta)_u+
+   \sum_{\substack{w\in\mathcal B\\M_0[u,w]\ne0}}
+                M_0[u,w]\varphi_{u,w}(T)\zeta_w.
+\end{equation}
+这直接给出全部三个所需性质：
+\begin{itemize}
+\item 在 $T=0$ 处每个乘子为一，两项之和为 $\zeta_u$。
+\item 每个乘子的次数为 $|E_{u,w}|\le R-1$，故
+$\deg\vec P_u\le R-1$。
+\item 在 $T=t$ 处，第一项是 $C\vec\zeta$ 的线性函数。
+和式中，系数只有在 $a_w(t)=d_u(t)$ 时才能保留，
+因此只剩 $\mathcal S_{t,d_u(t)}$ 中的坐标。
+\end{itemize}
+于是该替代恰好只使用
+\eqref{eq:overview-auxiliary-requirement} 所允许的数据。
+
+\medskip\noindent
+\textbf{第 4 步：代入原变量。}\par\nobreak
+\smallskip\noindent
+辅助行已构造完毕。为将其用于公式，选取日程
+\[
+ a_v\in[r]^Q\quad(v\in[n]),\qquad
+ d_e\in[r]^Q\quad(e\in\mathcal F).
+\]
+在点 $t$，把变量 $v$ 放入组 $a_v(t)$，把子句 $e$
+指派到组 $d_e(t)$：
+\[
+ S_{t,g}=\{v:a_v(t)=g\},\qquad \sigma_e(t)=d_e(t).
+\]
+出现 $(e,v)$ 使用辅助标号
+\[
+ u(e,v)=\bigl((a_v(s),d_e(s))\bigr)_{s\in[Q]}\in\mathcal B.
+\]
+设 $h$ 是任一标号获得的出现数的最大值。我们需要变量组
+小且 $h$ 小。对我们的三次出现、宽度三的公式，
+引理~\ref{lem:incidence-labels} 在多项式时间内确定性选取
+日程，使
+\[
+ |S_{t,g}|\le2n/r,\qquad h\le2M/D,
+\]
+只要
+\begin{equation}\label{eq:overview-balance-requirements}
+ 12D^2\le M,\qquad 2Qr^2\le n.
+\end{equation}
+想法是对日程的随机选取去随机化。若所有 $a_v$ 与 $d_e$
+独立均匀取自 $[r]^Q$，则每个标号的期望重数为 $M/D$，
+每组 $S_{t,g}$ 的期望大小为 $n/r$。
+在 \eqref{eq:overview-balance-requirements} 的假设下，
+标准的条件期望法在多项式时间内去随机化该选取，
+保证每个标号的重数至多 $2M/D$、每组的大小至多 $2n/r$。
+第 5 步对我们的参数选取验证这些假设。
+
+不同的出现可以得到同一标号，却在该坐标要求不同的原变量。
+使用 $\mathcal B$ 的 $h$ 份副本，把标号相同的出现放进不同
+副本。令 $j(e,v)\in[h]$ 为 $(e,v)$ 所用的副本；
+把 $X_v$ 放在其坐标 $u(e,v)$ 处，未用位置放零。
+记 $\vec\zeta^{(j)}(\vec X)$ 为副本 $j$ 中所得的填充向量。
+每个分量是零或一个原变量。$X_v$ 的重复出现使用同一取值，
+因此这些副本不引入新的布尔变量。
+
+把辅助行用于包含该出现的副本：
+\begin{equation}\label{eq:overview-transferred-row}
+ \langle\vec P_{e,v}(T),\vec X\rangle
+ =\left\langle\vec P_{u(e,v)}(T),
+                  \vec\zeta^{(j(e,v))}(\vec X)\right\rangle.
+\end{equation}
+在零点，右端读取含 $X_v$ 的坐标，代入变量保持次数界
+$R-1$。在点 $t$，其可自由使用的坐标只含满足
+$a_{v'}(t)=d_e(t)$ 的变量 $v'$，即恰为子句指派组
+$S_{t,d_e(t)}$ 中的变量。子句 $e$ 的所有出现都使用同一
+指派组。
+
+剩余的依赖通过 $h$ 份副本上的 $hc$ 个线性测量
+$C\vec\zeta^{(j)}(\vec X)$ 传递。它们可能涉及多个原组。
+固定形如 $x_1+x_2$ 的总测量仍会耦合分别含 $x_1$ 与 $x_2$
+的两个组。因此我们把每个测量按各组贡献拆分。
+对每个测量 $\ell(\vec X)$，写
+\[
+ \ell(\vec X)=\sum_{g=1}^r
+        \ell|_{S_{t,g}}(\vec X|_{S_{t,g}}),
+\]
+并把这些限制的系数行归入 $C_{t,g}$。
+每个辅助测量现在都是组测量的和。
+对指派到组 $g$ 的子句，来自 $S_{t,g}$ 的部分是局部线性型，
+而其余每一部分都是相应组测量的线性组合。
+这正是 \eqref{eq:outline-separation} 的条件。
+
+总行数为 $rhc$。由 $hD\le2M\le6n$，
+\[
+ \sum_{g=1}^r c_{t,g}
+ =rhc\le rh\frac{D\tau}{3r}\le2\tau n.
+\]
+$C$ 的每行有 $D$ 个 $\{0,1,-1\}$ 中的分量。
+代入变量、合并重复副本、限制到一个组，都不会增加系数
+绝对值之和。因此 $C_{t,g}$ 的每行都是整数的，且绝对系数
+和至多 $D$。结合组大小界，这证明替代型在每个点都容许
+$(r,\tau,D)$-design。
+
+\medskip\noindent
+\textbf{第 5 步：验证所承诺的参数界。}\par\nobreak
+\smallskip\noindent
+构造需要两个平衡不等式
+\eqref{eq:overview-balance-requirements} 与尾界
+$2e^{-R^2/(8Q)}\le\tau/(3r)$。现在按
+\eqref{eq:overview-parameter-bounds} 所述的阶选取参数，
+并验证这些要求。
+
+令 $\lambda=\lceil\log_2 n\rceil$、
+$\nu=\lceil\log_2\lambda\rceil$，并取
+\begin{equation}\label{eq:overview-explicit-parameters}
+ \begin{aligned}
+ r&=\left\lfloor\frac{\sqrt\lambda}{\nu^2}\right\rfloor,
+ &Q&=\left\lfloor\frac{\lambda}{128\nu}\right\rfloor,
+ &R&=4\lceil\sqrt\lambda\rceil,\\
+ \tau&=\frac1{r\lambda},
+ &D&=r^{2Q}.
+ \end{aligned}
+\end{equation}
+它们具有 \eqref{eq:overview-parameter-bounds} 所述的阶。
+对足够大的 $n$，有 $r\ge2$、$R\ge32$ 与 $6R\le Q$
+（因 $R/Q=O(\nu/\sqrt\lambda)\to0$）。逐一检查其余要求：
+\begin{itemize}
+\item \emph{插值区间。}
+取第 2 步中的 $p=(r-1)/(2r)$，令
+\[
+ A_0=\left\lfloor Qp-\frac{R-1}{2}\right\rfloor,\qquad
+ \mathcal I=\{A_0,\ldots,A_0+R-1\}.
+\]
+由 $Q/4\le Qp\le Q/2$ 与 $6R\le Q$，该区间落在
+$\{0,\ldots,Q\}$ 内。此外，$R\ge32$ 保证它包含与 $Qp$
+距离在 $R/4$ 之内的每个整数。二项尾界因此给出第 2 步
+所用估计 $\Pr[W\notin\mathcal I]\le2e^{-R^2/(8Q)}$。
+\item \emph{多项式维数与平衡日程。}
+由 $\log_2 r\le\nu/2$，
+\[
+ \log_2 D=2Q\log_2 r\le\lambda/128,\qquad
+ D\le(2n)^{1/128}.
+\]
+对足够大的 $n$，这给出
+\[
+ 12D^2\le12(2n)^{1/64}\le n\le M,\qquad
+ 2Qr^2=O(\lambda^2)\le n,
+\]
+正是第 4 步所需。
+\item \emph{少量测量。}
+我们有 $R^2/(8Q)\ge256\nu$。由 $\lambda\le2^\nu$ 与
+$r^2\le\lambda$，
+\[
+ 2e^{-R^2/(8Q)}\le2e^{-256\nu}
+ \le\frac1{3\lambda^2}
+ \le\frac1{3r^2\lambda}=\frac{\tau}{3r}.
+\]
+于是第 2 步给出第 4 步所用的辅助测量界。
+\end{itemize}
+
+最后，所有构造维数都被 $n$ 的多项式界定。
+引理~\ref{lem:row-coefficients} 给出第 2--3 步矩阵与行的
+多项式构造时间，引理~\ref{lem:incidence-labels}
+对第 4 步的日程亦然。传递只用 $hD\le6n$ 个坐标位置。
+因此我们在多项式时间内构造出替代型：在零点恢复每个原
+输入、次数至多 $R-1\le R$，并在每个 $t\in[Q]$
+处容许所承诺的 $(r,\tau,D)$-design。
+这提供了第~\ref{subsec:preview-parameters} 节所用的界；
+引理~\ref{lem:incidence-parameters} 为完整证明的更一般
+情形记录了参数检查。
+
+\subsection{一般 \texorpdfstring{$\#k$-SAT}{\#k-SAT} 的较弱算法}
+\label{subsec:preview-general-sat}
+上述算法已经给出一般 $\#k$-SAT 的亚指数算法：
+不交稀疏化之后，我们把每个实例直接归约为每个变量至多
+出现三次的 $3$-CNF。两步都保持计数，如下。
+
+固定 $k\ge2$。我们使用稀疏化~\cite{IPZ} 的保持计数版本
+~\cite[Appendix~A]{DHMTW}，定量界取自
+~\cite[Section~6]{CIP} 与
+\cite[Lemma~5.14 and equation~(5.4)]{CalabroThesis}。
+如引理~\ref{lem:sparsify} 所记，这把输入计数表示为至多
+$\operatorname{poly}_k(n,\sigma^{-1})2^{\sigma n}$ 个公式
+$G$ 的计数之和。每个 $G$ 有相同的 $n$ 个声明变量，
+每个变量的出现至多为
+\[
+ B=O_k\!\left((\sigma^{-1}\log(2/\sigma))^{k-1}\right)
+\]
+次，从而非空子句至多 $Bn$ 个。空子句直接使计数为零。
+
+第一步把 $G$ 变成计数不变的 $3$-CNF。保留规模至多三的
+子句。对更长的子句，用二元 OR 门计算其析取，并要求最终
+输出为一。对门 $z=u\vee v$，施加
+\[
+ (\neg u\vee z)\ \wedge\ (\neg v\vee z)\ \wedge\
+ (u\vee v\vee\neg z).
+\]
+这里 $u,v$ 是输入文字或更早的门输出，$z$ 是新的。
+这些子句强制与 OR 相等，故门值由原赋值唯一确定。
+因此，$G$ 的可满足赋值恰有一种到新公式的扩张，
+不满足 $G$ 的赋值则没有。这每子句用 $O(k)$ 个门。
+
+第二步减少出现次数。若变量 $x$ 在该 $3$-CNF 中出现
+$s\ge2$ 次，则把其出现替换为不同副本 $x_1,\ldots,x_s$
+（保持符号），并加上 Tovey 的蕴含圈~\cite[p.~86]{Tov84}：
+\[
+ (\neg x_1\vee x_2)\ \wedge\cdots\wedge\
+ (\neg x_{s-1}\vee x_s)\ \wedge\ (\neg x_s\vee x_1).
+\]
+该圈迫使所有副本一致。每个副本出现在一个继承自 $3$-CNF
+的子句与两个圈子句中，因此恰在三个子句中。
+至多一次出现的变量保持不变，包括未使用的声明变量。
+这个标准的变量复制归约~\cite[Proposition~4.7]{Gol08}
+同样给出可满足赋值之间的双射。最终公式 $\widehat G$
+满足 $\#\widehat G=\#G$ 且
+\[
+ n\le N:=\#\{\text{$\widehat G$ 的变量}\}=O_k(Bn).
+\]
+其所有子句（含双文字圈子句）规模至多三，
+且每个变量至多出现三次。因此它恰是本概览所述设置的实例。
+
+对每个 $\widehat G$ 应用 \eqref{eq:overview-bounded-time}
+并把计数相加。当 $\sigma^{-1}$ 被 $\log n$ 的固定幂界定时
+$B$ 亦然，所得时间为
+\[
+ (n+m)^{O_k(1)}
+ 2^{O_k\!\left(\sigma n+
+          Bn(\log\log n)^2/\sqrt{\log n}\right)}.
+\]
+例如，把 $\sigma$ 取到 $(\log n)^{-1/(2k)}$ 的常数倍内，得
+\[
+ (n+m)^{O_k(1)}
+ 2^{O_k\!\left(n(\log\log n)^{k+1}/(\log n)^{1/(2k)}\right)}
+   = (n+m)^{O_k(1)}2^{o(n)}
+\]
+与多项式空间，逐个处理稀疏化树与归约后的实例。
+参数 $\sigma$ 可取有理数。
+
+\subsection{经由对 \texorpdfstring{$\mathbb F_2$}{F\_2} 上稀疏低次多项式方程解的计数得到更快的 \texorpdfstring{$\#k$-SAT}{\#k-SAT} 算法}
+\label{subsec:preview-full-case}
+
+第~\ref{subsec:preview-general-sat} 节的运行时间指数是
+$O_k(\sigma n+B\rho(n))$，其中
+$\rho(n)=n(\log\log n)^2/\sqrt{\log n}$。
+若稀疏化能在 $\sigma=\Theta(\rho(n)/n)$ 处给出
+$B=O_k(1)$，我们就已得到一般 $\#k$-SAT 的
+$2^{O_k(\rho(n))}$ 时间算法（差多项式因子）：复制在每个
+叶上只用 $O_k(n)$ 个变量，叶数也落在同一界内。
+然而在这个 $\sigma$ 的取法下，保证只有
+$B=(\log n)^{O_k(1)}$。
+
+我们分两步得到 $2^{O_k(\rho(n))}$ 界。第一，本概览的计数
+算法推广到 $\mathbb F_2$ 上 $O(n)$ 个多项式方程构成的
+方程组，每个方程次数至多 $k$ 且单项数为多对数级
+（定理~\ref{thm:overview-sparse-polynomials}）。
+第二，即使叶 $G$ 有 $Bn$ 个子句，我们也能在原 $n$ 个变量上
+构造这样的方程组，其公共零点恰为 $G$ 的可满足赋值。
+我们先以一个自含的随机化构造展示该归约，
+再解释计数算法。
+
+\medskip\noindent
+\textbf{到稀疏多项式方程的随机化归约。}
+若 $x$ 违反子句 $e$ 则写 $v_e(x)=1$，否则为 $0$。
+子句集 $S$ 上的\emph{奇偶检验}是 $\mathbb F_2$ 上的多项式
+方程 $\sum_{e\in S}v_e(x)=0$：当 $x$ 违反 $S$ 中偶数个
+子句时通过。每个可满足赋值都通过，因此我们只需抓住每个
+不可满足的赋值。若 $G$ 有 $m_G\le n$ 个子句，
+每子句一个检验即够。设 $m_G>n$。
+
+短检验容易漏掉单个被违反的子句，但所有只违反该子句的
+赋值给出相同回答。因此只有 $m_G$ 个单点模式需要抓住。
+使用 $8n$ 个独立检验。对每个检验，有放回地均匀抽取
+$L=2B\lceil\log_2(2m_G)\rceil$ 个子句。对每次抽取，
+以概率 $1/2$ 独立地把其违反位加入奇偶和；
+被包含两次的副本相消。由 $m_G\le Bn$，每个子句在期望上
+总共至少被抽取对数次。对固定的 $w\ge1$ 个被违反子句的
+集合，令 $u=Lw/m_G$ 为每次检验的期望命中数。
+若样本命中该集合，则首个命中处的硬币在其余硬币固定时
+以概率 $1/2$ 使奇性为奇。因此拒绝概率为
+\[
+ p_w=\tfrac12\bigl(1-(1-w/m_G)^L\bigr)\ge\tfrac12(1-e^{-u}).
+\]
+
+对少量违反我们计\emph{集合}，对大量违反计\emph{赋值}：
+\begin{itemize}
+\item 若 $u\le1$，则 $p_w\ge u/4$。大小为 $w$ 的集合至多
+$m_G^w$ 个，故至少一个集合逃过所有检验的概率至多为
+$m_G^w e^{-8np_w}\le m_G^w e^{-2nLw/m_G}\le16^{-w}$。
+对 $w\ge1$ 求和，失败概率至多 $1/15$。
+\item 若 $u>1$，则 $p_w>1/4$。对 $2^n$ 个赋值用联合界，
+此情形下任一赋值逃过的概率被
+$2^n(3/4)^{8n}<1/4$ 界住。
+\end{itemize}
+于是以大于 $2/3$ 的概率，公共零点恰为 $G$ 的可满足赋值。
+每个 $v_e$ 是至多 $k$ 个形如 $x_j$ 或 $1+x_j$ 的因子的
+乘积，故每个检验的次数至多 $k$、单项数至多 $2^kL$
+（$n$ 的多对数）。
+第~\ref{sec:hashes} 节确定性地构造具有同一解集的短检验。
+我们先用来自展开码的奇偶校验保证仍然通过的非可满足赋值
+必违反许多子句；随机短检验随后以至少 $1/4$ 的概率抓住
+每个这样的赋值。对每个候选检验，我们统计同时通过该检验
+与已选全部检验的赋值个数，并追加使该计数最小的候选：
+每个可满足赋值通过每个候选，因此这至少消除剩余
+不可满足赋值的四分之一。
+
+\medskip\noindent
+\textbf{计数公共零点。}
+回忆第~\ref{subsec:preview-encoding} 节：$x$ 满足子句
+$e$ 时 $\Phi_e(x)$ 为 $1$，否则为 $0$。
+当我们一次检验整个子句集 $S_i$ 时，该因子应换成什么？
+先用普通整数加法统计\emph{本次检验}中被违反的子句数：
+\[
+ L_i(x)=\sum_{e\in S_i}v_e(x)=\sum_{e\in S_i}\bigl(1-\Phi_e(x)\bigr).
+\]
+检验恰在 $L_i(x)$ 为偶数时通过。取 $\ell=n+1$，
+使至多 $2^n$ 的计数由其模 $2^\ell$ 的剩余确定。
+补余 Beigel--Tarui 多项式 $p_\ell$
+（引理~\ref{lem:rational-idempotent}）在偶整数上模
+$2^\ell$ 为 $1$，在奇整数上为 $0$。
+例如，在 $S_i$ 中违反两个子句仍通过检验：
+$p_\ell(2)\equiv1\pmod{2^\ell}$。
+以 $m_{\mathrm{test}}$ 记检验数，我们的计数表达式变为
+\[
+ \underbrace{\sum_x\prod_{e\in G}\Phi_e(x)}_{\text{每子句一个因子}}
+ \qquad\longrightarrow\qquad
+ \underbrace{\sum_x\prod_{i=1}^{m_{\mathrm{test}}} p_\ell(L_i(x))}_{\text{每检验一个因子}}.
+\]
+左边是 $\#G$。右边模 $2^\ell$ 的最小非负剩余是通过全部
+检验的赋值个数。当检验抓住每个不可满足赋值时，
+它恰为 $\#G$。同一编码适用于 $\mathbb F_2$ 上任何稀疏
+多项式方程 $P_i(x)=0$：取 $L_i(x)$ 为其列出的单项的
+整数和。方程成立同样恰在这个和为偶数时。
+
+为复用 Taylor 步骤，我们需要输入次数 $O(n)$ 的乘积。
+直接相乘 $m_{\mathrm{test}}$ 个检验因子只有界
+$O(km_{\mathrm{test}}\ell)$，可能关于 $n$ 是二次的。
+关键是\emph{跨全部检验整体}截断乘积。
+第~\ref{subsec:rational-lift} 节把 $p_\ell(y)$ 写成
+$e_j(y)h(y)^j$ 项之和，其中 $e_j$ 次数至多一，
+$h(y)=y(y-1)$ 在每个整数处为偶。
+因此在布尔赋值上模 $2^\ell$，含 $\ell$ 个及以上 $h$
+副本的乘积项为零，即使这些副本来自不同检验。
+我们只保留总共少于 $\ell$ 个副本的项，并在相乘时追踪
+该数目。每个保留项在 $L_i$ 中至多有 $m_{\mathrm{test}}$
+个线性因子与 $\ell-1$ 个二次因子。由 $\deg L_i\le k$，
+其输入次数至多 $k(m_{\mathrm{test}}+2(\ell-1))=O(n)$。
+
+对替代型，重要的是每个因子读取哪些变量。
+第~\ref{subsec:preview-deformation} 节对子句中每个变量
+使用一个型，现在我们对检验中每个变量使用一个型，
+并在整个检验中复用。每个稀疏方程只读取多对数个变量。
+对 $O(n/\sqrt{\log n})$ 个最频繁变量分支后，
+每个剩余变量只出现在多对数个检验中，
+正是第~\ref{sec:construction} 节所需。
+在每个分支上，固定共享测量再次允许我们一次对一个组求和。
+由于截断乘积的输入次数为 $O(n)$，次数 $R$ 的替代给出
+$\deg_T H=O(nR)$：每点同样 $O(1+nR/Q)$ 个 Taylor 系数
+即可恢复 $T=0$ 处 $h$ 的 $0,1,\ldots,\ell-1$ 个副本的
+贡献。它们的和取模 $2^\ell$ 的最小非负剩余，
+就是精确的分支计数。把分支计数相加即得公共零点个数。
+
+\begin{theorem}[稀疏多项式公共零点的计数]
+\label{thm:overview-sparse-polynomials}
+固定整数 $k\ge2$ 与 $c\ge1$。设
+$P_1,\ldots,P_{m_{\mathrm{test}}}$ 是 $n\ge20$ 个布尔变量上
+的 $\mathbb F_2$ 多项式，$m_{\mathrm{test}}\le cn$。
+每个 $P_i$ 由至多 $(\log n)^c$ 个次数至多 $k$ 的单项
+列表给出。$\{0,1\}^n$ 中公共零点的精确个数可确定性地在
+$2^{O_{k,c}(n(\log\log n)^2/\sqrt{\log n})}$ 次位运算与
+$n^{O_{k,c}(1)}$ 空间内计算。
+\end{theorem}
+第~\ref{sec:counting} 与~\ref{sec:construction} 节提供
+计数例程与替代型；第~\ref{sec:setup} 节用它们对多项式
+方程直接证明该定理。
+
+对为 $G$ 构造的最终方程组，公共零点个数是 $\#G$。
+第~\ref{sec:hashes} 节对每个叶只用
+$2^{(\log n)^{O_k(1)}}$ 次计数器调用，
+保持定理~\ref{thm:overview-sparse-polynomials} 的运行
+时间指数。最后，在
+第~\ref{subsec:general-reduction} 节取阶为
+$(\log\log n)^2/\sqrt{\log n}$ 的 $\sigma$，
+使 $B$ 为多对数级且叶数在
+$2^{O_k(n(\log\log n)^2/\sqrt{\log n})}$ 之内。
+各叶的可满足赋值互不相交，故把计数相加给出
+命题~\ref{prop:interpolation-bound} 的界。

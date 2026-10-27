@@ -1,0 +1,637 @@
+\subsection{收缩定理的证明}
+\label{app:tensor}
+
+在定理~\ref{thm:tensor-contraction} 的证明中，
+$\log$ 表示以二为底的对数，$\ln$ 表示自然对数。
+
+\subsubsection{系数环与精确算术}
+\label{subsec:tensor-arithmetic}
+
+写 $\lambda=\lceil\log_2 s\rceil$、$e=4\lambda$。
+取一个次数为 $e$ 的首一多项式
+$f\in\mathbb Z[U]$，其首项系数之下的系数在 $\{0,1\}$
+中，且其模二约化不可约。
+这可以在 $s$ 的多项式时间内确定性完成：
+枚举 $2^e$ 个候选，并用 $\mathbb F_2$ 上每个次数为正、
+至多 $e/2$ 的首一多项式检验可除性。
+有限域有每个正次数的不可约多项式~\cite{vzGG13}。
+置
+\[
+ \mathcal O=\mathbb Z_{(2)}[U]/(f),\qquad
+ \mathcal K=\mathbb Q[U]/(f),\qquad
+ \mathcal A=\mathcal O[V]/(V^\ell),\qquad
+ \mathcal A_p=\mathcal A/(2^p).
+\]
+这里 $\mathbb Z_{(2)}$
+由分母为奇数的有理数组成。
+模二不可约蕴含在 $\mathbb Q$ 上不可约，
+故 $\mathcal K$ 是域。
+对 $\mathcal K$ 的非零元素，设 $v_2$
+为其在 $1,U,\ldots,U^{e-1}$
+中坐标的寻常二进赋值的最小值。
+$\mathcal O$ 模二的约化是域 $\mathbb F_{2^e}$。
+对最小坐标赋值取商因此表明
+\[
+ v_2(xy)=v_2(x)+v_2(y)\qquad(x,y\ne0).
+\]
+$\mathcal O$ 中模二非零的每个元素都是单位，
+因为其乘法矩阵的行列式在 $\mathbb Z_{(2)}$
+中可逆，故逆矩阵的分量在该环中。
+
+$\mathcal A_p$ 中的算术在 $s,p,\ell$
+上花费多项式时间与空间。
+我们使用基 $1,U,\ldots,U^{e-1}$
+与 $1,V,\ldots,V^{\ell-1}$，
+并把每个坐标表示为它在零与 $2^p-1$
+之间的整数剩余。标量单位的求逆可先模二求逆
+再用 Newton 提升完成，或用其乘法矩阵完成，
+使用精确的多项式与整数运算~\cite{vzGG13}。
+$\mathcal A$ 中元素的可除性与精度总是逐坐标理解。
+
+把 $2^e$ 个剩余域元素的二值坐标提升，
+即得两两之差为单位的插值点。
+因此，在这些点的任意所需数量上的 Lagrange
+插值在 $\mathcal A_p$ 上有效。
+我们将使用少于 $s^4$ 个点。
+初始分量属于 $\mathcal B_{P_0,\ell}$
+的收缩，在 $\mathcal A_{P_0}$ 中计算之后仍属于该子环，
+因为它是那些分量的多项式。
+
+精度增大时，我们逐个提升每个张量分量。
+对原来按模 $2^p$ 指定的分量，
+其\emph{典范提升}是由其全部坐标的整数代表得到的
+$\mathcal A$ 中元素。
+典范提升不必保持加法或乘法。
+每次递归调用按该调用的精度对其指定的张量作收缩。
+为定义其变形，它先作出这一逐分量的提升选取。
+该调用中后续的全部求值都指称这些相同的提升。
+更明确地，每个张量描述都带有其创建精度 $p_c$
+（原始张量为 $P_0$）。
+在其后的每个精度处，其分量按模 $2^{p_c}$
+求值，并使用这些相同的整数代表。
+精度沿递归路径严格递增，
+故这些代表在其后每个精度处也是典范代表。
+特别地，一个包张量在整个递归中保持其创建时的代表。
+
+\subsubsection{参数与碰撞装箱}
+\label{subsec:tensor-packing}
+
+下文全部估计对足够大的 $s$ 成立，
+阈值只依赖固定常数。
+较小规模的固定有限范围用直接求和处理。
+参数不等式可以直接检验。置
+\[
+ H=\left\lceil\frac{s}{\lfloor\sqrt\lambda\rfloor}\right\rceil,
+ \qquad r=64,\qquad \varepsilon=\frac1{128\cdot1024},
+ \qquad \Delta=\lceil s^{9/10}\rceil.
+\]
+有 $M\le H$ 条边的调用是叶，直接求值。
+在深度 $d$ 的活动调用处（根在深度零），使用
+\begin{equation}\label{eq:tensor-parameters}
+ u=u_d=\left\lfloor\frac{\varepsilon\lambda}{2^d}\right\rfloor,
+ \qquad a=a_d=2\sum_{j=0}^d u_j,\qquad
+ a_{-1}=0,\qquad L=2^a,\qquad D_{\rm arr}=r^{2a}.
+\end{equation}
+我们将安排每个孩子至多 $M/8$ 条边、最大度至多
+$\Delta$。这些断言蕴含，在每条活动路径上，
+\[
+ H<M\le Cs\,8^{-d},\qquad
+ d\le\frac{\log_2\lambda}{6}+O_C(1).
+\]
+因此，对一切足够大的 $s$，
+\begin{equation}\label{eq:tensor-parameter-bounds}
+ u=\Theta_C(\lambda/2^d),\quad
+ \lambda^{4/5}\le u\le M,\quad
+ a\le4\varepsilon\lambda,\quad
+ L,D_{\rm arr}\le s^{1/1000}.
+\end{equation}
+特别地，在每次活动调用处
+\begin{equation}\label{eq:tensor-packing-conditions}
+ M\ge2D_{\rm arr}^{\,2}\Delta,\qquad
+ M\ge L D_{\rm arr},\qquad 2L\le\Delta.
+\end{equation}
+例如，第一个不等式右端是
+$O(s^{9/10+2/1000})=o(H)$。
+其余不等式同理。
+
+\begin{lemma}[装箱成包]\label{lem:tensor-packets}
+在 \eqref{eq:tensor-packing-conditions} 下，
+把网络每侧的顶点用 $[r]^a$ 的元素标记。
+存在可确定性构造的标记与把边嵌入 $L$
+个槽位的包的方案，满足以下性质。
+\begin{enumerate}
+\item 包至多 $3M/L$ 个。每条边在其行端与列端占据
+      同一槽位。未用的槽位没有端口。
+\item 在每个包的每个坐标中，行符号与列符号的无序对
+      是固定的。当两符号不同时，槽位号的第 $i$
+      位指定它们在坐标 $i$ 中的取向
+      （$0\le i<a$）。
+\item 对每个坐标与每个符号，每侧属于带该符号顶点的
+      实端口至多 $3M/r$ 个。
+\end{enumerate}
+构造在 $s+\mathcal L$ 上使用多项式时间与空间。
+\end{lemma}
+\begin{proof}
+对每对标号，设 $X_\gamma$ 为具有该对的边数。
+独立均匀的顶点标号给出
+\[
+ \mathbb E\sum_\gamma (X_\gamma-M/D_{\rm arr})^2\le2M\Delta.
+\]
+事实上，把该期望展开为有序边对上的标号一致概率之和
+减去 $1/D_{\rm arr}$。端点不交的对贡献零。
+共享一个端点的有序对（含相等的边）至多 $2M\Delta$
+个，每个贡献至多一。
+条件期望给出具有该界的标记。
+为实现之，尝试下一个顶点的 $r^a$ 个标号，
+并通过枚举边对计算条件期望。
+每个概率只涉及至多四个顶点，
+故这是精确的多项式时间计算。
+这就是通常的条件期望法~\cite{Raghavan88}。
+
+每个负载至多 $M/D_{\rm arr}+\sqrt{2M\Delta}$。
+把全部对—标类垫到共同的槽数 $H_{\rm pad}$
+（最大负载向上取整到 $L$ 的倍数）。
+假设蕴含
+\[
+ H_{\rm pad}\le M/D_{\rm arr}+\sqrt{2M\Delta}+L
+              \le3M/D_{\rm arr}.
+\]
+固定每个坐标中符号的无序对。
+若有 $a'$ 个坐标的符号不等，其取向给出 $2^{a'}$
+个对标号。把这些垫后的槽位分装成包：
+每包用每个这样的标号取 $2^{a-a'}$ 个槽位。
+这是可能的，因为 $H_{\rm pad}$ 被 $L$ 整除。
+把一个包的位置从 $0$ 到 $L-1$ 编号。
+其第 $i$ 位在第 $i$ 对不等时指定取向，
+相等时指定副本。每个包内使用同一取向约定。
+
+包数为 $H_{\rm pad}D_{\rm arr}/L\le3M/L$。
+在固定坐标中，给定符号在两侧的全部垫后对标号中恰占
+$1/r$。其实端口数因此至多
+$H_{\rm pad}D_{\rm arr}/r\le3M/r$。
+\end{proof}
+
+\subsubsection{Cauchy 变形与整的局部坐标}
+\label{subsec:tensor-deformation}
+
+固定一个活动调用、其包与其逐分量提升的张量。
+使用
+\[
+ S=\{-L,-L+1,\ldots,L-1\},\qquad
+ \mathcal C(T)=\prod_{t\in S}(T-t),\qquad \alpha=2^{a+1}.
+\]
+在一个包内，对其行槽位 $x$ 与列槽位 $y$，置
+\begin{equation}\label{eq:tensor-cauchy}
+ W_{xy}(T)=\frac{\mathcal C(T)}
+                  {\mathcal C'(0)(T-(y-x))}.
+\end{equation}
+分母中的因子消去分子中的一个因子，因为 $y-x\in S$。
+故这是 $\mathbb Q$ 上次数 $2L-1$ 的多项式。
+把不同包之间的分量置零，并限制到实端口。
+在原来的边等同关系下，$W(0)=I$：
+对角分量为二，其他每个分量都有一个未消去的零因子。
+
+设 $A(Y)$ 与 $B(X)$ 分别是提升后的行张量与列张量
+在独立端口赋值 $Y,X\in\{0,1\}^M$ 上的乘积。
+写 $l_0(z)=1-z$、$l_1(z)=z$。定义
+\begin{equation}\label{eq:tensor-deformed-contraction}
+ F(T)=\sum_{X,Y\in\{0,1\}^M} A(Y)B(X)
+                  \prod_{\text{行端口 }x}l_{Y_x}((W(T)X)_x).
+\end{equation}
+其系数落在 $\mathcal K[V]/(V^\ell)$ 中，
+次数至多 $M(2L-1)$，而 $F(0)$
+是提升后张量的收缩。特别地，
+把 $F(0)$ 模该调用的精度化简即得所需答案。
+
+\begin{lemma}\label{lem:tensor-integrality}
+对每个 $t\in S$，$W(t+\alpha z)$ 的分量属于
+$\mathcal O[z]$，且 $F(t+\alpha z)$ 属于
+$\mathcal A[z]$。
+给定 $\zeta$ 模 $2^p$ 的 $e$ 个坐标，
+每个分量 $W_{xy}(t+\alpha\zeta)\bmod 2^p$
+可以用 $s,p$ 上多项式次位运算计算。
+\end{lemma}
+\begin{proof}
+网格 $S$ 是模 $2^{a+1}$ 的完全剩余系。
+对 $S$ 中 $t\ne q$，$v_2(t-q)\le a$，
+且每个赋值处非零差的个数与 $t$ 无关。
+故 $v_2(\mathcal C'(t))=v_2(\mathcal C'(0))$。
+在
+\[
+ \frac{\mathcal C(t+\alpha z)}{\mathcal C'(0)}
+  =\frac{\alpha z\prod_{q\in S\setminus\{t\}}
+                         (t-q+\alpha z)}{\mathcal C'(0)}
+\]
+中，每个以 $q\ne t$ 为下标的因子逐系数被
+$2^{v_2(t-q)}$ 整除。对这些幂与分母相消后，
+所示多项式被 $2^{a+1}$ 整除。
+为得 \eqref{eq:tensor-cauchy}，只省略以 $y-x$
+为下标的因子。若 $y-x=t$，这去掉 $\alpha z$
+并留下整系数多项式。否则 $\alpha z$
+保留，而被省略因子有二进容量
+$2^{v_2(t-y+x)}$（$v_2(t-y+x)\le a$），
+故结果仍被二整除。代入
+\eqref{eq:tensor-deformed-contraction}
+即证明关于 $F$ 的断言。
+
+对求值，先把每个以 $q\ne t$ 为下标的因子
+$t-q+\alpha z$ 除以已知整数 $2^{v_2(t-q)}$。
+所得一次多项式的两个系数都是整数。
+如上对分母消去其余二的显式幂，
+并把其奇部模 $2^p$ 求逆。
+现在可以直接在所给 $\zeta$
+的剩余处求值该乘积（含 $\zeta=0$）。
+输入有 $ep$ 位，乘积有 $O(L)$ 个因子。
+全部坐标运算在 $s,p$ 上花费多项式时间。
+\end{proof}
+
+\subsubsection{锥形 Hermite 恢复}
+\label{subsec:tensor-hermite}
+
+下一条引理单列出精度估计。
+其陈述中全部幂级数截断都是 $z$
+中的通常截断。
+
+\begin{lemma}[锥形 Hermite 恢复]\label{lem:tapered-hermite}
+设整数 $u,M$ 满足 $1\le u\le a$、$M\ge u$，
+并置 $h=\lceil3M/u\rceil$。
+对 $t\in S\setminus\{0\}$ 置
+\[
+ i=v_2(t),\qquad q_t=q(i)=h\max(0,u-i),\qquad D_t=L/2^i.
+\]
+设 $F\in(\mathcal K[V]/(V^\ell))[T]$
+次数至多 $M(2L-1)$，$F(0)\in\mathcal A$，
+且对每个 $t\in S$ 有
+$F(t+\alpha z)\in\mathcal A[z]$。
+对 $p\ge1$，其值 $F(0)$ 模 $2^p$
+可以从
+\[
+ F(t+\alpha z)\pmod{2^{p_t}},
+ \qquad
+ p_t=p+8hD_t+8M(a+1),\qquad q_t>0
+\]
+恢复。只需每个多项式的前 $q_t$ 个系数。
+恢复在 $M,L,\ell,e$ 与各精度上花费多项式时间与空间。
+\end{lemma}
+\begin{proof}
+$S$ 中有 $L$ 个奇点，故
+$\sum_{t\ne0}q_t\ge Lhu\ge3ML>M(2L-1)$。
+且 $h\le4M/u$，故 $q_t\le4M$。
+对每个正重数的 $t$ 置
+\[
+ E_t(T)=\prod_{q\in S\setminus\{0,t\}}
+                    \left(\frac{T-q}{t-q}\right)^{q_q}.
+\]
+Hermite 插值给出
+\begin{equation}\label{eq:tensor-hermite-origin}
+ F(0)=\sum_{t:q_t>0}E_t(0)
+       \left(\left[\frac{F(t+\alpha z)}
+                            {E_t(t+\alpha z)}\right]_{<q_t}\right)
+                            (-t/\alpha).
+\end{equation}
+为完整起见，把右端的零换成未定元 $T$，
+把 $-t/\alpha$ 换成 $(T-t)/\alpha$。
+每个被加项次数小于 $\sum q_t$；
+在其自身节点处有指定的 jet，
+在其他每个节点处按所需阶为零。
+它与 $F$ 之差被
+$\prod_{t\ne0}(T-t)^{q_t}$ 整除且次数更小，
+故为零。这是 Hermite 插值的通常中国剩余构造
+~\cite[Section~5.6]{vzGG13}。
+
+$E_t(t+\alpha z)$ 的每个因子是
+$1+\alpha z/(t-q)$ 的幂。它是整的且常项为一，
+其截断到 $q_t$ 的倒数也是整的，
+故作成 \eqref{eq:tensor-hermite-origin}
+中的商不损失精度。
+
+固定 $i=v_2(t)$ 与 $D=D_t$。直接从乘积，
+\begin{align}
+ v_2(E_t(0))
+ &=\sum_{q\ne0,t}q_q\bigl(v_2(q)-v_2(t-q)\bigr)\notag\\
+ &=D\sum_{j=1}^{a-i}\frac{j}{2^j}
+                           \bigl(q(i+j)-q(i)\bigr)
+ \ \ge -6Dh. \label{eq:tensor-hermite-loss}
+\end{align}
+第二等式的理由：赋值小于 $i$ 的点贡献零。
+对 $1\le j\le a-i$，有 $D/2^j$
+个 $v_2(q)=i+j$ 的点，同样个数的
+$v_2(t-q)=i+j$ 的点。后者有 $v_2(q)=i$，
+而这些层穷尽了该赋值处除 $t$
+外的全部点。这些计数来自完全剩余网格：
+其非零整数差的赋值至多 $a$。
+最后，$q(i+j)-q(i)\ge-hj$ 且
+$\sum_{j\ge1}j^2/2^j=6$。
+
+次数低于 $q_t$ 的多项式在 $-t/\alpha$
+处求值至多再损失 $4M(a+1)$ 个二的幂。
+于是把每个商系数换成其模 $2^{p_t}$
+剩余的任意提升，只会把其在
+\eqref{eq:tensor-hermite-origin}
+中的贡献改变一个 $2^p\mathcal A$
+中的元素。对这些误差求和不损失更多精度。
+重构的和是整的，因为它与整值 $F(0)$
+相差一个 $2^p\mathcal A$ 中的元素。
+
+最后这一组合可以用所指定基下的有理算术执行。
+乘子 $E_t(0)(-t/\alpha)^j$（$j<q_t$）
+是计重数的 $O(a)$ 位有理因子的多项式个乘积。
+其分子与分母长度因此在 $M,L,a$
+上是多项式的。这样的系数只有多项式个，
+故即使其分母的乘积也是足够的多项式位公分母。
+相加之后，消去其二进幂，
+并把所得整坐标模 $2^p$ 化简。
+这证明了算法断言。
+\end{proof}
+
+在输入精度为 $p$ 的调用处，
+以 \eqref{eq:tensor-parameters} 的参数应用该引理。
+对每个活动的 $t$，
+通过在剩余域元素的 $M(2L-1)+1$
+个互异的二值坐标提升处求值再做 Lagrange 插值，
+得到整个多项式 $F(t+\alpha z)$ 模 $2^{p_t}$。
+引理~\ref{lem:tensor-integrality}
+容许该插值在 $\mathcal A_{p_t}$ 上进行。
+由 \eqref{eq:tensor-parameter-bounds}，
+点数小于 $s^4$。
+下文的求值算法把精度 $p_t$ 传给其孩子。
+
+输入精度与孩子精度满足
+\begin{equation}\label{eq:tensor-precision-bound}
+ p\le s\lambda^{O(1)}2^{a_{d-1}},
+ \qquad
+ p_t=O_C(MD_t/u).
+\end{equation}
+第一个断言在根处成立，因为 $P_0\le Cs$。
+沿一条路径，精度增量是 $8hD_t+8M(a+1)$，
+其中 $h\le4M/u$、$M\le Cs$、$D_t\le2^{a_d}$。
+在 $O(\log\lambda)$ 层深度上求和，
+即对每个调用（含叶）证明第一个断言。
+对第二个：$q_t>0$ 蕴含 $i<u$，故
+\[
+ D_t\ge2^{a_d-u}=2^{a_{d-1}+u}.
+\]
+由 $M>H$ 与 $u\ge\lambda^{4/5}$，
+这一额外的因子 $2^u$
+支配 $\lambda$ 的每个固定幂。
+于是 $p$ 的第一个界以及 $8M(a+1)$
+都是 $O_C(MD_t/u)$。
+余下的增量 $8hD_t$ 直接具有该界。
+由 $a_d\le4\varepsilon\lambda$，
+全部精度都保持在 $s$ 的多项式内。
+
+锥形化解释了该估计中的因子 $1/u$。
+作为对比，给 $u$ 以下的每一层指派同一重数
+$q_*=\Theta(M)$，其余层指派零。
+在最后保留的层 $i=u-1$ 处，
+恒等式 \eqref{eq:tensor-hermite-loss}
+将给出损失
+\[
+ -q_*D_t\sum_{j=1}^{a-i}\frac{j}{2^j}=-\Theta(MD_t).
+\]
+而我们的重数每层只变化 $h=\Theta(M/u)$，
+给出损失 $O(MD_t/u)$。
+$a_d$ 的累积选取提供了吸收继承精度与求值损失所需的
+额外因子 $2^u$。
+因此在每个保留层、每个递归深度处都成立较小的界。
+
+\subsubsection{组间相互作用的模}
+\label{subsec:tensor-modes}
+
+固定活动 $t$ 与 $z$ 的插值取值
+$\zeta\in\mathcal O$。
+本小节中 $T=t+\alpha\zeta$，
+全部计算按模 $2^{p_t}$ 进行。
+置 $i=v_2(t)<u$、$D=L/2^i$。
+两侧顶点按其在坐标 $i$ 中的符号分组。
+$W(T)$ 中两端口同组的分量称为局部的，
+保持不变。
+
+这一坐标选取使 $W(t)$ 是局部的。
+事实上，除非 $y-x=t$，否则 $W_{xy}(t)=0$。
+加一个赋值为 $i$ 的整数会翻转第 $i$ 位，
+故存留的对有不同的第 $i$ 位。
+当包在该坐标中的两个符号不同时，
+这意味着行符号与列符号一致。
+符号相等的对本来就同组。
+从 $t$ 走到 $t+\alpha\zeta$
+引入我们现在展开的交叉项。
+
+在其坐标 $i$ 中两符号不同的包里，
+行位置 $x$ 与列位置 $y$ 不同组
+当且仅当它们的第 $i$ 位相等。
+把列分划成瓦片（tile）
+\[
+ y=y_0+2^{i+1}j,\qquad 0\le y_0<2^{i+1}.
+\]
+列组在瓦片上为常数。对跨越到该瓦片的行，
+\[
+ v_2(t-y_0+x)\le i.
+\]
+否则 $y_0$ 将与 $x+2^i$ 模 $2^{i+1}$
+一致，与其第 $i$ 位相等矛盾。
+加 $\alpha\zeta$ 不改变此赋值。
+几何展开因此给出
+\begin{equation}\label{eq:tensor-mode-expansion}
+ W_{xy}(T)=
+ \sum_{\substack{b\ge0\\b+1<p_t}}
+ \frac{\mathcal C(T)}
+      {\mathcal C'(0)(T-y_0+x)}
+ \left(\frac{2^{i+1}}{T-y_0+x}\right)^b j^b
+ \pmod {2^{p_t}}.
+\end{equation}
+事实上，第一个分式的赋值至少 $a+1-i\ge1$，
+而该比值取 $b$ 次幂前赋值至少为一。
+几何余项被 $2^{p_t}$ 整除。
+这些表达式可以经分解已知的二的幂、
+只用单位逆而计算。
+
+对每个这样的包、瓦片与 $b$，
+引入权重 $w_Z=b+1$ 的模变量 $Z$，
+其将替换为
+\[
+ L_Z(X)=\sum_{\text{瓦片中的实列 }y}j^bX_y.
+\]
+照常 $j^0=1$（含 $j=0$）。
+其源是该瓦片的列组，其目标是该包坐标对中的另一组。
+公式 \eqref{eq:tensor-mode-expansion}
+把每个行型表示为其局部部分加上其目标模的线性组合。
+$Z$ 的系数被 $2^{w_Z}$ 整除。
+任一权重的变量至多
+\begin{equation}\label{eq:tensor-mode-multiplicity}
+ (3M/L)2^{i+1}=6M/D
+\end{equation}
+个。
+
+在仿射因子 $l_{Y_x}((W(T)X)_x)$
+的乘积中，模单项 $Z^\beta$
+的每个系数都被
+$2^{\sum_Zw_Z\beta_Z}$ 整除。
+因此只需考虑满足
+\begin{equation}\label{eq:tensor-mode-budget}
+ \sum_Zw_Z\beta_Z<p_t
+\end{equation}
+的指数元组。这些元组的个数是
+\begin{equation}\label{eq:tensor-partition-count}
+ \exp\bigl(O(\sqrt{Mp_t/D})\bigr)
+       =\exp\bigl(O_C(M/\sqrt u)\bigr).
+\end{equation}
+以下是完整的计数估计。对任何 $\theta>0$，
+用生成乘积与 \eqref{eq:tensor-mode-multiplicity}
+把个数界定为
+\[
+ \exp\left(\theta p_t+\frac{6M}{D}
+                   \sum_{j\ge1}-\ln(1-e^{-\theta j})\right).
+\]
+展开对数并对几何级数求和，
+\[
+ \sum_{j\ge1}-\ln(1-e^{-\theta j})
+  =\sum_{h\ge1}\frac1{h(e^{\theta h}-1)}
+  \le\frac1\theta\sum_{h\ge1}\frac1{h^2}.
+\]
+取 $\theta=\sqrt{M/(Dp_t)}$ 并用
+\eqref{eq:tensor-precision-bound}。
+全部模变量及其指数都有多项式规模描述。
+满足 \eqref{eq:tensor-mode-budget}
+的元组可以按多项式延迟与空间枚举：
+对变量排序，逐个在剩余预算内选取每个指数。
+每个可行的部分选取都有全零的延续，
+故被访问的部分选取数至多为完整元组数乘以变量数
+（差一个可加常数）。
+
+\subsubsection{孩子网络及其描述}
+\label{subsec:tensor-children}
+
+对 \eqref{eq:tensor-mode-budget} 中的一个元组
+$\beta$，为每个组 $g\in[r]$
+构造一个孩子网络。把当前网络两侧属于组 $g$
+的全部当前顶点放到孩子的同一侧。
+保留其端口与所选提升分量（现按模 $2^{p_t}$
+化简）。另一侧为每个包放一个顶点，
+连边到该包的每个保留端口。
+其下标恰为该包中组 $g$ 的行位 $Y$
+与列位 $X$。
+
+为定义这个新的包张量，把包中组 $g$
+的行因子 $l_{Y_x}$ 相乘，
+其自变量用局部列位与形式模表示。
+提取以该包中所有目标为 $g$ 的模的指数 $\beta_Z$
+的系数。把它乘以
+\[
+ \prod_{\substack{Z\text{ 在此包中}\\
+                  \text{source}(Z)=g}}L_Z(X)^{\beta_Z}.
+\]
+空乘积为一。若无目标行，则只要某目标指数为正，
+提取的系数为零。若 $Z$
+的源瓦片没有实列，则 $L_Z(X)=0$，
+其幂在 $\beta_Z=0$ 时贡献一，否则贡献零。
+
+每个模恰有一个目标与一个源。
+因此系数提取在「包—组」行乘积上可分解，
+且每个模的代入只依赖其源组中的位。
+在 \eqref{eq:tensor-deformed-contraction}
+中展开乘积，随后在组内对独立位求和，
+证明精确恒等式
+\begin{equation}\label{eq:tensor-recursion-identity}
+ F(t+\alpha\zeta)
+   =\sum_{\beta:\,\sum w_Z\beta_Z<p_t}
+                       \prod_{g=1}^r Z_{g,\beta}
+                  \pmod {2^{p_t}},
+\end{equation}
+其中 $Z_{g,\beta}$ 是刚才定义的孩子的收缩。
+被省略的单项由其系数可除性而为零。
+
+由引理~\ref{lem:tensor-packets}，
+孩子至多 $6M/r=3M/32<M/8$ 条边。
+旧顶点的度不变，新的包顶点至多 $2L\le\Delta$
+个端口。于是 \eqref{eq:tensor-parameter-bounds}
+所用的不变量归纳成立。
+
+全部新张量都是隐式给出的。
+为求值一个包张量分量，展开其至多 $L$
+个仿射行因子的乘积。每个因子在 $s$
+上有多项式个项（含其局部项）。
+枚举这些选取、检验所需指数并对所得项求和花费
+\[
+ \exp(O(L\log s))
+\]
+时间与多项式空间。因子 $L_Z(X)^{\beta_Z}$
+用 $\mathcal A_{p_t}$ 中通常的反复平方计算。
+由 $L\le s^{1/1000}$，该分量成本为
+$\exp(O(s^{9/10}))$。
+
+新张量的描述由其包数据、元组 $\beta$、
+插值取值与创建精度组成。
+这些数据与局部核足以直接计算其分量。
+保留的张量从其原描述求值，
+或从其自己的创建时描述求值（若它在递归中较早创建）。
+其在那个精度处的剩余随后被典范提升到当前精度。
+旧描述不可变并按引用共享。
+因此分量例程的复合不随深度增长，
+全部分量例程保持所需的时间与空间界。
+沿一条路径只添加多项式个顶点与多项式多的新描述数据。
+
+\subsubsection{时间与空间界}
+\label{subsec:tensor-cost}
+
+\begin{proof}[定理~\ref{thm:tensor-contraction} 的证明]
+把原始分量嵌入 $\mathcal A_{P_0}$，
+执行上述递归算法。在活动调用处，
+对每个正重数的节点与每个所需的、剩余互异的插值取值，
+用其孩子收缩计算
+\eqref{eq:tensor-recursion-identity}。
+插值 $F(t+\alpha z)$ 并应用
+引理~\ref{lem:tapered-hermite}。
+在叶处，直接对全部布尔边赋值求和。
+引理~\ref{lem:tensor-integrality}、
+递归恒等式与恢复引理由叶向上归纳证明正确性。
+
+一次调用处的插值节点数、取值数与组数是 $s$
+的多项式，与 $\mathcal L$ 无关。
+由 \eqref{eq:tensor-partition-count}，
+深度 $d$ 的活动调用的孩子数至多
+\[
+ s^{O(1)}\exp\left(
+       O_C\left(\frac{s}{\sqrt\lambda}
+                    \left(\frac{\sqrt2}{8}\right)^d\right)\right).
+\]
+事实上 $M\le Cs\,8^{-d}$
+且 $u_d=\Theta_C(\lambda/2^d)$。
+把这些界在 $O_C(\log\lambda)$ 层深度上相乘，
+或以此方式界定每层节点数，得总调用数至多
+\[
+ \exp\left(O_C(s/\sqrt\lambda)
+                   +O_C(\lambda\log\lambda)\right)
+       =\exp(O_C(s/\sqrt\lambda)).
+\]
+在叶处，直接求和至多用 $2^H$
+个赋值，每赋值多项式次分量求值。
+其成本被 $s+\mathcal L$
+的一个多项式乘以
+\[
+ \exp(O_C(H)+O_{C,A}(s^{9/10}))
+   =\exp(O_{C,A}(s/\sqrt\lambda))
+\]
+界定。局部算术、装箱、描述与恢复对每个生成的项
+花费多项式时间（已算界的分量求值除外）。
+依赖描述的因子界定每次调用的工作。
+由于分支界与 $\mathcal L$ 无关，
+总工作保持 $s+\mathcal L$
+的固定多项式因子。这证明时间界。
+
+对空间，深度优先遍历递归，
+一次累加一个关于 $\beta$ 的和与一个关于组的积。
+存储一次调用的恢复所需的多项式个 Taylor 数据、
+其当前插值与模下标、其图与新张量描述。
+其规模在 $s+\mathcal L$ 上是多项式的
+（精度由 \eqref{eq:tensor-precision-bound}
+计入）。栈层只有 $O_C(\log\lambda)$ 层。
+引理~\ref{lem:tapered-hermite}
+中的公分母计算也只用多项式位整数。
+每次调用按其自身的固定精度累加其收缩项。
+原始分量例程按假设使用多项式空间，
+新例程亦然。这证明空间界。
+最后提取 $\mathcal A_{P_0}$
+中的基坐标，它们给出 $\mathcal B_{P_0,\ell}$
+中的答案。
+\end{proof}

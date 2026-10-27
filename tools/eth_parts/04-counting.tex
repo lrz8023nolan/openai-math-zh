@@ -1,0 +1,396 @@
+\section{经由共享线性摘要的快速计数算法}\label{sec:counting}
+第~\ref{sec:counting}--\ref{sec:setup} 节证明
+定理~\ref{thm:overview-sparse-polynomials}。
+我们从第~\ref{subsec:preview-encoding} 节的和出发：
+对每个布尔赋值，把各因子相乘，再把乘积对所有赋值相加。
+这里因子可以是任意有理多项式。我们说明在给定替代型与测量时
+如何计算该和。第~\ref{sec:construction} 节只用每个因子读取的
+变量来构造它们。第~\ref{sec:setup} 节为每个稀疏多项式方程
+提供一个因子。
+
+\subsection{多项式因子与要恢复的值}
+\label{subsec:product-interface}
+设 $\mathcal F$ 为因子的下标集，$I_f\subseteq[n]$ 为 $\Phi_f$
+读取的变量。取有理系数时，目标是
+\begin{equation}\label{eq:general-product-sum}
+ Z=\sum_{x\in\{0,1\}^n}\prod_{f\in\mathcal F}\Phi_f((x_v)_{v\in I_f}).
+\end{equation}
+对子句满足指示子，$Z$ 就是可满足赋值的个数。
+证明对任意交换 $\mathbb Q$-代数 $\mathcal A$ 中的系数同样成立：
+此时和与积在 $\mathcal A$ 中进行，插值只用有理标量。
+本节读者可始终取 $\mathcal A=\mathbb Q$。
+
+不同因子可对同一变量使用不同替换。
+给每个关联 $(f,v)$ 一个自己的未定元 $Y_{f,v}$，并设
+\begin{equation}\label{eq:general-product-degree}
+ \deg_{\{Y_{f,v}\}}\!
+    \left(\prod_{f\in\mathcal F}\Phi_f((Y_{f,v})_{v\in I_f})\right)\le d .
+\end{equation}
+这是整个乘积在 $\mathcal A$ 上计算的次数。
+取次数至多 $R$、满足 $\vec P_{f,v}(0)=\delta_v$ 的替代行
+$\vec P_{f,v}(T)$，并作
+\begin{equation}\label{eq:general-count-polynomial}
+ H(T)=\sum_{x\in\{0,1\}^n}\prod_{f\in\mathcal F}
+   \Phi_f\bigl((\langle\vec P_{f,v}(T),x\rangle)_{v\in I_f}\bigr)
+   \in\mathcal A[T].
+\end{equation}
+替换在零点恢复输入，并把次数至多乘以 $R$。
+于是 $H(0)=Z$ 且 $\deg_T H\le d_H:=dR$。
+我们的应用将如受限出现次数的例子那样取 $d=O(n)$。
+
+\subsection{所需的行、划分与测量}
+\label{subsec:layout-interface}
+我们使用与第~\ref{subsec:preview-separation} 节相同的 design，
+只是对每个因子（而非每个子句）作组指派。
+下面的最后一个条件记录精确算术所需的系数界。
+记 $\widetilde\xi$ 表示从一个组经补零延拓到全部 $n$ 个坐标。
+
+\begin{definition}\label{def:layout}
+对因子 scope $(I_f)_{f\in\mathcal F}$，设 $r\ge2$、$D\ge1$、
+$1\le R<Q$ 为整数，$0<\tau\le1/2$。我们要求如下数据与性质。
+\begin{enumerate}
+\item 对每个 $t\in[Q]$，一个允许空部分的划分
+$[n]=S_{t,1}\sqcup\cdots\sqcup S_{t,r}$，且
+$|S_{t,g}|\le2n/r$。
+\item 对每个因子 $f\in\mathcal F$，一个序列
+$\sigma_f\in[r]^Q$。值 $\sigma_f(t)$ 在点 $t$
+把因子 $f$ 指派到一个组。
+\item 对每个 $t\in[Q]$ 与 $g\in[r]$，一个整数矩阵
+$C_{t,g}\in\mathbb Z^{[c_{t,g}]\times S_{t,g}}$，其中
+$c_{t,g}$ 为非负整数。每行的绝对值之和至多 $D$，且
+\[
+ \sum_{g=1}^r c_{t,g}\le2\tau n.
+\]
+对赋值 $x$，$C_{t,g}(x|_{S_{t,g}})$ 的分量就是组 $g$
+上的测量。
+\item 对每个 $f\in\mathcal F$ 与 $v\in I_f$，一行
+$\vec{P}_{f,v}(T)\in\mathbb Q[T]^{1\times n}$，满足
+$\vec{P}_{f,v}(0)=\delta_v$ 与
+$\deg \vec{P}_{f,v}\le R$。
+对每个 $t\in[Q]$、$g\in[r]\setminus\{\sigma_f(t)\}$ 与
+$\xi\in\mathbb Q^{S_{t,g}}$，要求
+\[
+ C_{t,g}\xi=\vec{0}\quad\Longrightarrow\quad
+ \langle \vec{P}_{f,v}(t), \widetilde\xi\rangle=0,
+\]
+其中 $\widetilde\xi\in\mathbb Q^n$ 是 $\xi$ 的补零延拓。
+\item 记 $d_{\mathrm{den}}=(R-1)!Q!$，
+$d_{\mathrm{den}} \vec{P}_{f,v}$ 的每个系数都是整数，
+其位数为 $O(Q\log Q+\log D)$（隐含常数为绝对常数）。
+\end{enumerate}
+\end{definition}
+
+为解读核条件，固定 $t$、$f$ 与 $v\in I_f$，
+令 $g=\sigma_f(t)$。写 $x_h=x|_{S_{t,h}}$。
+若 $x,x'\in\mathbb Q^n$ 对某个 $h\ne g$ 在 $S_{t,h}$
+之外一致，且满足 $C_{t,h}x_h=C_{t,h}x'_h$，
+则 $x'_h-x_h\in\ker C_{t,h}$。该条件给出
+\[
+ \langle \vec{P}_{f,v}(t), x'\rangle=\langle \vec{P}_{f,v}(t), x\rangle.
+\]
+一次对一个组应用之，可知元组
+$(\langle \vec{P}_{f,v}(t), x\rangle)_{v\in I_f}$
+由 $x_g$ 与 $(C_{t,h}x_h)_{h\ne g}$ 确定。
+因此固定全部测量向量后，整个因子成为 $x_g$ 的函数。
+这适用于每个多项式因子 $\Phi_f$，包括系数在 $\mathcal A$
+中的因子。
+
+布尔向量的每个测量落在 $[-D,D]\cap\mathbb Z$ 中。
+我们界定矩阵分量绝对值之和，因为构造可能把同一布尔坐标
+放到多个辅助位置。识别出这些位置后，$C_{t,g}$ 的分量
+不必属于 $\{0,1,-1\}$。仅凭秩界无法控制可能的测量个数：
+单独一行 $(1,2,4,\ldots,2^{n-1})$ 就区分所有 $2^n$
+个布尔向量。
+
+\subsection{通过固定测量分离求和}
+\label{subsec:measurement-factorization}
+固定测量使每个因子只依赖其指派组。下面的引理陈述由此
+得到的、在交换环上的计算，因此同样适用于有理值因子与
+$\mathcal A$ 中的因子。限制 $x_i=1$ 在 Taylor 系数中
+需要，且是各组局部的。
+
+\begin{lemma}\label{lem:measurement-separation}
+设 $[n]=S_1\sqcup\cdots\sqcup S_r$ 是一个允许空部分的划分。
+对每个 $g\in[r]$，设 $C_g$ 是有 $c_g$ 行、列以 $S_g$
+为下标的整数矩阵。设每行的绝对值之和至多为整数 $D\ge0$，
+记 $c=\sum_g c_g$。设 $\mathcal A$ 是有单位元的交换环，
+$A_g:\mathbb Q^n\to\mathcal A$ 满足
+\[
+ A_g(x+\xi)=A_g(x)
+ \qquad
+ (x\in\mathbb Q^n,\ \xi\in\ker C_h,\ h\ne g),
+\]
+其中 $\xi$ 在 $S_h$ 之外补零。
+对任意 $E\subseteq[n]$，和
+\[
+ Z_E=\sum_{\substack{x\in\{0,1\}^n\\x_i=1\ (i\in E)}}
+           \prod_{g=1}^r A_g(x)
+\]
+可以通过检查至多
+\[
+ 2(2D+1)^c\sum_{g=1}^r2^{|S_g|}
+\]
+个布尔向量求值，每个向量上至多一次 $A_g$ 求值、
+$\poly(n,r,c,\log(D+2))$ 次额外位运算与 $O(1)$
+次环运算。除求值器自身的存储与 $O(1)$ 个环元素外，
+该过程使用 $\poly(n,r,c,\log(D+2))$ 比特空间。
+\end{lemma}
+\begin{proof}
+对 $y_g\in\mathbb Z^{c_g}$，定义
+\[
+ \mathcal X_g(y_g)=\{u\in\{0,1\}^{S_g}:C_gu=y_g\},
+ \qquad
+ \mathcal Y=\prod_{g=1}^r\{-D,\ldots,D\}^{c_g}.
+\]
+布尔赋值的每个测量元组都属于 $\mathcal Y$，
+且 $|\mathcal Y|=(2D+1)^c$。
+我们先识别固定测量元组 $\vec y=(y_1,\ldots,y_r)$ 的贡献。
+若每个 $\mathcal X_g(y_g)$ 非空，为每个 $g$ 取代表
+$\bar x_g\in\mathcal X_g(y_g)$，并令
+\[
+ \mathcal X_{g,E}(y_g)=
+ \{u\in\mathcal X_g(y_g):u_i=1\text{ 对所有 }i\in E\cap S_g\}.
+\]
+若对每个 $h$ 都有 $x_h\in\mathcal X_h(y_h)$，则
+$x_h-\bar x_h\in\ker C_h$。对 $h\ne g$ 逐次应用不变性
+假设，得
+\[
+ A_g\Bigl(\sum_{h=1}^r x_h\Bigr)
+ =A_g\Bigl(x_g+\sum_{h\ne g}\bar x_h\Bigr).
+\]
+测量元组为 $\vec y$ 且以 $E$ 为下标的位固定的赋值构成
+$\prod_g\mathcal X_{g,E}(y_g)$。定义
+\begin{equation}\label{eq:group-sum}
+ \Sigma_g(\vec y)=\sum_{x_g\in\mathcal X_{g,E}(y_g)}
+       A_g\Bigl(x_g+\sum_{h\ne g}\bar x_h\Bigr).
+\end{equation}
+分配律表明这些赋值对 $Z_E$ 的贡献为
+$\prod_g\Sigma_g(\vec y)$。若 $\mathcal X_{g,E}(y_g)$
+为空，则 $\Sigma_g(\vec y)=0$。
+代表 $\bar x_g$ 自身不必满足以 $E$ 为下标的固定位条件。
+每个布尔赋值有唯一的测量元组，故
+\[
+ Z_E=\sum_{\vec y\in\mathcal Y}\prod_{g=1}^r\Sigma_g(\vec y),
+\]
+其中任何一个 $\mathcal X_g(y_g)$ 为空时乘积取为零。
+
+算法每次处理一个测量元组地求值该恒等式，从
+$Z=0_{\mathcal A}$ 开始。对每个 $\vec y\in\mathcal Y$，
+先扫描每个 $\{0,1\}^{S_g}$ 找代表
+$\bar x_g\in\mathcal X_g(y_g)$；若任一集合为空，
+算法跳过该元组。否则初始化 $p=1_{\mathcal A}$。
+为计算 $\Sigma_g(\vec y)$，初始化 $s=0_{\mathcal A}$
+并再次扫描 $u\in\{0,1\}^{S_g}$。每当
+\[
+ C_gu=y_g,\qquad u_i=1\quad(i\in E\cap S_g),
+\]
+算法执行更新
+\[
+ s\leftarrow s+A_g\Bigl(u+\sum_{h\ne g}\bar x_h\Bigr).
+\]
+扫描结束时 $s=\Sigma_g(\vec y)$，算法置
+$p\leftarrow ps$。全部组处理完后置 $Z\leftarrow Z+p$。
+全部元组 $\vec y$ 处理完后，$Z=Z_E$。
+
+对每个 $\vec y$，找代表的扫描与计算
+$\Sigma_g(\vec y)$ 的扫描各至多检查
+$\sum_g2^{|S_g|}$ 个布尔向量。这给出所述界。
+检查一个向量的测量与固定位使用
+$\poly(n,r,c,\log(D+2))$ 次位运算：矩阵每行的绝对值之
+和至多 $D$，故其部分和有 $O(\log(D+2))$ 位。
+每个向量上至多一次因子求值。
+保留的状态是 $\vec y$、$(\bar x_1,\ldots,\bar x_r)$、$g$、
+$u$、$s$、$p$ 与 $Z$。元组 $\vec y$ 含 $c$ 个 $[-D,D]$
+中的整数，代表共含 $n$ 个比特，而 $s,p,Z\in\mathcal A$。
+\end{proof}
+
+为在固定 $t$ 处求值 \eqref{eq:general-count-polynomial}，
+按 $\sigma_f(t)$ 把变换后的因子分组，
+并在 $\mathcal A$ 中以 $E=\varnothing$ 应用该引理。
+定义~\ref{def:layout} 给出其不变性假设，故该和为 $H(t)$。
+与概览相同，两个指数成本是测量选取与一组内的布尔赋值。
+
+\subsection{由固定布尔代入得到的 Taylor 系数}
+\label{subsec:fixed-boolean-substitutions}
+$Q$ 个值 $H(1),\ldots,H(Q)$ 未必确定 $H$。
+令
+\begin{equation}\label{eq:hasse-order}
+ q=\left\lfloor\frac{d_H}{Q}\right\rfloor,\qquad J=q+1.
+\end{equation}
+由 $QJ>d_H$，只需计算
+\begin{equation}\label{eq:taylor-truncation}
+ \mathcal H_t(z)=\sum_{j=0}^{J-1}([z^j]H(t+z))z^j
+ \qquad(t\in[Q]).
+\end{equation}
+Hermite 插值从这 $QJ$ 个 $\mathcal A$ 中系数恢复 $H$，
+从而 $Z=H(0)$。事实上，次数小于 $QJ$ 的多项式的有理
+Hermite 矩阵在 $\mathbb Q$ 上可逆，其逆通过有理线性组合
+作用在 $\mathcal A$ 的元素上。
+
+固定 $t$。$t+z$ 处的替代型不必尊重 $t$ 处的 design。
+写
+\[
+ \Delta\vec P_{f,v}(z)=\vec P_{f,v}(t+z)-\vec P_{f,v}(t).
+\]
+每个分量都被 $z$ 整除。对固定的 $x\in\mathbb Q^n$，
+引入独立未定元 $\vec X$，把每个输入替换为
+\begin{equation}\label{eq:jet-substitution}
+ \langle\vec P_{f,v}(t),x\rangle
+       +\langle\Delta\vec P_{f,v}(z),\vec X\rangle.
+\end{equation}
+令
+\begin{equation}\label{eq:auxiliary-polynomial}
+ \mathcal G_x(\vec X,z)=\prod_{f\in\mathcal F}
+ \Phi_f\!\left(
+  (\langle\vec P_{f,v}(t),x\rangle+
+   \langle\Delta\vec P_{f,v}(z),\vec X\rangle)_{v\in I_f}\right).
+\end{equation}
+置 $\vec X=x$ 给出
+$\sum_x\mathcal G_x(x,z)=H(t+z)$。
+改为固定 $\vec X$ 则使每个修正项与 $x$ 无关，
+因此 $t$ 处的 design 仍然分离各因子。
+此外，$\vec X$ 的每次出现都带一个 $z$ 因子，给出
+\begin{equation}\label{eq:degree-cost}
+ \deg_{\vec X}([z^j]\mathcal G_x(\vec X,z))\le j.
+\end{equation}
+下面的恒等式从固定布尔代入与对被求和赋值的限制恢复
+代入 $\vec X=x$。
+
+\begin{lemma}\label{lem:boolean-differences}
+设 $q\ge0$ 为整数，$\mathcal A$ 是有单位元的交换环。
+对每个 $x\in\{0,1\}^n$，设
+$p_x(X_1,\ldots,X_n)$ 是 $\mathcal A$ 上次数至多 $q$
+的多项式。则
+\begin{align}
+ \sum_{x\in\{0,1\}^n}p_x(x)
+ &=\sum_{\substack{E\subseteq[n]\\|E|\le q}}
+   \sum_{U\subseteq E}(-1)^{|E|-|U|}
+   \sum_{\substack{x\in\{0,1\}^n\\x_i=1\ (i\in E)}}
+                  p_x(\mathbf1_U).
+ \label{eq:boolean-differences}
+\end{align}
+这里 $\mathbf1_U$ 是 $U$ 的指示向量。
+\end{lemma}
+\begin{proof}
+对固定的 $x$，把 $X_i$ 的每个正幂替换为 $X_i$。
+这保持布尔求值不变，且不增加次数。
+由子集上的 M\"obius 反演，所得多重线性多项式有展开
+\[
+ \widetilde p_x(\vec{X})=\sum_{E\subseteq[n]}c_{x,E}\prod_{i\in E}X_i,
+ \qquad
+ c_{x,E}=\sum_{U\subseteq E}(-1)^{|E|-|U|}p_x(\mathbf1_U).
+\]
+次数界给出：只要 $|E|>q$ 就有 $c_{x,E}=0$。
+置 $\vec{X}=x$ 并对 $x$ 求和即得所述恒等式：
+单项 $\prod_{i\in E}x_i$ 恰选出对所有 $i\in E$
+满足 $x_i=1$ 的赋值。
+\end{proof}
+
+对每个 $j<J$，把引理~\ref{lem:boolean-differences}
+应用于 $\mathcal A$ 上的 $[z^j]\mathcal G_x$。
+全部系数可以用同样的对 $U\subseteq E$、$|E|\le q$，
+故在
+\[
+ \mathcal R=\mathcal A[z]/(z^J)
+\]
+中一并计算。对固定的对 $(E,U)$，令 $\Phi_{f,U}(x;z)$
+为 \eqref{eq:auxiliary-polynomial} 中因子 $f$
+在置 $\vec X=\mathbf1_U$ 后的形式。
+按指派把这些因子分组：
+\begin{equation}\label{eq:group-polynomial}
+ A_{g,U}(x;z)=\prod_{f:\sigma_f(t)=g}\Phi_{f,U}(x;z).
+\end{equation}
+其乘积为 $\mathcal G_x(\mathbf1_U,z)$。
+对 $h\ne g$，把 $x$ 加上 $\ker C_{t,h}$ 中的向量，
+既不改变这些因子的原输入，也不改变其固定修正项。
+因此引理~\ref{lem:measurement-separation} 通过检查至多
+\begin{equation}\label{eq:boolean-enumeration}
+ 2r(2D+1)^{2\tau n}2^{2n/r}
+\end{equation}
+个布尔向量，计算 $x_i=1$（$i\in E$）的受限和。
+合并全部对给出
+\begin{equation}\label{eq:full-taylor-sum}
+ H(t+z)\equiv
+ \sum_{\substack{E\subseteq[n]\\|E|\le q}}
+ \sum_{U\subseteq E}(-1)^{|E|-|U|}
+ \sum_{\substack{x\in\{0,1\}^n\\x_i=1\ (i\in E)}}
+       \mathcal G_x(\mathbf1_U,z)\pmod{z^J}.
+\end{equation}
+组乘积与组和在 $\mathcal R$ 中作成。结果是
+$\mathcal H_t(z)$；在所有 $t$ 处重复即提供插值数据。
+算法从不存储关于全部 $n$ 个未定元的多项式：
+它先置 $\vec X=\mathbf1_U$，只存储 $\mathcal A$ 中的
+$J$ 个系数。
+
+\subsection{三个指数成本}
+\label{subsec:three-costs}
+对每个 $t\in[Q]$，满足 $|E|\le q$ 的对
+$U\subseteq E\subseteq[n]$ 的个数是
+\begin{equation}\label{eq:pair-count}
+ C_q=\sum_{s=0}^{\min(q,n)}2^s\binom ns.
+\end{equation}
+特别地，$C_0=1$，且当 $q\ge n$ 时 $C_q=3^n$。
+对每个 $0<\eta\le1$，
+\begin{equation}\label{eq:finite-difference-cost}
+ \eta^qC_q\le\sum_{s=0}^n\binom ns(2\eta)^s=(1+2\eta)^n,
+\end{equation}
+因为对每个保留的下标 $s\le q$ 都有
+$\eta^q\le\eta^s$。
+
+\begin{proposition}[公共计数例程]\label{prop:general-count}
+设 $\mathcal A$ 是交换 $\mathbb Q$-代数。
+设 \eqref{eq:general-product-sum} 中各因子的乘积
+（在 $\mathcal A$ 上计算）满足次数界
+\eqref{eq:general-product-degree}，且替代行、划分与测量
+满足定义~\ref{def:layout}。取 \eqref{eq:hasse-order}
+中的 $q,J$，该例程通过检查至多
+\[
+ 2Qr\,C_q(2D+1)^{2\tau n}2^{2n/r}
+\]
+个布尔向量计算 $Z$。对每个向量，它在
+$\mathcal A[z]/(z^J)$ 中至多求值 $|\mathcal F|$
+个因子。每个向量上的额外运算与最终插值需要
+$\mathcal A$ 与 $\mathbb Q$ 上关于参数
+$n,|\mathcal F|,D,Q,R,J,r$ 与 scope 总长的多项式次运算。
+除因子求值器自身的存储外，该例程只保留多项式个代数元素、
+有理数与下标比特。
+\end{proposition}
+\begin{proof}
+有 $Q$ 个点，每点 $C_q$ 个对，每个对至多
+\eqref{eq:boolean-enumeration} 个布尔向量。
+作每个组乘积至多用 $|\mathcal F|$ 次因子求值。
+模 $z^J$ 的加法与乘法每次花费 $O(J^2)$ 次 $\mathcal A$
+系数上的运算。上述 Taylor 恒等式与插值证明正确性。
+依序处理点、对、测量元组与局部赋值，保留其当前下标与
+累加器。连同 $QJ$ 个插值系数，这给出所述存储界。
+位复杂度还取决于因子求值的成本与系数大小；
+对稀疏多项式应用，这些在
+第~\ref{subsec:one-query-cost} 节验证。
+\end{proof}
+
+当 $d=O(n)$ 时，$d_H=O(nR)$，$q=O(nR/Q)$。
+在 \eqref{eq:finite-difference-cost} 中取 $\eta=R/Q$，
+得
+\[
+ \log C_q\le q\log(Q/R)+n\log(1+2R/Q)
+     =O\!\left(n\frac RQ\log\frac{2Q}{R}\right).
+\]
+因此，若因子求值与系数算术有多项式位成本，运行时间就是
+多项式因子乘以
+\begin{equation}\label{eq:three-costs}
+ 2^{O\left(n\left[
+       \frac RQ\log\frac{2Q}{R}
+       +\tau\log(2D+1)+\frac1r\right]\right)}.
+\end{equation}
+这恰是概览中的三项成本。当因子的 scope 与其最大出现次数
+被 $\log n$ 的固定幂界定时，
+引理~\ref{lem:incidence-parameters} 的参数选取使其和为
+$O((\log\log n)^2/\sqrt{\log n})$。
+该例程对更大的 $d$ 同样适用；此时在
+命题~\ref{prop:general-count} 的界中保留实际值
+$q=\lfloor dR/Q\rfloor$ 即可。
+
+到目前为止我们假定 design 是给定的。
+下一节从因子的 scope 构造它。
+剩下两节先用所得例程计数给定多项式方程组的零点，
+再为公式选取这样的方程组。

@@ -1,0 +1,55 @@
+% =====================================================================
+% 中文对照翻译版说明：
+% 本文件为 openai/math 仓库 preprints/The-Exponential-Time-Hypothesis-is-False-October-25-2026
+% 中 main_full_version.tex 的非官方中文翻译。公式、标签（\label）、
+% 引用（\cite/\ref）与编号均与英文原文保持一致，以英文原文为准。
+% =====================================================================
+\documentclass[11pt,reqno]{amsart}
+\usepackage[T1]{fontenc}
+\PassOptionsToPackage{no-math}{fontspec}
+\usepackage{xeCJK}
+\setCJKmainfont[BoldFont=SimHei,ItalicFont=KaiTi]{SimSun}
+\setCJKsansfont[BoldFont=SimHei]{SimHei}
+\setCJKmonofont{FangSong}
+\usepackage{amsmath,amssymb,amsthm,mathtools}
+\usepackage{dsfont}
+\usepackage[margin=1in]{geometry}
+\usepackage{microtype}
+\usepackage[colorlinks=true,allcolors=blue,backref=page]{hyperref}
+\numberwithin{equation}{section}
+\newtheorem{theorem}{定理}[section]
+\newtheorem{lemma}[theorem]{引理}
+\newtheorem{proposition}[theorem]{命题}
+\newtheorem{corollary}[theorem]{推论}
+\theoremstyle{definition}\newtheorem{definition}[theorem]{定义}
+\theoremstyle{remark}\newtheorem{remark}[theorem]{注}
+\newcommand{\poly}{\operatorname{poly}}
+\newcommand{\Prob}{\mathbb P}
+\DeclareMathOperator{\Bin}{Bin}
+\allowdisplaybreaks[2]
+\renewcommand{\le}{\leqslant}
+\renewcommand{\ge}{\geqslant}
+\setlength{\emergencystretch}{1.5em}
+\setcounter{tocdepth}{1}
+\title{时间指数猜想是错误的\\[0.6em]
+ {\large\textmd{The Exponential Time Hypothesis is False}}\\[0.2em]
+ {\small\textmd{（非官方中文对照翻译，以英文原文为准）}}}
+\author{OpenAI}
+\date{2026 年 10 月 17 日，2026 年 10 月 25 日修订}
+\hypersetup{pdftitle={ETH is False},
+ pdfauthor={OpenAI},
+ pdfsubject={Exact counting, sparse parity tests, and polynomial interpolation}}
+\begin{document}
+\begin{abstract}
+我们给出一个确定性算法，用于精确计数任意 $k$-CNF 公式的可满足赋值个数。
+对每个固定的 $k\ge2$，在含 $n$ 个声明变量、$m$ 个子句的公式上，
+我们的算法使用 $\poly_k(n,m)$ 空间，运行时间为
+$(n+m)^{O_k(1)}2^{\,n/(\log n)^{\frac12+o(1)}}$。
+我们的算法证伪了时间指数猜想（Exponential Time Hypothesis, ETH），
+该猜想断言：判定 $n$ 个变量的 $3$-SAT 在最坏情形下需要
+$2^{\Omega(n)}$ 时间。
+\end{abstract}
+\maketitle
+
+\tableofcontents
+\vspace{-\baselineskip}

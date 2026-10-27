@@ -1,0 +1,418 @@
+\section{引言}
+对每个固定的 $k\ge3$，$k$-SAT 是典型的 NP 完全问题~\cite{Cook71}，
+其指数时间复杂度构成了时间指数猜想（ETH）与强时间指数猜想
+（SETH）的基础~\cite{IP01,IPZ}。
+本文证伪 ETH：对每个固定的 $k\ge2$，我们给出一个确定性算法，
+在亚指数时间、多项式空间内计数 $k$-CNF 的可满足赋值。
+
+将输入的、含 $n$ 个声明变量与 $m$ 个输入子句的 $k$-CNF 写作
+\[
+ F(x_1,\ldots,x_n)=\bigwedge_{e=1}^m
+ \bigl[(x_{i_{e,1}}\oplus b_{e,1})\vee\cdots\vee
+       (x_{i_{e,k}}\oplus b_{e,k})\bigr],
+\]
+其中 $i_{e,j}\in\{1,\ldots,n\}$ 与 $b_{e,j}\in\{0,1\}$ 分别是第
+$e$ 个子句中第 $j$ 个文字的变量下标与取反位，$\oplus$ 表示模二加。
+重复某个文字即允许子句的文字数少于 $k$。
+下标 $i_{e,j}$ 与位 $b_{e,j}$ 由 $F$ 固定；
+只有 $x_1,\ldots,x_n$ 在赋值范围内变化。
+我们的目标是计算量
+\begin{equation}\label{eq:solution-count}
+ \#F=\bigl|\{x\in\{0,1\}^n:F(x)=1\}\bigr|.
+\end{equation}
+判定 $\#F>0$ 也就判定了可满足性。
+当 $n$ 增大时我们保持 $k$ 固定。
+全文中 $\log$ 表示自然对数。
+\begin{theorem}\label{thm:main}
+对每个固定的 $k\ge2$，存在确定性算法：给定含 $n\ge20$ 个声明变量、
+$m$ 个子句的 $k$-CNF $F$，按 \eqref{eq:solution-count} 计算 $\#F$，
+使用
+\[
+ (n+m)^{O_k(1)}2^{O_k(n\log\log n/\sqrt{\log n})}
+\]
+次位运算与 $(n+m)^{O_k(1)}$ 比特空间。
+对每个固定的 $D>0$，在满足 $m\le Dn$ 的输入上，其运行时间为
+\[
+ (n+m)^{O_{k,D}(1)}2^{O_{k,D}(n/\sqrt{\log n})}.
+\]
+\end{theorem}
+
+第~\ref{subsec:general-reduction} 节的有理插值论证给出较弱的指数
+$O_k(\rho(n))$，其中
+\[
+ \rho(n)=\frac{n(\log\log n)^2}{\sqrt{\log n}}
+          =\frac{n}{(\log n)^{\frac12+o(1)}}.
+\]
+附录~\ref{app:quantitative} 用张量收缩证明定理~\ref{thm:main}
+的两个界。
+
+当 $\#F>0$ 时，标准的自归约方法通过每次固定一个变量并检查剩余
+计数是否为正来找出一个可满足赋值。若改为按两个条件计数来选取
+每一位，则可得到完全均匀分布的随机可满足赋值，期望额外开销为
+$\poly_k(n,m)$~\cite[Theorem~3.3(1)]{JVV86}。
+
+该定理还给出任意精度的、亚指数时间的 Max-$k$-SAT 近似算法。
+唯一游戏定理~\cite[Section~8.1]{OpenAIUGC26} 蕴含 Max-$k$-SAT
+的 NP 难度界，其在逼近比上任意小误差范围内匹配~\cite{Rag08}
+的半定规划算法给出的保证。
+记 $\operatorname{OPT}(F)$ 为一个赋值同时满足的 $F$ 子句数的最大值。
+\begin{corollary}\label{cor:max-sat-approximation}
+对每个固定的 $k\ge2$ 与 $\varepsilon>0$，存在随机化算法：给定含
+$n\ge20$ 个变量、$m$ 个子句的 $k$-CNF $F$，以概率
+$1-2^{-\Omega(n)}$ 找到一个至少满足
+$\operatorname{OPT}(F)-\varepsilon m$ 个子句的赋值，
+时间为
+\[
+ (n+m)^{O_{k,\varepsilon}(1)}2^{O_{k,\varepsilon}(\rho(n))}
+\]
+，空间为 $(n+m)^{O_{k,\varepsilon}(1)}$。
+\end{corollary}
+\begin{proof}
+可设 $m>0$。
+设 $f(x)$ 为 $x$ 满足的子句比例，$\widehat f(x)$ 为从 $m$ 个子句中
+独立均匀有放回抽取 $O(n/\varepsilon^2)$ 个组成的样本上的该比例。
+由 Hoeffding 不等式与对所有 $2^n$ 个赋值的联合界，以概率
+$1-2^{-\Omega(n)}$ 有
+\[
+ |\widehat f(x)-f(x)|\le\varepsilon/2
+ \qquad\text{对每个 }x\in\{0,1\}^n.
+\]
+于是，若 $\widehat x$ 最大化 $\widehat f$，则
+$f(\widehat x)\ge\max_x f(x)-\varepsilon$。
+给定整数阈值 $b$，一个每门至多两个输入、规模
+$O_{k,\varepsilon}(n)$ 的布尔电路可检验某赋值是否至少满足 $b$
+个抽样子句。
+标准的电路到 $3$-CNF 归约~\cite[Lemmas~15.9--15.10]{Bar23}
+产出一个含 $O_{k,\varepsilon}(n)$ 个变量与子句的公式，其可满足
+当且仅当该阈值可以达到。
+定理~\ref{thm:main}、对阈值的二分搜索与自归约随即在所述界内找到
+精确的样本最优者。
+对每个样本，在 $O(n+\log(n/\varepsilon^2))$ 次尝试后截断拒绝采样，
+即可保证最坏情形 $\poly(n,m,\varepsilon^{-1})$ 的采样时间，
+且失败概率至多增加 $2^{-\Omega(n)}$。
+\end{proof}
+
+注意，形如 $2^{o(n)}$ 的运行时间界在一般多项式时间归约下不可传递
+（传递需要 $2^{n^{o(1)}}$），因此我们的结果并不蕴含一般 NP 问题
+都有亚指数时间算法。不过我们确实得到了计数图着色与完美匹配的
+亚指数时间算法。
+
+\begin{corollary}\label{cor:graph-counting}
+在含 $v$ 个顶点、$e$ 条边的简单图上，独立集个数，以及每个固定的
+$q\ge2$ 的正常 $q$-着色个数，均可确定性地在 $2^{o(v)}$ 时间、
+$\poly_q(v,e)$ 空间内计算。完美匹配个数可确定性地在 $2^{o(v+e)}$
+时间、$\poly(v,e)$ 空间内计算。
+\end{corollary}
+\begin{proof}
+对 $G=(V,E)$，为每个 $u\in V$ 引入布尔变量 $x_u$。
+\[
+ \bigwedge_{\{u,w\}\in E}(\neg x_u\vee\neg x_w)
+\]
+的可满足赋值与独立集 $\{u\in V:x_u=1\}$ 一一对应。
+对正常 $q$-着色，为每个（顶点，颜色）对使用一个布尔变量，
+要求每个顶点恰取一种颜色，并禁止相邻顶点取相同颜色。
+这给出一个保持计数的 $q$-CNF 编码，含 $qv$ 个变量与
+$O_q(v+e)$ 个子句。
+
+对完美匹配，为每条边使用一个布尔变量，并用一个线性规模电路
+检验每个顶点恰与一条被选边关联。标准的电路到 $3$-CNF
+归约~\cite[Lemmas~15.9--15.10]{Bar23} 给出 $O(v+e)$ 个变量与
+子句。一旦边位固定，门变量取值唯一，因此该编码同样保持计数。
+定理~\ref{thm:main} 给出所述时间与空间界。
+\end{proof}
+
+定理~\ref{thm:main} 的固定密度情形给出
+$\mathrm E^{\mathrm{NP}}$（可由确定性时间 $2^{O(n)}$ 加 NP 谕示
+判定的语言类）的电路下界。
+
+\begin{corollary}\label{cor:quantitative-circuits}
+设 $C_L(n)$ 是在 $\{0,1\}^n$ 上计算语言 $L$ 的电路所需非输入门的
+最小数目，允许任意扇入至多二的布尔门与无限制扇出。存在语言
+$L\in\mathrm E^{\mathrm{NP}}$ 与常数 $c>0$，使得
+\begin{equation}\label{eq:quantitative-circuit-lower-bound}
+ C_L(n)>c\,n\sqrt{\log n}\qquad\text{对无穷多个 }n.
+\end{equation}
+\end{corollary}
+
+附录~\ref{subsec:circuit-lower-bounds} 证明该推论。
+附录~\ref{subsec:local-inversion} 给出常数输出局部性的布尔映射的
+求逆与精确原像计数算法。
+
+\subsection{相关工作}\label{sec:related}
+我们先讨论此前的 SAT 与计数算法，以及被定理~\ref{thm:main}
+否定的若干复杂度假设。
+随后将我们的方法与既有的代数算法比较，并指出证明中用到的既有构造，
+它们的作用将在第~\ref{sec:technical-overview} 节的路线图中展开。
+
+\subsubsection{SAT 算法与指数时间假设}\label{subsec:related-sat}
+Sch\"oning 的局部搜索算法与 PPSZ 是 $k$-SAT 指数时间算法发展史上
+的里程碑~\cite{Schon99,PPSZ05}。
+Sch\"oning 的随机化算法从随机赋值出发，反复在某个未被满足的子句中
+均匀选一个变量翻转。对每个固定的 $k\ge3$，其有界错误判定时间为
+\[
+ (n+m)^{O(1)}(2-2/k)^n
+\]
+~\cite[Section~2]{Schon99}。
+特别地，对 $3$-SAT 给出 $(n+m)^{O(1)}(4/3)^n$ 时间。
+PPSZ 算法~\cite{PPSZ05} 采用不同机制：先用有界消解导出更多子句，
+再按随机顺序给变量赋值，能取被迫值时取被迫值，否则猜测。
+对 $k=3,4$，其原始分析对唯一可满足公式给出比一般公式更强的界。
+唯一 SAT 的保证后来被推广到一般 $3$-SAT 与 $4$-SAT；对 $3$-SAT
+由此得到随机化 $O(1.308^n)$ 界~\cite{Hertli14}。
+Hansen、Kaplan、Zamir 与 Zwick 通过给算法的猜测加偏置，改进了每个
+固定 $k\ge3$ 的 PPSZ 界~\cite{HKZZ19}。
+Scheder 通过锐化原始 PPSZ 算法的分析，在同一 $k$ 范围得到改进
+~\cite[Theorem~1.5]{Scheder24}。
+对一般 $3$-SAT，Jiang 与 Cai 的预印本给出随机化
+$O^*(1.307031578^n)$ 界~\cite[Corollary~1.2]{JC26}，其中 $O^*$
+略去输入规模的多项式因子。Liu 的确定性算法结合分支与去随机化
+局部搜索，以 $O(1.32793^n)$ 时间求解 $3$-SAT~\cite[Theorem~21]{Liu18}。
+
+随机化局部搜索也产生了有效的启发式算法。
+WalkSAT 启发式选取一个未被满足的子句并翻转其一个变量，
+把随机选择与贪心移动相结合~\cite{SKC94}。
+在电路综合与诊断产生的公式上的实验表明了该方法的实用价值
+~\cite[pp.~340--342, Tables~4--5]{SKC94}。
+
+在均匀随机的 $k$-CNF 中，可满足性阈值处的实例曾被猜测是判定
+可满足性最难的情形~\cite[Section~1]{VW21}；
+对固定的 $k\ge3$ 与较低的子句密度 $m/n\le 2^k/k^C$（$C$
+为普适常数），已知在公式上以高概率存在多项式时间的近均匀
+可满足赋值采样~\cite[Theorem~1.2]{CLWYY25}。
+对子句数为多项式的均匀随机公式，在以可满足为条件的情形下，
+Vyas 与 Williams~\cite[Theorem~3]{VW21} 给出基于 PPZ 的算法，
+在公式与算法随机选取二者之上以高概率在
+$2^{n(1-\Omega(\log k/k))}$ 时间内找到一个解。
+
+时间指数猜想（ETH）断言 $3$-SAT 最坏情形需要 $2^{\Omega(n)}$
+确定性时间，从而对每个固定的 $k\ge3$，$k$-SAT 亦然
+~\cite[Theorem~1]{IP01}。
+强时间指数猜想（SETH）给出更尖锐的预言：随 $k$ 增大，$k$-SAT
+需要 $2^{n(1-o_k(1))}$ 时间。
+确切地说，对每个 $\varepsilon\in(0,1)$，存在固定的 $k$，
+使任何确定性算法都不能在 $2^{(1-\varepsilon)n}(n+m)^{O(1)}$
+时间内求解 $k$-SAT。
+Sch\"oning 算法与 PPSZ 的运行时间界助长了这一预言：
+它们相对穷举的改进随 $k$ 增大而衰减~\cite[Open Problems, item~2]{IP01}。
+
+间隙时间指数猜想（Gap-ETH）强化 ETH：断言存在常数
+$\delta,\gamma>0$，使得任何 $O(2^{\gamma n})$ 时间算法都无法区分
+一个可满足的 $3$-CNF 与一个每个赋值都至少违反 $\delta$
+比例子句的 $3$-CNF，即使 $m=O(n)$~\cite{Din16,MR17}。
+其随机化版本排除以相同运行时间在每个被承诺输入上以至少 $2/3$
+概率区分两种情形的算法~\cite[Conjecture~2.5]{CCK20}。
+它被用于证明逼近 Label Cover~\cite{Din16} 与稠密约束满足问题
+~\cite{MR17} 的难度，也排除了 Clique 与 Dominating Set 的非平凡
+固定参数近似。对 Clique，被排除的比为 $o(\mathrm{OPT})$，
+其中 $\mathrm{OPT}$ 为最大团规模~\cite[Corollaries~5.3 and~5.6]{CCK20}。
+
+非确定性强时间指数猜想（NSETH）断言：对每个 $\varepsilon>0$，
+某个固定的 $k$ 不存在非确定性 $2^{(1-\varepsilon)n}(n+m)^{O(1)}$
+时间算法判定 $k$-CNF 是否\emph{不可满足}，等价地判定 $k$-DNF
+是否为重言式~\cite{CGIMPS16}。
+NSETH 被用于建立从 SAT 到 3SUM、全对最短路径等问题的确定性
+细粒度归约的障碍~\cite{CGIMPS16}，并用于划定基于 SETH 的有向图
+直径近似下界~\cite{Li21}。
+
+定理~\ref{thm:main} 证伪 ETH、SETH、Gap-ETH 与 NSETH。
+事实上，判定精确计数为正或为零即可对每个固定的 $k$ 以确定性
+$2^{o(n)}(n+m)^{O_k(1)}$ 时间同时判定可满足与不可满足；
+判定可满足性也解决了 Gap-ETH 的承诺问题。
+该确定性算法还证伪了 ETH~\cite[Section~1]{DHMTW}、
+SETH~\cite[Definition~2.1]{CDL16} 与 Gap-ETH 的有界错误随机化版本。
+它与受限证明系统（如正则消解）的无条件指数下界不冲突
+~\cite{BeckImp13}。
+2016 年，Ryan Williams 通过给出一个以 $2^{n/2}\poly(n,m)$ 时间
+证明 $k$-CNF 不可满足性的协议，证伪了 Merlin--Arthur 版 SETH
+（MA-SETH）~\cite[Theorem~3.3]{Wil16}。
+
+\subsubsection{精确计数与计数复杂度}\label{subsec:related-counting}
+在 Valiant 的框架下，$\#\mathrm{SAT}$ 与 $\#3$-SAT 在吝啬归约下
+是 $\#\mathrm P$ 完全的~\cite[Section~3, Facts~1--2]{Val79}。
+对固定的 $k\ge3$，此前的精确计数算法达到
+$\poly_k(n,m)2^{n-\Omega(n/k)}$ 时间，其中 Las Vegas 期望时间界见
+~\cite[Lemma~3.5]{IMP12}，确定性界见~\cite[Theorem~1.6]{CW21}。
+对 $\#2$-SAT，Wahlstr\"om 的算法以 $O^*(1.2377^n)$ 时间计数可满足
+赋值~\cite{Wahlstrom08}。对 $\#3$-SAT，Kutzkov 用互补分支以
+$O^*(1.637^n)$ 时间计数可满足赋值~\cite{Kutzkov26}。
+两个算法都是确定性的。
+
+计数时间指数猜想（$\#\mathrm{ETH}$）断言：精确计数 $3$-CNF 的
+可满足赋值需要 $2^{\Omega(n)}$ 确定性时间~\cite[Section~1]{DHMTW}。
+在 $\#\mathrm{ETH}$ 之下，Curticapean~\cite{Cur18} 排除了计数完美
+匹配的确定性 $2^{o(v)}$ 时间算法，即使在含 $v$ 个顶点、$O(v)$
+条边的无权二部图上亦然。
+推论~\ref{cor:graph-counting} 的完美匹配算法特别适用于这些图。
+我们的算法（定理~\ref{thm:main}）以 $2^{o(n)}\poly(n,m)$ 时间
+确定性求解 $\#3$-SAT，因此证伪 $\#\mathrm{ETH}$。
+
+\subsubsection{对细粒度复杂度的影响}\label{subsec:related-consequences}
+ETH 与 SETH 成为参数化复杂度与细粒度复杂度的标准假设
+~\cite{IPZ,VW19}。
+基于 ETH 的归约给出了 Clique 对解规模的依赖~\cite{CHKX06}，
+以及约束满足与分片子图同构对树宽的依赖~\cite{Marx10} 的下界。
+SETH 支持 Hitting Set 与 Set Splitting~\cite{CDL16}，以及按树宽
+参数化的 Independent Set 与 Dominating Set~\cite{LMS18} 的尖锐
+指数界。
+它还给出 Subset Sum 与 Bicriteria Path 的伪多项式算法可能加速的
+界~\cite{ABHS19}。
+
+对 $\mathrm P$ 中的问题，SETH 被用于排除编辑距离
+~\cite{BackursIndyk18}、最长公共子序列与动态时间规整~\cite{BK15}、
+Fr\'echet 距离~\cite{Bri14}、正则表达式匹配~\cite{BI16}
+相对二次运行时间的多项式因子加速。
+其他应用涉及图直径近似~\cite{RV13}，以及在图更新下维护可达计数
+或最大强连通分量规模~\cite{AW14}。
+这些结果共同使 SETH 成为解释众多迥异问题上算法表观最优性的
+常用基础。
+
+我们对 ETH 与 SETH 的证伪移除了上述难度断言的一个基础。
+其中一些下界可由更弱的、可能仍然成立的假设推出。
+例如，最长公共子序列与正则表达式匹配的下界可由正交向量猜想
+（OVC）推出~\cite{BK15,BI16}。OVC 断言：对每个固定的
+$\varepsilon>0$，不存在 $O(N^{2-\varepsilon}\poly(d))$ 时间算法
+判定两个由 $N$ 个 $d$ 维布尔向量组成的集合是否含有正交对（各取
+一个向量）。从 SAT 到正交向量的归约表明 SETH 蕴含
+OVC~\cite{Wil05,VW19}。
+Fr\'echet 距离、图直径近似、以及 Independent Set 与 Dominating
+Set 对树宽的依赖的下界，也可由「无限制 CNF-SAT 对任何常数
+$\delta>0$ 都不容许 $2^{(1-\delta)n}\poly(n,m)$ 时间算法」这一
+假设推出~\cite{Bri14,RV13,LMS18}。定理~\ref{thm:main} 对每个固定
+子句宽度 $k$ 给出运行时间保证，而该假设允许宽度随 $n$ 增长。
+
+要用我们的 SAT 算法为目标问题得到更快算法，需要反方向的归约：
+从该问题归约到固定宽度的 SAT，并控制变量数。
+集合规模至多 $k$ 的 Set Splitting 具有此类归约
+~\cite[Observation~3.6]{CDL16}：为每个元素使用一个布尔变量指定其
+分侧。对每个集合，一个子句要求其变量至少一个为真，另一个子句
+要求至少一个为假。所得 $k$-CNF 每个全集元素一个变量，因此对固定
+$k$，定理~\ref{thm:main} 给出以全集大小计的亚指数时间（相差一个
+输入规模的多项式因子）。
+
+\subsubsection{组合问题的代数算法先行工作}\label{subsec:related-algebraic}
+我们的算法是代数型的，基于对精心选取的辅助变量的多项式插值。
+下面讨论用代数方法为组合问题设计算法的先行工作。
+更一般的背景见 Koutis 与 Williams 关于代数指纹的综述
+~\cite{KW16}、Williams 关于算法设计中多项式方法的综述
+~\cite{Wil14}，以及 Husfeldt 关于算法容斥的综述~\cite{Hus11}。
+
+Williams 的 split-and-list 算法~\cite{Wil05} 将 $2$-CSP 的变量
+分为三组，枚举部分赋值，并用快速矩阵乘法合并。
+Koivisto~\cite{Koi06} 给出直接的「和--积」表述。
+第~\ref{sec:counting}--\ref{sec:hashes} 节的算法同样在组内枚举
+赋值。固定共享测量 $\vec y$ 后，各组的贡献可以独立相乘。
+Scott 与 Sorkin~\cite[Section~6]{SS09} 将 split-and-list 推广到
+多项式值权与任意环。
+我们的求和例程同样使用截断多项式环，在一次计算中保留多个系数。
+
+Bj\"orklund~\cite[Sections~2--3]{Bjo16} 用容斥与多项式插值将
+积和式与有向哈密顿圈计数归约为更小实例上的加权和。
+他在表中把相同实例的权相加，然后对总权非零的每个不同实例求解一次。
+Bj\"orklund、Kaski 与 Williams~\cite{BKW19} 用低次曲线与广义挂谷集
+从小规模结构化点集上的取值恢复多项式的值，得到关于费米子式
+（fermionant，包括元素绝对值被固定常数界住的整数矩阵的积和式）
+的更快算法。
+我们的多项式替代形式起类似作用：它们把目标计数与结构化取值
+连接起来，从而可以重构。这里有效的结构是固定少数共享测量后
+按组分离。
+
+Bhargava、Ghosh、Kumar 与
+Mohapatra~\cite[Sections~3.1--3.2]{BGKM23} 沿低次曲线在有限域上
+求值多元多项式，在仅取值不够时使用 Hasse 导数与 Hermite 插值。
+对一元限制 $g$，$t$ 处的 $j$ 阶 Hasse 导数是 $g(t+z)$ 中 $z^j$
+的系数。我们使用相同的恢复原理：在每个允许快速求和的点上计算
+若干 Taylor 系数，再用 Hermite 插值恢复原计数。
+
+Woodruff 与 Yekhanin~\cite{WY07} 在私有信息检索中用沿直线的取值
+与一阶导数恢复目标值。
+Kopparty、Saraf 与 Yekhanin~\cite{KSY14} 用高阶 Hasse 导数做重数码
+的局部校正，推广了基于直线的 Reed--Muller 码恢复。
+在我们的算法中，矩阵构造提供低次替代形式，使我们能在固定少数
+共享测量后，用快速求和计算插值点处的 Taylor 系数。
+
+\subsubsection{矩阵构造的渊源}\label{subsec:related-spectral}
+我们的计数算法在布尔赋值上求多项式乘积的和。这些多项式共享
+变量，因此这些和不能分解为独立的小和之和。
+我们引入（对插值参数多项式依赖的）线性替换，在固定少数整数线性
+测量后使这种分解成为可能。一个辅助的有理方阵 $M_0$ 支撑这些
+替换：$\operatorname{rank}(I-M_0)$ 的界限制测量个数，而 $M_0$
+非零元上的限制保持替换次数很小。
+第~\ref{subsec:preview-auxiliary} 节解释这一联系。
+
+相关插值方法已被用于构造结构化矩阵的低秩近似。
+在~\cite[Section~3]{AW17} 中，一个低次多项式在整数内积 $j$ 的
+区间上匹配 $(-1)^j$，用的是~\cite[Lemma~3.1]{AW15} 的插值引理。
+这给出在大多数位置与 Walsh--Hadamard 矩阵一致的低秩矩阵，
+是矩阵刚性研究中的一个结果~\cite{Val77}。
+相关插值在~\cite[Theorem~6.1]{AGP23} 中给出 Kronecker 幂的刚性界。
+Dvir 与 Liu~\cite[Claim~2.20 and Lemmas~3.3--3.4]{DL20} 用谱方法：
+对坐标置换不变函数的稀疏改动使许多 Fourier 系数为零，
+降低其群循环矩阵的秩。
+
+我们的构造同样在一个短区间上插值 $(-1)^j$，但此刻是为了得到
+交换置换矩阵的多项式。同一个多项式既给出 $I-M_0$ 的秩界，
+也给出 $M_0$ 非零元上的限制。我们在第~\ref{sec:construction} 节
+直接证明这些性质及其定量界。
+
+\subsubsection{稀疏化与奇偶检验}\label{subsec:related-reductions}
+我们使用稀疏化引理~\cite{IPZ} 的保持计数版本~\cite[Appendix~A]{DHMTW}，
+定量界取自~\cite[Section~6]{CIP} 与
+\cite[Lemma~5.14 and equation~(5.4)]{CalabroThesis}。
+这把可满足赋值分拆到同一组布尔变量上的稀疏公式中。
+附录~\ref{app:sparsify} 记录了不交分支论证，以及其参数随输入
+规模变化时所需的界。
+
+初始的奇偶检验是 Tanner 码~\cite[Section~II]{Tanner81} 的约束，
+作用在记录赋值违反了哪些子句的二进制向量上。
+我们使用~\cite[Sections~IV and~VI]{SS96} 的基于边的展开码构造：
+每条图边承载一位，每个顶点要求其关联的位属于某个固定的二元线性码。
+局部码的最小距离与图展开共同迫使满足所有这些约束的每个非零
+向量具有大支撑。该构造与距离论证是标准的。
+引理~\ref{lem:sparse-checks} 给出此处所需的参数选取，包括检验的
+个数与支撑大小的界，并用确定性穷举搜索构造图与局部码。
+图是一个 Cayley 多重图的二部双覆盖。定义该多重图的移位几乎
+平衡基群上的每个非常数奇偶性：这就是小偏置条件
+~\cite{NN93,AR94}，在 \eqref{eq:hash-walsh} 中显式表述。
+将未用的边位固定为零，得到恰在 $m$ 个坐标上的码。
+另外的奇偶检验排除剩余的非零违反向量。我们用条件期望法背后的
+平均原理~\cite{Raghavan88} 选取这些检验，用精确计数评估每个
+候选。第~\ref{sec:hashes} 节给出此处所需的构造与定量界。
+
+定理~\ref{thm:main} 提示人们重新寻找那些已知难度结果依赖于
+ETH 或 SETH 的问题的算法。
+第~\ref{subsec:related-consequences} 节的例子既显示了直接推论，
+也显示了一些需要新算法思想的问题。
+
+\subsection{记号}\label{subsec:notation}
+对整数 $s\ge0$，记 $[s]=\{1,\ldots,s\}$，$[0]=\varnothing$。
+对条件 $E$，标量 $\mathds{1}_{\{E\}}$ 在 $E$ 成立时为一，否则为零。
+我们使用自然对数，底为二时写作 $\log_2$。
+对复杂度界，$\poly(t_1,\ldots,t_s)$ 表示形如
+$(1+t_1+\cdots+t_s)^{O(1)}$ 的界，其中隐含常数为绝对常数。
+下标（如 $\poly_{k,c}(t_1,\ldots,t_s)$）允许这些常数依赖所标出的
+固定参数。整数以带符号二进制记法存储，故整数 $z$ 使用
+$O(\log(|z|+2))$ 比特。
+有理数存储为整数分子与正整数分母；所述位长界对二者分别成立。
+空间以比特计。算术运算次数与位运算次数区分使用。
+
+对有限集 $S$，$\mathbb Q^S$ 中的向量以 $S$ 为坐标下标，
+除另有说明外均为列向量。
+对 $U\subseteq S$，指示向量 $\mathbf1_U\in\{0,1\}^S$ 的分量
+$(\mathbf1_U)_v=\mathds{1}_{\{v\in U\}}$（$v\in S$）。
+零向量记作 $\vec{0}$。对 $v\in S$，行 $\delta_v\in\mathbb Q^{1\times S}$
+选取第 $v$ 个坐标，即 $\delta_vx=x_v$。
+以 $U\subseteq S$ 为下标的向量可延拓到 $S$：在 $S\setminus U$ 的
+每个坐标处补零。
+
+我们写 $\vec{X}=(X_1,\ldots,X_n)$ 表示形式变量向量，用箭头表示
+多项式系数向量，如 $\vec{P}_{f,v}(T)$。
+对系数行 $\vec{p}=(p_i)_{i\in S}$ 与向量 $z=(z_i)_{i\in S}$，
+二者的标量配对记作 $\langle\vec{p},z\rangle=\sum_{i\in S}p_i z_i$。
+特别地，$\langle\vec{P}_{f,v}(T),\vec{X}\rangle$ 是变量 $X_i$
+的标量线性型。
+
+对变量 $\vec{X}$ 与变量 $z$ 的多项式 $P(\vec{X},z)$，
+$[z^j]P$ 表示 $z^j$ 的系数（视为 $\vec{X}$ 的多项式），
+$\deg_{\vec{X}} P$ 表示对 $\vec{X}$ 的总次数。
+多项式行的次数是其各元素次数的最大值。
+除非另有说明，多项式系数为有理数，矩阵核在 $\mathbb Q$ 上取。

@@ -13,6 +13,7 @@ tools/pdf_build/
 *.fdb_latexmk
 *.bbl
 *.toc
+*.brf
 *.blg
 
 # 系统文件

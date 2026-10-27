@@ -1,0 +1,352 @@
+\section{技术概览}\label{sec:technical-overview}
+我们先对每个变量至多出现在三个子句中的 $3$-CNF 计数可满足赋值。
+其子句多项式的乘法次数至多为 $3n$，因此可以用插值从小变量组上的
+和恢复精确计数。
+随后第~\ref{subsec:preview-general-sat} 节用不交稀疏化与变量复制，
+对每个固定的 $k\ge2$，在 $(n+m)^{O_k(1)}2^{o(n)}$ 时间内计数任意
+$k$-CNF 的可满足赋值。取 $k=3$ 即已证伪 ETH。
+第~\ref{subsec:preview-full-case} 节解释在原变量上计数如何给出
+命题~\ref{prop:interpolation-bound} 的指数 $O_k(\rho(n))$。
+
+\subsection{受限出现次数的情形}\label{subsec:preview-setting}
+设 $F$ 含 $n$ 个声明布尔变量。每个子句至多含三个文字，
+每个变量（正出现与负出现合计）至多出现在三个子句中。
+我们的任务是精确计数 $F$ 的可满足赋值。
+
+我们删除重言子句与子句内重复的文字。空子句直接使计数为零。
+这些操作保持出现次数界。对剩下的每个子句 $e$，令
+$I_e\subseteq[n]$ 为其变量集。
+对不出现在任何子句中的变量，添加一个 scope 为 $\{v\}$、取值恒为
+一的因子。这样的因子不改变计数，并保证每个变量在构造中都有
+ assigned 的位置。我们称这些恒一项为\emph{哑子句}（dummy clauses）。
+令 $\mathcal F$ 为全部子句（含哑子句）的下标集。则
+\begin{equation}\label{eq:overview-incidences}
+ |I_e|\le3,\qquad
+ \#\{e\in\mathcal F:v\in I_e\}\le3,\qquad
+ n\le M:=\sum_{e\in\mathcal F}|I_e|\le3n.
+\end{equation}
+下文所有求和仍遍历原来的 $n$ 个布尔变量。
+
+\subsection{计数的直接多项式}\label{subsec:preview-encoding}
+对正文字写 $L_{e,v}(X_v)=X_v$，对负文字写 $L_{e,v}(X_v)=1-X_v$。
+子句 $e$ 的满足多项式为
+\[
+ \Phi_e((X_v)_{v\in I_e})
+ =1-\prod_{v\in I_e}(1-L_{e,v}(X_v)).
+\]
+例如，$x_a\vee\neg x_b\vee x_c$ 给出
+\[
+ \Phi_e(X_a,X_b,X_c)=1-(1-X_a)X_b(1-X_c).
+\]
+在布尔输入上，子句被满足时该多项式取一，否则取零。
+对哑子句 $e$，置 $\Phi_e=1$。因此
+\begin{equation}\label{eq:overview-direct-count}
+ \#F=\sum_{x\in\{0,1\}^n}\prod_{e\in\mathcal F}
+                   \Phi_e((x_v)_{v\in I_e}).
+\end{equation}
+该乘积的总次数至多为 $M\le3n$。
+这个线性次数界正是三次出现假设带来的有用结论。
+
+式~\eqref{eq:overview-direct-count} 是计数的精确表达式，
+但对其 $2^n$ 个被加项求值就相当于穷举搜索。
+为引出算法，假设给定变量到 $r$ 个组 $S_1,\ldots,S_r$
+的一个划分，同时满足以下两个条件：
+\begin{enumerate}
+\item 每组至多含 $2n/r$ 个变量。
+\item 每个子句的全部变量都属于同一组。
+\end{enumerate}
+这是一个假想的、限制性极强的假设；我们并不假定输入公式容许
+这样的划分。
+
+在该假设下，我们可以在每个组内独立计数可满足赋值。
+设 $N_g$ 为 $S_g$ 中变量上满足该组全部子句的赋值个数。
+这样的赋值可以与其他组的任意可满足赋值组合，因为没有子句
+连接不同的组。每个全局可满足赋值恰以一种方式如此产生。
+于是
+\[
+ \#F=\prod_{g=1}^r N_g.
+\]
+在组内穷举计算每个 $N_g$ 总共至多检查
+\[
+ \sum_{g=1}^r 2^{|S_g|}\le r\,2^{2n/r}
+\]
+个局部赋值，每个赋值上的工作量为多项式。
+对大的 $r$，这远快于枚举全部 $2^n$ 个全局赋值。
+
+我们将替换子句的输入，使不同组只通过一小批共享线性摘要
+相互作用。固定这些摘要的取值后，便又可对每组分别求和。
+
+\subsection{更容易求值点上的一族多项式}
+\label{subsec:preview-deformation}
+我们引入参数 $T$。在 $T=0$ 处，替换必须恢复原来的子句输入；
+在选定的非零点 $T=1,\ldots,Q$ 处，替换应使我们能通过固定共享
+线性摘要来分离各组。这里 $Q$ 是选定点的个数，
+$R$ 将界定替代系数的次数。两个参数稍后选取。
+
+写 $\vec{X}=(X_1,\ldots,X_n)$ 表示形式变量向量。
+对每个出现 $v\in I_e$，用多项式系数向量
+$\vec{P}_{e,v}(T)=(p_{e,v,1}(T),\ldots,p_{e,v,n}(T))$
+把子句 $e$ 中的 $X_v$ 替换为标量内积
+\[
+ \langle \vec{P}_{e,v}(T),\vec{X}\rangle
+ =\sum_{i=1}^n p_{e,v,i}(T)X_i.
+\]
+我们称此表达式为变量 $v$ 在子句 $e$ 中出现的
+\emph{替代线性型}（replacement linear form）。它替换子句多项式
+$\Phi_e$ 中的输入 $X_v$。
+我们要求
+\[
+ \langle \vec{P}_{e,v}(0),\vec{X}\rangle=X_v,
+ \qquad \deg \vec{P}_{e,v}\le R.
+\]
+不同子句可对同一变量使用不同的替代线性型。
+定义
+\begin{equation}\label{eq:simple-counting-polynomial}
+ H(T)=\sum_{x\in\{0,1\}^n}\prod_{e\in\mathcal F}
+       \Phi_e\bigl((\langle \vec{P}_{e,v}(T), x\rangle)_{v\in I_e}\bigr)
+       \in\mathbb Q[T].
+\end{equation}
+在零点每个替换都恢复原变量，而每个子句多项式的次数至多增长
+$R$ 倍。因此
+\begin{equation}\label{eq:overview-value-degree}
+ H(0)=\#F,\qquad \deg H\le MR\le3nR.
+\end{equation}
+我们将从 $t=1,\ldots,Q$ 处的 Taylor 系数恢复 $H(0)$。
+次数界意味着每点只需 $O(1+nR/Q)$ 个系数，
+第~\ref{subsec:preview-interpolation} 节将作解释。
+因此我们的目标是让 $R$ 相对 $Q$ 较小：点多而替代次数低，
+意味着每点需要的系数更少。
+
+在非零的 $t$ 处，替代线性型的取值
+$\langle\vec{P}_{e,v}(t),x\rangle$ 未必落在 $\{0,1\}$ 中，
+即使 $x$ 是布尔取值。因此变换后的子句多项式
+不必再充当满足指示子。
+
+\subsection{通过固定测量分离求和}
+\label{subsec:preview-separation}
+固定 $t\in[Q]$。此时给定系数向量 $\vec{P}_{e,v}(t)$，
+其分量已是常数。我们说明什么结构使我们可以快速计算 $H(t)$，
+以及如何使用它。本小节中记 $S_g=S_{t,g}$、$C_g=C_{t,g}$。
+
+\begin{definition}[$(r,\tau,D)$-design]
+\label{def:overview-measurement-structure}
+对给定的系数向量 $\vec{P}_{e,v}(t)$，
+\emph{$t$ 处的 $(r,\tau,D)$-design}
+由组 $S_g$、子句指派 $\sigma_e(t)$ 与测量矩阵 $C_g$
+组成，满足以下四个条件：
+\begin{enumerate}
+\item \emph{小组。}将变量划分为两两不交的组
+$[n]=S_1\sqcup\cdots\sqcup S_r$，且 $|S_g|\le2n/r$。
+\item \emph{每子句一个指派组。}把每个子句 $e$ 指派到一个组
+$\sigma_e(t)\in[r]$。条件~4 必须对子句 $e$ 的每个替代线性型
+都在这同一组上成立。
+\item \emph{少量有界测量。}每组 $g$ 有一个整数矩阵 $C_g$，
+列以 $S_g$ 为下标，共 $c_g$ 行。每一行指定对 $S_g$
+中变量的一个线性测量。总行数至多 $2\tau n$，且每行系数的
+绝对值之和至多为 $D$。
+对赋值 $x$，写
+\[
+ x_g=x|_{S_g},\qquad y_g=C_gx_g,\qquad
+ \vec{y}=(y_1,\ldots,y_r).
+\]
+\item \emph{对其他组的依赖只通过测量。}设子句 $e$ 被指派到组
+$g=\sigma_e(t)$。该子句的每个替代线性型可以自由依赖 $S_g$
+中的变量；它对任何其他组 $S_h$ 的依赖必须是该组测量 $y_h$
+的线性组合。确切地说，对每个 $v\in I_e$，必须存在系数向量
+$\vec{\lambda}_{e,v,h}\in\mathbb Q^{c_h}$（$h\ne g$），使得
+对每个 $x\in\mathbb Q^n$，
+\begin{equation}\label{eq:outline-separation}
+ \langle\vec{P}_{e,v}(t),x\rangle
+ =\langle\vec{P}_{e,v}(t)|_{S_g},x_g\rangle
+   +\sum_{h\ne g}\langle\vec{\lambda}_{e,v,h},y_h\rangle.
+\end{equation}
+等价地，$\vec{P}_{e,v}(t)|_{S_h}$ 对每个 $h\ne g$ 都落在 $C_h$
+的行空间中。
+\end{enumerate}
+\end{definition}
+矩阵 $C_h$ 为所有子句共享。子句的指派组不必包含其原变量。
+不过一旦 $\vec{y}$ 固定，整个变换后的子句多项式就只依赖
+其指派组中的变量。
+
+\smallskip\noindent
+\textbf{算法。}
+给定 $t$ 处的 $(r,\tau,D)$-design，
+先通过求解条件~4 保证的线性方程组找到系数向量
+$\vec{\lambda}_{e,v,h}$。
+对固定的 $\vec{y}$，令 $\mathcal X_{t,g}(y_g)$ 为测量值等于
+$y_g$ 的 $S_g$ 上变量的赋值集合：
+\[
+ \mathcal X_{t,g}(y_g)
+ =\{u\in\{0,1\}^{S_g}:C_gu=y_g\}.
+\]
+对这样的赋值 $u$，如下计算组 $g$ 的贡献。对指派到 $g$ 的每个
+子句 $e$，先用 \eqref{eq:outline-separation} 从 $u$ 与固定的
+测量计算其替代线性型的取值；再在这些取值上求子句多项式
+$\Phi_e$ 的值；最后把指派到 $g$ 的全部子句的取值相乘。
+记该乘积为 $A_{t,g}(u;\vec{y})$。此计算不需要其他组的赋值。
+
+布尔赋值的每个测量都是 $[-D,D]$ 中的整数。
+初始化 $Z=0$，执行以下步骤：
+\begin{enumerate}
+\item 尝试每个测量元组
+$\vec{y}\in\mathcal Y:=\prod_{g=1}^r\{-D,\ldots,D\}^{c_g}$。
+对每个元组执行第 2、3 步。
+\item 对每个组 $g$，尝试其变量的每个布尔赋值 $u$，
+仅当 $C_gu=y_g$ 时保留。把对应的乘积 $A_{t,g}(u;\vec{y})$
+相加，得到组和
+\[
+ B_{t,g}(\vec{y})=
+ \sum_{u\in\mathcal X_{t,g}(y_g)}A_{t,g}(u;\vec{y}).
+\]
+若无赋值满足 $C_gu=y_g$，置 $B_{t,g}(\vec{y})=0$。
+\item 把各组之和相乘，并将 $\prod_{g=1}^r B_{t,g}(\vec{y})$
+加到 $Z$ 上。
+\end{enumerate}
+处理完所有测量元组后，返回 $Z$。
+
+为说明它返回 $H(t)$，固定 $\vec{y}$，并从每个集合
+$\mathcal X_{t,g}(y_g)$ 中各选一个赋值。由于各组包含互不相交
+的变量集，这些选择合成一个完整赋值。每个测量为 $\vec{y}$ 的
+完整赋值恰以一种方式如此产生。其子句多项式的乘积就是各组
+贡献 $A_{t,g}$ 的乘积。先把组和相乘、再对 $\vec{y}$ 求和，
+即得
+\begin{equation}\label{eq:outline-separated-sum}
+ H(t)=\sum_{\vec{y}\in\mathcal Y}\prod_{g=1}^r
+       \left(\sum_{u\in\mathcal X_{t,g}(y_g)}
+                         A_{t,g}(u;\vec{y})\right).
+\end{equation}
+每个布尔赋值恰有一个测量元组，因此该和把每个赋值的贡献
+恰好计一次。
+
+测量元组至多有 $(2D+1)^{2\tau n}$ 个。对每个元组，算法对各组
+内部至多尝试 $\sum_g2^{|S_g|}\le r2^{2n/r}$ 个赋值。
+因此，不计多项式因子，运行时间为
+\[
+ (2D+1)^{2\tau n}2^{2n/r}.
+\]
+第一个因子界定测量元组的个数；第二个界定一组内的赋值个数。
+算法一次扫描一个组，只保留当前测量元组、当前赋值以及运行中
+的和与积；见引理~\ref{lem:measurement-separation}。
+
+对第~\ref{subsec:preview-parameters} 节的参数选取，
+我们可以构造次数至多 $R$ 的替代型，使其在零点恢复原变量，
+并在每个 $t\in[Q]$ 处容许 $(r,\tau,D)$-design。
+第~\ref{subsec:preview-auxiliary} 节给出构造。
+我们先解释这些性质如何让我们高效地恢复计数。
+
+\subsection{由 Taylor 系数恢复计数}
+\label{subsec:preview-interpolation}
+我们的目标是从 $t=1,\ldots,Q$ 处的信息恢复 $H(0)=\#F$。
+由于 $\deg H\le3nR$，仅有 $Q$ 个值 $H(t)$ 未必确定 $H$。
+我们改为在每个点计算若干 Taylor 系数。取
+\[
+ q=\left\lfloor\frac{3nR}{Q}\right\rfloor,\qquad J=q+1.
+\]
+假设对每个 $t\in[Q]$，我们知道 $H(t+z)$ 中 $z^0,\ldots,z^q$
+的系数。这些数据唯一确定 $H$：若两个次数至多 $3nR$
+的多项式有相同的数据，则其差对每个 $t\in[Q]$ 都被
+$(T-t)^J$ 整除，从而被 $\prod_{t=1}^Q(T-t)^J$ 整除。
+该乘积的次数为 $QJ>3nR$，故差必为零。
+每个 Taylor 系数给出 $H$ 的系数的一个线性方程。
+解这个有理线性方程组恢复 $H$，其常数项即所要的计数 $H(0)$。
+
+剩下的是计算这些 Taylor 系数。固定 $t\in[Q]$；
+我们要 $H(t+z)$ 中 $z$ 的次数至多 $q$ 的部分。
+design 控制替代型在 $t$ 处的形态，但未必控制它们从 $t$
+到 $t+z$ 的变化。我们先把这些变化单列为一个输入，
+使固定该输入时组的分离得以保持。
+
+\smallskip\noindent
+\textbf{保持平移输入的分离。}
+写
+\[
+ \Delta\vec P_{e,v}(z)=\vec P_{e,v}(t+z)-\vec P_{e,v}(t).
+\]
+保留 $x$ 作为被求和的布尔赋值，并为变化引入单独的形式向量
+$\vec X$。定义
+\begin{equation}\label{eq:outline-taylor-product}
+ \mathcal G_x(\vec X,z)=
+ \prod_{e\in\mathcal F}\Phi_e\bigl(
+       (\langle\vec P_{e,v}(t),x\rangle+
+        \langle\Delta\vec P_{e,v}(z),\vec X\rangle)_{v\in I_e}\bigr).
+\end{equation}
+这里 $x$ 是多项式的下标，而 $\vec X$ 与 $z$ 是其形式变量。
+置 $\vec X=x$ 即恢复每个平移输入
+$\langle\vec P_{e,v}(t+z),x\rangle$，因此
+\[
+ H(t+z)=\sum_{x\in\{0,1\}^n}\mathcal G_x(x,z).
+\]
+另一方面，对某个 $U\subseteq[n]$ 固定 $\vec X=\mathbf1_U$，
+使每个修正项 $\langle\Delta\vec P_{e,v}(z),\mathbf1_U\rangle$
+与 $x$ 无关。于是对 $x$ 的全部依赖都经
+$\langle\vec P_{e,v}(t),x\rangle$ 传递，design 在此适用。
+我们的任务因此是从 $\vec X$ 固定的和恢复 $\vec X=x$ 的和。
+
+次数界使少量固定代入即可做到。
+$\Delta\vec P_{e,v}(z)$ 的每个分量都被 $z$ 整除，故展开项中
+$X_i$ 的每次出现至少贡献一个 $z$ 的因子。于是
+\[
+ \deg_{\vec X}([z^j]\mathcal G_x(\vec X,z))\le j.
+\]
+因此，丢弃 $q$ 以上的 $z$ 的幂后，每个单项至多涉及 $\vec X$
+中 $q$ 个不同变量。
+
+\smallskip\noindent
+\textbf{用容斥恢复平移后的和。}
+在模 $z^J$ 意义下工作，只保留 $z^q$ 以下的系数。
+把 $\mathcal G_x$ 中 $X_i$ 的每个正幂替换为 $X_i$。
+这保持其在布尔输入上的取值。由上述次数界，对布尔 $\vec X$，
+\[
+ \mathcal G_x(\vec X,z)\equiv
+ \sum_{\substack{E\subseteq[n]\\|E|\le q}}
+       a_E(x,z)\prod_{i\in E}X_i\pmod{z^J},
+\]
+其中 $a_E(x,z)$ 是该替换后所指单项的系数。
+在 $\mathbf1_U$（恰在 $U$ 处取一的向量）处求值，即对以 $U$
+的子集为下标的系数求和。容斥逐一提取：
+\[
+ a_E(x,z)\equiv
+ \sum_{U\subseteq E}(-1)^{|E|-|U|}
+                 \mathcal G_x(\mathbf1_U,z)\pmod{z^J}.
+\]
+当置 $\vec X=x$ 时，单项 $\prod_{i\in E}x_i$ 恰在 $E$ 中所有位
+为一时等于一。它对 $x$ 上求和的贡献因此是
+$\sum_{x:\,x_i=1\ (i\in E)}a_E(x,z)$（$x$ 取布尔值）。
+代入上面的系数公式，这便化归为形式输入固定的和。
+
+\smallskip\noindent
+\textbf{计算受限和。}
+对 $U\subseteq E\subseteq[n]$、$|E|\le q$，定义
+\begin{equation}\label{eq:outline-restricted-taylor-sum}
+ \mathcal Z_{t,E,U}(z)=
+ \sum_{\substack{x\in\{0,1\}^n\\x_i=1\ (i\in E)}}
+                    \mathcal G_x(\mathbf1_U,z)
+       \quad\text{（在 }\mathbb Q[z]/(z^J)\text{ 中）}.
+\end{equation}
+这里 $U$ 固定形式输入 $\vec X=\mathbf1_U$，而 $E$ 把求和变量
+$x$ 的某些位固定为一。
+对单项贡献求和给出
+\begin{equation}\label{eq:outline-taylor-recovery}
+ H(t+z)\equiv
+ \sum_{\substack{E\subseteq[n]\\|E|\le q}}
+       \sum_{U\subseteq E}(-1)^{|E|-|U|}
+                         \mathcal Z_{t,E,U}(z)\pmod{z^J}.
+\end{equation}
+这同时恢复全部 $J=q+1$ 个 Taylor 系数。
+引理~\ref{lem:boolean-differences} 陈述了这里使用的一般恒等式。
+
+每个和 $\mathcal Z_{t,E,U}$ 都可以用
+第~\ref{subsec:preview-separation} 节的算法求值。
+固定 $\vec X=\mathbf1_U$ 后，每个修正项
+$\langle\Delta\vec P_{e,v}(z),\mathbf1_U\rangle$ 与 $x$ 无关。
+对 $x$ 的全部依赖都来自型
+$\langle\vec P_{e,v}(t),x\rangle$，因此固定 $\vec y$
+仍然分离各子句多项式。限制 $x_i=1$ 是各组局部的。
+分离恒等式只用加法、乘法与分配律，因此也适用于这些截断
+多项式值。每个子句都在代入 $\vec X=\mathbf1_U$ 后求值，
+只用次数小于 $J$ 的一元 $z$ 多项式，且每次乘法后丢弃更高次幂。
+多元展开及其系数 $a_E(x,z)$ 只用于论证恒等式；算法从不
+构造它们。
+
+在 $t=1,\ldots,Q$ 处重复这一计算，即提供上述插值所需的全部
+Taylor 系数，从而恢复 $H(0)=\#F$。

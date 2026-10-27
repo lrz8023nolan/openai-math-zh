@@ -34,6 +34,12 @@
 | 102-2 | [A-Direct-Proof-of-Optimal-Max-Cut-Hardness-September-23-2026](https://github.com/openai/math/blob/main/preprints/A-Direct-Proof-of-Optimal-Max-Cut-Hardness-September-23-2026/paper.pdf)（最优 Max-Cut 难度的直接证明） | 102 唯一游戏猜想 | ✅ 完成（37 页） | [build/](preprints-zh/A-Direct-Proof-of-Optimal-Max-Cut-Hardness-September-23-2026/build/) ｜ [paper-zh.pdf](preprints-zh/A-Direct-Proof-of-Optimal-Max-Cut-Hardness-September-23-2026/paper-zh.pdf) |
 | — | 其余 8 篇精选 | — | ⏳ 待译 | 逐篇推进，流程同上 |
 
+**上游新增（2026-10-27 同步，上游 commit `7ef5c0c`）**：
+
+| # | 手稿（Slug） | 说明 | 状态 | 译稿 / PDF |
+|---|---|---|---|---|
+| 新 | [The-Exponential-Time-Hypothesis-is-False-October-25-2026](https://github.com/openai/math/blob/main/preprints/The-Exponential-Time-Hypothesis-is-False-October-25-2026/paper.pdf)（时间指数猜想是错误的） | 证伪 ETH 的全文翻译；约 5900 行源码（主文件 + 3 个 quantitative 附录），55 页 | ✅ 完成（55 页） | [build/](preprints-zh/The-Exponential-Time-Hypothesis-is-False-October-25-2026/build/) ｜ [paper-zh.pdf](preprints-zh/The-Exponential-Time-Hypothesis-is-False-October-25-2026/paper-zh.pdf) |
+
 ## 成果族目录翻译（contents-zh/）
 
 - 状态：**✅ 完成**——[CONTENTS-zh.md](contents-zh/CONTENTS-zh.md) 覆盖全部 **372 个成果族 / 722 篇手稿**（235 个族带 Lean 形式化标记），编号与上游一一对应，按 17 个学科分组。
@@ -41,5 +47,6 @@
 
 ## 上游同步
 
-- 本翻译基于上游 commit `adc7f12`（2026-10-06）。
+- 目录翻译基于上游 commit `adc7f12`（2026-10-06）。
+- 2026-10-27 同步至上游 commit `7ef5c0c`，新增 ETH 证伪论文全文翻译（见上表）。
 - 上游承诺持续补充 Lean 形式化与修订。上游更新后，本表将标记过时译文。

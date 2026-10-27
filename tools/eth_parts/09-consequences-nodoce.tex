@@ -1,0 +1,99 @@
+\section{证伪 ETH 的其他推论}\label{app:consequences}
+定理~\ref{thm:main} 给出一个电路下界，以及求逆常数输出
+局部性布尔映射的亚指数时间算法。固定密度情形给出
+推论~\ref{cor:quantitative-circuits} 的定量电路下界。
+两个电路论证都只用我们 $3$-SAT 算法的判定版本；
+精确原像计数使用其完整的计数保证。
+
+\subsection{$\mathrm E^{\mathrm{NP}}$ 的电路下界}\label{subsec:circuit-lower-bounds}
+对下文的定性界，记 $\mathrm{SIZE}(O(n))$
+为拥有 $O(n)$ 个有界扇入 AND、OR、NOT 门的非一致电路的
+语言类。
+
+\begin{corollary}\label{cor:consequence-circuits}
+我们有
+\[
+ \mathrm E^{\mathrm{NP}}\not\subseteq\mathrm{SIZE}(O(n)).
+\]
+\end{corollary}
+\begin{proof}
+Williams 证明：若 ETH 为假，则
+$\mathrm E^{\mathrm{NP}}$ 没有线性规模电路
+~\cite[Theorem~6.1]{Wil13}。把该蕴含应用于
+定理~\ref{thm:main} 提供的确定性亚指数时间 $3$-SAT
+算法。
+\end{proof}
+
+这一联系是从更快的可满足性算法导出电路下界的一个实例。
+为编码有 $s$ 个门、$n$ 个输入的布尔电路，
+为每个门引入一个变量，用其输入强制其取值，
+并添加一个要求输出位等于 $1$ 的单元子句。
+所得 $3$-CNF 有 $O(n+s)$ 个变量与子句，
+且恰在电路输出为一时可满足。
+因此我们的定理在 $2^{o(n)}$ 时间内判定线性规模电路的
+可满足性。Williams 的论证把这样的加速与对见证的假想小
+电路结合，与某个非确定性时间层级矛盾。
+该推论给出 $\mathrm E^{\mathrm{NP}}$
+中没有线性规模电路族的语言；
+它不断言 NP 的超多项式电路下界。
+
+\input{quantitative-circuits-zh}
+
+\subsection{求逆常数输出局部性的布尔映射}\label{subsec:local-inversion}
+固定常数 $d$。考虑布尔映射
+$G:\{0,1\}^n\to\{0,1\}^m$，其第 $i$ 个输出位形如
+\[
+ G(\vec{x})_i=g_i(\vec{x}|_{S_i}),
+ \qquad S_i\subseteq[n],\quad |S_i|\le d.
+\]
+$G$ 的输入描述列出集合 $S_i$ 与布尔函数 $g_i$
+的真值表。于是每个输出只检查常数个输入位，
+尽管集合 $S_i$ 可以任意重叠。
+给定目标 $\vec{b}\in\{0,1\}^m$，
+求逆即要求任意满足 $G(\vec{x})=\vec{b}$
+的 $\vec{x}$。
+
+\begin{corollary}\label{cor:consequence-local-inversion}
+对每个固定的 $d$ 与 $n\ge20$，
+数 $|G^{-1}(\vec{b})|$ 可以被精确计算，
+且当原像存在时可以找到其一，
+确定性时间为
+\[
+ (n+m)^{O_d(1)}2^{O_d(\rho(n))}
+\]
+，空间为 $(n+m)^{O_d(1)}$。
+\end{corollary}
+\begin{proof}
+对每个 $i$ 与每个满足 $g_i(\vec{\alpha})\ne b_i$
+的局部赋值 $\vec{\alpha}\in\{0,1\}^{S_i}$，
+加入子句
+\[
+ \bigvee_{j\in S_i}\ell_{j,\alpha_j},
+ \qquad
+ \ell_{j,0}=X_j,\quad \ell_{j,1}=\neg X_j.
+\]
+该子句恰禁止局部赋值 $\vec{\alpha}$。
+若 $S_i$ 为空，其约束是常值的，可直接检验。
+剩余子句的合取是原 $n$ 个声明变量上的 CNF，
+宽度至多 $d$、子句至多 $2^d m$ 个。
+其可满足赋值恰为 $G^{-1}(\vec{b})$；
+不需要辅助变量或重数修正。
+以 $k=\max\{2,d\}$ 应用定理~\ref{thm:main}。
+通常的逐变量自归约用至多 $n$ 次进一步计数查询找到一个
+原像，这只改变多项式因子。
+每次查询可在下一次之前丢弃，
+保持多项式空间。
+\end{proof}
+
+条件计数还允许在原像集非空时采样一个完全均匀的原像，
+期望时间界相同（差多项式因子）~\cite{JVV86}。
+特别地，该推论适用于 Goldreich 候选单向函数的常数
+局部性版本，其在输入位的重叠子集上求值局部谓词
+~\cite{Gol00}。对多项式个输出位，
+它给出对像中每个输出的 $2^{o(n)}$ 时间求逆算法，
+排除这些族的 $2^{\Omega(n)}$ 求逆难度。
+这并不排除对多项式时间算法的单向性。
+
+\input{quantitative-reduction-zh}
+\input{quantitative-contraction-zh}
+

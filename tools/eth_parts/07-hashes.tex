@@ -1,0 +1,411 @@
+\section{把 \texorpdfstring{$\#k$-SAT}{\#k-SAT} 归约到公共零点计数}\label{sec:hashes}\label{subsec:sparse-hashes}
+给定至多 $Bn$ 个子句的稀疏 $k$-CNF $F$（$B$ 为 $n$
+的多对数），我们在其原 $n$ 个变量上构造 $O(n)$
+个稀疏多项式方程，使其公共零点恰为其可满足赋值。
+每子句一个方程可能需要 $Bn$ 个方程。我们改为让每个方程
+检验一列短子句之违反的奇偶性。我们用
+定理~\ref{thm:overview-sparse-polynomials} 既选取这些方程，
+也得到最终计数。
+
+设 $m$ 为编入下标的子句数，$v_e(x)$ 为子句 $e$
+的违反位。作为 $\mathbb F_2$ 上的多项式，
+$v_e$ 是正文字的因子 $1+x_v$ 与负文字的因子 $x_v$
+的乘积。重言子句有 $v_e=0$，空子句有 $v_e=1$。
+删除重复文字后，$\deg v_e\le k$ 且 $v_e$
+展开为至多 $2^k$ 个单项。置 $v(x)=(v_1(x),\ldots,v_m(x))$。
+对有 $m$ 列的二值矩阵 $A$，第 $i$ 行指定方程
+\begin{equation}\label{eq:hash-query}
+ P_i(x):=\sum_{e:A_{ie}=1} v_e(x)=0\qquad\text{（在 }\mathbb F_2\text{ 上）}.
+\end{equation}
+记该方程组为 $\mathcal P_A$，其公共零点个数为
+$N(A)=N(\mathcal P_A)$。每个可满足赋值通过每一行。
+故 $N(A)=\#F+D(A)$，其中 $D(A)$ 统计仍然通过的
+不可满足赋值。我们不知道 $\#F$，但它对每个候选新行都相同：
+使 $N$ 最小的行也使 $D$ 最小。
+
+我们用对 $(e,c)$ 的列表表示检验行，其中 $e\in[m]$、
+$c\in\{0,1\}$；子句下标重复时系数按模二合并。
+列表长度计入全部对，包括重复下标与系数为零的对。
+列表长度为 $s$ 的行在相消之前至多读取 $ks$ 个变量。
+
+\subsection{排除小违反集的初始检验}
+
+若一个赋值只违反众多子句中的一个，则抽样一列短子句的
+检验不太可能注意到它。因此我们首先构造矩阵 $A^{(0)}$，
+它拒绝每个支撑小的非零违反向量。
+通过这些初始检验的每个不可满足赋值必违反许多子句。
+于是，抽样一列短子句的进一步检验能以常数概率拒绝每个
+这样的赋值。
+
+我们使用标准的基于边的 Tanner 码：把位指派到展开图的边
+上，并要求与每个顶点关联的位构成某个指定局部线性码的字
+（局部约束见 Tanner~\cite[Section~II]{Tanner81}，
+展开图构造见 Sipser 与 Spielman~\cite[Sections~IV and~VI]{SS96}）。
+通常的局部距离与展开论证给出非零码字权重的所需下界。
+下面的证明确定性地构造图与局部码，其参数满足我们对检验
+个数与长度的界。
+
+\begin{lemma}\label{lem:sparse-checks}
+设正整数 $n,m,B$ 满足 $m\le Bn$，并置
+\[
+ \mu=\lfloor\log_2 m\rfloor+1,\qquad
+ P=20000B^2\mu^2,\qquad D_0=320000B^2\mu^3.
+\]
+存在 $A^{(0)}$ 的确定性构造：一个有 $m$ 列、至多 $3n$
+行的二值矩阵，每行非零分量至多 $D_0$ 个，且
+\[
+ z\in\{0,1\}^m\setminus\{\vec{0}\},\quad
+ A^{(0)}z=\vec{0}\pmod2
+ \quad\Longrightarrow\quad
+ |\operatorname{supp}z|\ge m/P.
+\]
+构造使用 $\exp(\poly(B,\log(m+2)))$ 次位运算与
+$\poly(n,m,B)$ 比特工作空间。
+\end{lemma}
+
+\begin{proof}
+我们构造一个边数在 $m$ 与 $2m$ 之间的二部图，
+用其边作为临时二值坐标。每个顶点处的检验将迫使与某条
+非零边关联的每个顶点有许多条非零关联边；
+随后一个混合估计将迫使总权重大。
+最后我们保留 $m$ 个边坐标，把其余固定为零。
+令
+\[
+ d_G=\min(m,D_0),
+ \qquad
+ q_G=\min\{2^a:a\in\mathbb Z_{\ge0},\ 2^a d_G\ge m\}.
+\]
+则 $m\le q_Gd_G<2m$。写 $q_G=2^{\ell_G}$，
+取 $\{0,1\}^{\ell_G}$ 的两份副本作顶点集。
+对每个左顶点 $u$ 与每个端口 $j\in[d_G]$，
+放一条从 $u$ 到 $u\oplus s_j$ 的边，
+其中 $\oplus$ 表示按位模二加，
+移位 $s_1,\ldots,s_{d_G}\in\{0,1\}^{\ell_G}$
+将在下文选取。边以对 $(u,j)$ 为下标；
+平行边保持互异。每侧每个顶点在每个端口 $j$
+都有一条关联边，故图是 $d_G$ 正则的。
+
+为得到混合估计 \eqref{eq:hash-mixing}，
+我们选取移位使非空坐标集的每个奇偶性都近乎平衡。
+对非零向量 $b\in\{0,1\}^{\ell_G}$，
+位 $b\cdot s_j\bmod2$ 是 $s_j$ 中 $b$ 取一的坐标的
+奇偶性。取 $\varepsilon=1/(200B\mu)$，要求
+\begin{equation}\label{eq:hash-walsh}
+ \Bigl|\sum_{j=1}^{d_G}(-1)^{b\cdot s_j}\Bigr|
+ \le\varepsilon d_G
+ \qquad
+ \bigl(b\in\{0,1\}^{\ell_G}\setminus\{\vec{0}\}\bigr).
+\end{equation}
+\eqref{eq:hash-walsh} 中的和是奇偶为偶的下标个数
+减去为奇的下标个数。于是对每个非零 $b$，
+每种奇偶性出现在比例介于 $(1-\varepsilon)/2$
+与 $(1+\varepsilon)/2$ 之间的下标处。
+具有该性质的移位列表称为 $\varepsilon$
+偏置的（$\varepsilon$-biased）~\cite[Definitions~2.1--2.2]{NN93}。
+
+若 $q_G=1$，则没有条件要检验。否则 $d_G=D_0$。
+为证明合适的移位存在，我们独立均匀随机地选取。
+对每个固定的非零 $b$，符号 $(-1)^{b\cdot s_j}$
+独立均匀分布于 $\{-1,1\}$。
+Hoeffding 不等式把该 $b$ 违反
+\eqref{eq:hash-walsh} 的概率界定为
+$2\exp(-\varepsilon^2d_G/2)$。对 $b$
+用联合界，总失败概率至多
+\[
+ 2q_G\exp(-\varepsilon^2d_G/2)
+ =2q_G\exp(-4\mu)<1,
+\]
+其中 $q_G<2m<2^{\mu+1}$。因此，穷举移位元组并检验
+\eqref{eq:hash-walsh}，可在
+$\exp(O(d_G\log(m+2)))$ 时间内找到有效元组。
+
+接下来从 \eqref{eq:hash-walsh} 推导混合估计。
+设 $\mathsf A_G$ 为 $q_G\times q_G$ 矩阵，
+$\mathsf A_G[u,v]=|\{j\in[d_G]:u\oplus s_j=v\}|$；
+其分量统计从左顶点 $u$ 到右顶点 $v$ 的边数。
+两侧有同一下标集 $\{0,1\}^{\ell_G}$，
+其上函数 $\chi_b(u)=(-1)^{b\cdot u}$
+构成正交基。对每个 $b,u\in\{0,1\}^{\ell_G}$，
+\[
+ (\mathsf A_G\chi_b)(u)
+ =\sum_{j=1}^{d_G}\chi_b(u\oplus s_j)
+ =\chi_b(u)\sum_{j=1}^{d_G}(-1)^{b\cdot s_j}.
+\]
+于是每个 $\chi_b$ 都是特征向量：常值函数
+$\chi_{\vec{0}}$ 有特征值 $d_G$，而
+\eqref{eq:hash-walsh} 把所有其他特征值的绝对值界定在
+$\varepsilon d_G$。对左顶点集 $U$ 与右顶点集 $V$，
+令 $e_G(U,V)$ 统计二者之间的边数（含重数）。
+把 $U,V$ 的指示向量分解为常值部分与正交部分，
+应用 Cauchy--Schwarz 得
+\begin{equation}\label{eq:hash-mixing}
+ e_G(U,V)\le
+ \frac{d_G|U||V|}{q_G}
+ +\varepsilon d_G\sqrt{|U||V|}.
+\end{equation}
+为指定局部码，置
+\[
+ c_G=\left\lceil\frac{d_G}{8B}\right\rceil,
+ \qquad \delta=\frac1{100B\mu}.
+\]
+我们需要一个 $c_G$ 行 $d_G$ 列的二值矩阵
+$A_{\mathrm{loc}}$，使其核（模二）中每个非零字的权重
+至少 $\delta d_G$。为证明这样的矩阵存在，
+考虑分量独立均匀取位的矩阵。对每个固定的非零字，
+其某个非零分量使每行中的奇偶性均匀；
+由行的独立性，该字落在核中的概率为 $2^{-c_G}$。
+置 $h=\lceil\delta d_G\rceil-1$。若 $h=0$，
+则没有权重小于 $\delta d_G$ 的非零字。
+否则其个数至多为
+\[
+ \sum_{j=1}^{h}\binom{d_G}{j}
+ \le(h+1)(2d_G)^h
+ \le(2d_G)^{2h}
+ <2^{d_G/(25B)}.
+\]
+最后一个不等式用 $h<\delta d_G$、$d_G\le m<2^\mu$
+与 $\mu+1\le2\mu$。由 $c_G\ge d_G/(8B)$，
+联合界表明合适的 $A_{\mathrm{loc}}$ 存在。
+枚举 $2^{c_Gd_G}$ 个二值矩阵并检验全部权重小于
+$\delta d_G$ 的字，可在 $\exp(\poly(B,\log(m+2)))$
+次位运算内找到一个。
+
+在两侧每个顶点处，把 $A_{\mathrm{loc}}$ 的 $c_G$
+行按端口次序施加到其关联边坐标上。
+这些约束定义了一个局部码为
+$C_{\mathrm{loc}}=\ker_{\mathbb F_2}A_{\mathrm{loc}}$
+的 Tanner 码。其关联图对我们图的每条边有一个位节点，
+对每个顶点有一个局部码节点；每个位参与其两个端点处的
+约束。考虑被所有这些检验接受的非零边字。
+设 $U,V$ 为其非零边在两侧触碰的顶点，$h'$
+为其权重。$U\cup V$ 中每个顶点至少关联
+$\delta d_G$ 条非零边，故
+$h'\ge\delta d_G\max(|U|,|V|)$。因此
+\[
+ \delta d_G\sqrt{|U||V|}
+ \le h'\le e_G(U,V)
+ \le\frac{d_G|U||V|}{q_G}
+       +\varepsilon d_G\sqrt{|U||V|}.
+\]
+$U$ 与 $V$ 都非空。除以 $d_G\sqrt{|U||V|}$
+得 $\sqrt{|U||V|}\ge(\delta-\varepsilon)q_G$，
+从而
+\[
+ h'\ge\delta(\delta-\varepsilon)q_Gd_G
+ =\frac{q_Gd_G}{20000B^2\mu^2}\ge\frac mP.
+\]
+
+通过保留 $q_Gd_G$ 个边坐标中的任意 $m$ 个
+（把它们等同于 $[m]$）并把其余坐标置零，缩短该
+Tanner 码。把全部顶点检验限制到保留坐标上即得
+$A^{(0)}$。被 $A^{(0)}$ 接受的字经补零延拓为被接受的
+边字，故具有所需权重。每行非零分量至多 $d_G\le D_0$
+个。行数为 $2q_Gc_G$。若 $q_G=1$，则 $d_G=m$ 且
+\[
+ 2c_G\le\frac{m}{4B}+2\le\frac n4+2\le3n.
+\]
+若 $q_G>1$，则 $d_G=D_0\ge8B$，且
+\[
+ 2q_Gc_G\le\frac{q_Gd_G}{4B}+2q_G
+ \le\frac{q_Gd_G}{2B}<\frac mB\le n.
+\]
+对移位、局部矩阵与检验字的搜索依序进行。
+存储当前选取与最终的行使用 $\poly(n,m,B)$
+比特工作空间。
+\end{proof}
+
+\subsection{通过计数公共零点选取附加方程}
+初始检验之后，仍然通过检验的每个不可满足赋值至少违反
+$m/P$ 个子句。这使短随机检验能以常数概率抓住每个这样的
+赋值。为使选取确定性，我们使用条件期望法背后的平均原理
+~\cite{Raghavan88}。
+
+\begin{lemma}\label{lem:greedy-hashes}
+取引理~\ref{lem:sparse-checks} 的 $P,D_0$ 与
+$A^{(0)}$，一个确定性过程追加 $3n$ 行列表长度 $P$
+的行，得到满足 $N(A)=\#F$ 的矩阵 $A$。
+它至多使用 $3n(2m)^P$ 次公共零点计数。
+每个候选方程组至多 $6n$ 个方程，
+每个方程至多涉及 $2^k\max(D_0,P)$ 个次数至多 $k$
+的单项。
+\end{lemma}
+\begin{proof}
+在当前矩阵为 $A$ 的阶段，枚举有序列表
+\[
+ \gamma=((e_1,c_1),\ldots,(e_P,c_P))
+ \in\mathcal C:=([m]\times\{0,1\})^P.
+\]
+列表 $\gamma$ 表示二值行 $h_\gamma$：
+\[
+ (h_\gamma)_e=
+ \Bigl(\sum_{j:e_j=e}c_j\Bigr)\bmod2
+ \qquad(e\in[m]).
+\]
+列表共 $(2m)^P$ 个；表示同一行的不同列表仍分别计数。
+把 $h_\gamma$ 追加到 $A$ 所得的矩阵记作
+$A;h_\gamma$。
+
+固定被 $A$ 接受的一个不可满足赋值 $x$。
+初始行仍在 $A$ 中，故
+$|\operatorname{supp}v(x)|\ge m/P$。
+对均匀列表 $\gamma$，$e_1,\ldots,e_P$
+都不属于该支撑的概率至多
+\[
+ (1-1/P)^P\le e^{-1}<1/2.
+\]
+在命中的条件下，选取一个命中位置 $j$。
+固定除 $c_j$ 外的所有系数后，均匀位 $c_j$
+使 $h_\gamma\cdot v(x)$ 模二均匀。
+当某些子句下标重复时仍然如此。
+于是对每个这样的 $x$，至少四分之一的候选列表给出
+拒绝 $x$ 的行。
+
+把该界对仍然通过的不可满足赋值求和，得
+\[
+ \mathbb E_\gamma D(A;h_\gamma)\le\tfrac34 D(A).
+\]
+对每个候选，通过计数其多项式方程组的公共零点计算
+$N(A;h_\gamma)$。追加取得最小值的候选，
+并列时按枚举次序取先者。
+由每个 $\gamma$ 都有
+$N(A;h_\gamma)=\#F+D(A;h_\gamma)$，
+所选行留下至多 $\tfrac34 D(A)$ 个不可满足赋值。
+$3n$ 轮之后至多剩
+$(3/4)^{3n}2^n=(27/32)^n<1$ 个；
+其个数是整数，故为零。
+该过程运行固定轮数，从不需要知道 $D(A)$ 或 $\#F$。
+
+初始矩阵至多 $3n$ 行，每个候选至多用 $3n$
+个附加行求值。由 \eqref{eq:hash-query}，
+列出 $s$ 个子句的行在原变量上展开为至多 $2^k s$
+个单项；重复项在 $\mathbb F_2$ 上相消。
+这些观察给出所述规模与查询界。
+\end{proof}
+
+\subsection{对单个稀疏公式计数}\label{subsec:count-sparse}
+设 $n\ge20$、$1\le m\le Bn$，其中 $B$
+被只依赖 $k$ 的 $\log n$ 固定幂界定。
+用引理~\ref{lem:sparse-checks} 构造初始矩阵。
+这使用 $\exp((\log n)^{O_k(1)})$ 次位运算与多项式空间。
+$P$ 与 $D_0$ 都是 $(\log n)^{O_k(1)}$，
+故引理~\ref{lem:greedy-hashes} 的每个候选都是
+定理~\ref{thm:overview-sparse-polynomials}
+在单个固定 $c=c(k)$ 下的实例。
+这同样适用于被丢弃的候选与最终方程组：
+计数器只需要方程的个数、次数与稀疏度。
+对固定的 $k$，展开每行并合并单项花费多项式时间与空间。
+
+至多 $3n(2m)^P+1=\exp((\log n)^{O_k(1)})$
+次调用即够，含一次最终计数。每次调用花费
+$2^{O_k(n(\log\log n)^2/\sqrt{\log n})}$ 次位运算。
+由于 $\log n$ 的任何固定幂都是
+$o(n(\log\log n)^2/\sqrt{\log n})$，
+包括构造与候选比较在内的总时间为
+\begin{equation}\label{eq:sparse-formula-cost}
+ (n+m)^{O_k(1)}2^{O_k(n(\log\log n)^2/\sqrt{\log n})}.
+\end{equation}
+由贪心引理，最终计数是 $\#F$。
+无子句或含空子句的公式直接处理。
+候选被依序检查；除计数器的多项式工作空间外，
+只需保留当前各行、一个候选、最佳行及其计数。
+
+\subsection{回到一般公式}\label{subsec:general-reduction}
+
+我们用不交稀疏化把可满足赋值分拆到同一 $n$
+个声明变量上的稀疏公式中。前述算法对每个这样的公式计数。
+参数 $\sigma$ 控制一个权衡：取小会减少公式数，
+但增大其出现界 $B$。我们的求解器容许 $B$
+按 $\log n$ 的固定幂增长，
+因此可以让 $\sigma$ 趋于零，
+同时把公式数与每公式成本都保持在所需时间界内。
+
+\begin{lemma}\label{lem:sparsify}
+固定 $k\ge2$。给定 $n$ 个声明变量、$m$
+个子句的 $k$-CNF 与有理数 $0<\sigma\le1$，
+一个确定性算法在同一变量上构造一棵 $k$-CNF 树。
+设 $L_\sigma$ 为所给 $\sigma$ 的分子与分母的总二进制
+编码长度。一个赋值满足输入当且仅当它满足某个叶公式，
+且它不能同时满足两个不同的叶。
+该树有
+\[
+ \operatorname{poly}_k(n,\sigma^{-1})\,2^{\sigma n}
+\]
+个节点，深度为 $\poly_k(n,\sigma^{-1})$。
+在每个叶中，每个变量至多出现 $B$ 次，
+其中 $B$ 是显式计算出的整数，满足
+\[
+ B=O_k\!\Bigl(\bigl[\sigma^{-1}\log(2/\sigma)\bigr]^{k-1}\Bigr).
+\]
+输入归一化使用 $\poly_k(n,m)$ 次位运算。
+构造数值参数使用 $\poly_k(L_\sigma)$ 次位运算。
+此后，处理每个节点使用 $\poly_k(n,\log(2/\sigma))$
+次位运算。输入计数是叶计数之和。
+\end{lemma}
+附录~\ref{app:sparsify} 证明该引理，
+包括为叶计数相加提供正当性的不交性。
+
+\begin{proposition}\label{prop:interpolation-bound}
+对每个固定的 $k\ge2$，插值算法对 $n\ge20$
+个声明变量、$m$ 个子句的 $k$-CNF
+计数可满足赋值，使用 $(n+m)^{O_k(1)}2^{O_k(\rho(n))}$
+次位运算与 $(n+m)^{O_k(1)}$ 比特空间。
+\end{proposition}
+\begin{proof}
+我们先以 $(n+m)^{O_k(1)}$ 时间归一化输入：
+删除重复文字、重言子句、重复子句以及包含其他子句的
+子句。我们保留全部 $n$ 个声明变量。
+空子句给出计数零，无子句的公式给出计数 $2^n$。
+$n<20$ 用穷举搜索处理。
+对 $n\ge20$，接着选取稀疏化参数。定义
+\[
+ \lambda_n=\lceil\log_2 n\rceil,\qquad
+ \nu_n=\lceil\log_2\lambda_n\rceil,\qquad
+ s=\left\lfloor\frac{\sqrt{\lambda_n}}{\nu_n^2}\right\rfloor.
+\]
+我们用整数比较计算 $s$：
+取满足 $s^2\nu_n^4\le\lambda_n$ 的最大非负整数。
+若 $s<2$，用穷举搜索；
+$\sqrt{\lambda_n}/\nu_n^2$ 趋于无穷，
+故只有有限多个这样的规模。
+否则以 $\sigma=1/s$ 应用引理~\ref{lem:sparsify}。
+树至多 $2^{n/s}\operatorname{poly}_k(n,s)$
+个节点，其叶的出现界为
+\[
+ B=O_k\bigl((s\log s)^{k-1}\bigr)=(\log n)^{O_k(1)}.
+\]
+每个叶使用原 $n$ 个变量，非空子句至多 $Bn$ 个。
+我们用第~\ref{subsec:count-sparse} 节的稀疏公式算法
+对每个叶计数，其运行时间由
+\eqref{eq:sparse-formula-cost} 给出。
+无子句或含空子句的叶直接处理。
+该应用中的子句数是叶的子句数；
+最终界中的 $m$ 仍是输入子句数。
+
+对 $s\ge2$，其定义中的取整给出
+\[
+ \frac ns=O\!\left(\frac{n\nu_n^2}{\sqrt{\lambda_n}}\right)
+ =O(\rho(n)).
+\]
+于是叶数与每叶计数时间的指数都是 $O_k(\rho(n))$。
+其多项式因子，连同归一化与树节点上的工作，
+被 $(n+m)^{O_k(1)}$ 界住。位运算总数因此为
+\[
+ (n+m)^{O_k(1)}2^{O_k(\rho(n))}.
+\]
+有限多个穷举搜索情形被吸收进常数中。
+全部参数、初始检验与附加行都由上述确定性过程计算；
+每次计数查询都使用
+定理~\ref{thm:overview-sparse-polynomials}
+的公共零点算法。
+
+为界定完整算法使用的空间，我们深度优先遍历稀疏化树，
+一次对一个叶计数。当前路径有 $\poly_k(n,s)$
+个节点，每个归一化公式有 $\poly_k(n)$
+比特编码。由 $s\le\sqrt{\lceil\log_2 n\rceil}$，
+存储该路径并对一个叶计数使用 $\poly_k(n,m)$ 比特。
+不交性使已处理叶计数之和保持在零与 $2^n$ 之间，
+故其累加器至多用 $n+1$ 比特。
+因此总空间为 $\poly_k(n,m)$ 比特。
+\end{proof}
+
+\appendix
